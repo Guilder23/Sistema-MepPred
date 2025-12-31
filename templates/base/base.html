@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block titulo %}MeetWin{% endblock %}</title>
+  <link rel="stylesheet" href="/static/css/base/base.css" />
+  <link rel="stylesheet" href="/static/css/componentes/navbar.css" />
+  <link rel="stylesheet" href="/static/css/componentes/sidebar.css" />
+  <link rel="stylesheet" href="/static/css/componentes/footer.css" />
+  {% block css %}{% endblock %}
+</head>
+<body>
+  {% include 'componentes/navbar.html' %}
+
+  <main class="layout">
+    <div class="layout__container">
+      {% if request.user.is_authenticated %}
+        {% include 'componentes/sidebar.html' %}
+      {% endif %}
+
+      <div class="layout__content">
+    {% if messages %}
+      <div class="mensajes">
+        {% for message in messages %}
+          <div class="mensaje mensaje-{{ message.tags|default:'info' }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% block contenido %}{% endblock %}
+      </div>
+    </div>
+  </main>
+
+  {% include 'componentes/footer.html' %}
+
+  <script src="/static/js/base/base.js"></script>
+  <script src="/static/js/componentes/navbar.js"></script>
+  <script src="/static/js/componentes/sidebar.js"></script>
+  <script src="/static/js/componentes/footer.js"></script>
+  {% block js %}{% endblock %}
+</body>
+</html>

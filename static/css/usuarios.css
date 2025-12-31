@@ -1,0 +1,7 @@
+.card{background:#0f1a33;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:18px;margin-top:18px}
+.card h1{margin:0 0 12px 0;font-size:22px}
+label{display:block;margin:10px 0 6px 0;color:#c9d2ff}
+input,select{width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:#0b1220;color:#e6e8ef;outline:none}
+button,.btn{display:inline-block;margin-top:14px;padding:10px 14px;border:0;border-radius:12px;background:#4c7dff;color:white;cursor:pointer;text-decoration:none}
+.links{margin-top:14px;display:flex;gap:12px;flex-wrap:wrap}
+.links a{color:#c9d2ff;text-decoration:none}

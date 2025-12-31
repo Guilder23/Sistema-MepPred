@@ -1,0 +1,22 @@
+{% extends 'base/base.html' %}
+
+{% block titulo %}Verificación enviada{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="/static/css/usuarios/verificacion_enviada.css" />
+{% endblock %}
+
+{% block contenido %}
+<section class="card">
+  <h1>Revisa tu correo</h1>
+  <p>Te enviamos un enlace para verificar tu cuenta.</p>
+  <div class="links">
+    <a href="/login/">Ir a login</a>
+    <a href="/verificacion/reenviar/">No me llegó el correo</a>
+  </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script src="/static/js/usuarios/verificacion_enviada.js"></script>
+{% endblock %}

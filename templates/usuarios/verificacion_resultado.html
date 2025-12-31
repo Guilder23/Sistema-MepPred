@@ -1,0 +1,29 @@
+{% extends 'base/base.html' %}
+
+{% block titulo %}Verificación{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="/static/css/usuarios/verificacion_resultado.css" />
+{% endblock %}
+
+{% block contenido %}
+<section class="card">
+  {% if estado == 'ok' %}
+    <h1>Correo verificado</h1>
+    <p>Tu cuenta está activa. Ya puedes iniciar sesión.</p>
+    <a class="btn" href="/login/">Ir a login</a>
+  {% elif estado == 'expirado' %}
+    <h1>Enlace expirado</h1>
+    <p>El enlace de verificación expiró.</p>
+    <a class="btn" href="/verificacion/reenviar/">Reenviar verificación</a>
+  {% else %}
+    <h1>Enlace inválido</h1>
+    <p>El enlace no es válido.</p>
+    <a class="btn" href="/verificacion/reenviar/">Reenviar verificación</a>
+  {% endif %}
+</section>
+{% endblock %}
+
+{% block js %}
+<script src="/static/js/usuarios/verificacion_resultado.js"></script>
+{% endblock %}

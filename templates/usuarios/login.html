@@ -1,0 +1,33 @@
+{% extends 'base/base.html' %}
+
+{% block titulo %}Login{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="/static/css/usuarios/login.css" />
+{% endblock %}
+
+{% block contenido %}
+<section class="card">
+  <h1>Iniciar sesión</h1>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    <label>Correo electrónico</label>
+    <input type="email" name="email" required />
+
+    <label>Contraseña</label>
+    <input type="password" name="password" required />
+
+    <button type="submit">Ingresar</button>
+  </form>
+
+  <div class="links">
+    <a href="/recuperar/">¿Olvidaste tu contraseña?</a>
+    <a href="/verificacion/reenviar/">Reenviar verificación</a>
+    <a href="/registro/">Crear cuenta</a>
+  </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script src="/static/js/usuarios/login.js"></script>
+{% endblock %}

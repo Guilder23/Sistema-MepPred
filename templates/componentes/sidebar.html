@@ -1,0 +1,9 @@
+<aside class="sidebar">
+  <div class="sidebar__section">
+    <div class="sidebar__title">Navegación</div>
+    <a class="sidebar__link" href="/panel/">Inicio</a>
+    {% if request.user.is_superuser or request.user.role == 'admin' %}
+      <a class="sidebar__link" href="/admin/asignar/">Asignar admin</a>
+    {% endif %}
+  </div>
+</aside>

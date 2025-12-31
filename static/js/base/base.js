@@ -1,0 +1,3 @@
+(function(){
+  // Helpers base (reservado)
+})();

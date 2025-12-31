@@ -1,0 +1,3 @@
+(function(){
+  // verificacion_enviada
+})();

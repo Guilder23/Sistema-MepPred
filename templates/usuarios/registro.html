@@ -1,0 +1,48 @@
+{% extends 'base/base.html' %}
+
+{% block titulo %}Registro{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="/static/css/usuarios/registro.css" />
+{% endblock %}
+
+{% block contenido %}
+<section class="card">
+  <h1>Registro de estudiante</h1>
+  <form method="post" novalidate>
+    {% csrf_token %}
+
+    <label>Correo electrónico</label>
+    <input type="email" name="email" required />
+
+    <label>Usuario</label>
+    <input type="text" name="username" />
+
+    <label>Año de estudio</label>
+    <select name="study_year">
+      <option value="pre_uni">Pre-universitario</option>
+      <option value="year_1">Año 1</option>
+      <option value="year_2">Año 2</option>
+      <option value="year_3">Año 3</option>
+      <option value="year_4">Año 4</option>
+      <option value="year_5">Año 5</option>
+    </select>
+
+    <label>Contraseña</label>
+    <input type="password" name="password1" required />
+
+    <label>Confirmar contraseña</label>
+    <input type="password" name="password2" required />
+
+    <button type="submit">Crear cuenta</button>
+  </form>
+
+  <div class="links">
+    <a href="/login/">Ya tengo cuenta</a>
+  </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script src="/static/js/usuarios/registro.js"></script>
+{% endblock %}

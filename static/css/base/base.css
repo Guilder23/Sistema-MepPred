@@ -1,0 +1,27 @@
+:root{--bg:#0b1220;--panel:rgba(255,255,255,.04);--panel2:rgba(255,255,255,.06);--border:rgba(255,255,255,.10);--text:#e6e8ef;--muted:#aab2d6;--primary:#4c7dff;--danger:#ff4c6a;--success:#2ee59d;--shadow:0 16px 60px rgba(0,0,0,.35)}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:radial-gradient(1200px 600px at 20% 10%, rgba(76,125,255,.18), transparent 55%),radial-gradient(900px 500px at 85% 20%, rgba(46,229,157,.12), transparent 60%),var(--bg);color:var(--text)}
+a{color:inherit}
+.layout{padding:18px}
+.layout__container{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:260px 1fr;gap:16px}
+.layout__content{min-height:calc(100vh - 140px)}
+@media (max-width: 900px){.layout__container{grid-template-columns:1fr}.sidebar{display:none}}
+.card{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.03));border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);padding:18px}
+.h1{font-size:24px;margin:0 0 10px 0}
+.mensajes{margin:0 0 14px 0;display:flex;flex-direction:column;gap:8px}
+.mensaje{padding:10px 12px;border-radius:14px;border:1px solid var(--border);background:rgba(255,255,255,.03)}
+.mensaje-error{border-color:rgba(255,76,106,.35);background:rgba(255,76,106,.10)}
+.mensaje-success{border-color:rgba(46,229,157,.35);background:rgba(46,229,157,.10)}
+.mensaje-info{border-color:rgba(76,125,255,.35);background:rgba(76,125,255,.10)}
+form{display:grid;gap:10px}
+label{font-size:13px;color:var(--muted)}
+input,select{width:100%;padding:12px 12px;border-radius:14px;border:1px solid var(--border);background:rgba(0,0,0,.25);color:var(--text);outline:none;transition:border-color .15s ease,box-shadow .15s ease}
+input:focus,select:focus{border-color:rgba(76,125,255,.6);box-shadow:0 0 0 4px rgba(76,125,255,.15)}
+button,.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 14px;border-radius:14px;border:1px solid rgba(76,125,255,.45);background:linear-gradient(180deg,rgba(76,125,255,1),rgba(76,125,255,.85));color:white;cursor:pointer;text-decoration:none;font-weight:700;transition:transform .08s ease,filter .15s ease}
+button:hover,.btn:hover{filter:brightness(1.06)}
+button:active,.btn:active{transform:translateY(1px)}
+.links{display:flex;gap:10px;flex-wrap:wrap}
+.link{color:var(--muted);text-decoration:none;padding:8px 10px;border-radius:12px;border:1px solid transparent}
+.link:hover{border-color:var(--border);background:rgba(255,255,255,.03);color:var(--text)}
+.auth{max-width:520px;margin:0 auto}
