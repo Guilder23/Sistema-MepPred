@@ -1,0 +1,104 @@
+/* ===== ESTILOS ESPECÍFICOS - ASIGNAR ADMIN ===== */
+
+.card {
+  background: var(--fondo-panel);
+  border: 1px solid var(--borde-sutil);
+  border-radius: var(--radio-xl);
+  box-shadow: var(--sombra-card);
+  padding: var(--espacio-2xl);
+  transition: all var(--transicion-normal);
+  width: 100%;
+}
+
+.card:hover {
+  box-shadow: var(--sombra-md);
+}
+
+.card h1 {
+  font-size: var(--fuente-tamano-2xl);
+  font-weight: var(--fuente-peso-bold);
+  margin: 0 0 var(--espacio-xl) 0;
+  color: var(--texto-principal);
+  line-height: 1.2;
+}
+
+form {
+  display: grid;
+  gap: var(--espacio-xl);
+  width: 100%;
+}
+
+label {
+  font-size: var(--fuente-tamano-sm);
+  font-weight: var(--fuente-peso-semibold);
+  color: var(--texto-principal);
+  display: block;
+  margin-bottom: var(--espacio-sm);
+  letter-spacing: 0.01em;
+}
+
+input {
+  width: 100%;
+  padding: var(--espacio-md) var(--espacio-lg);
+  border-radius: var(--radio-md);
+  border: 1px solid var(--borde-normal);
+  background: var(--fondo-panel);
+  color: var(--texto-principal);
+  font-size: var(--fuente-tamano-base);
+  font-family: var(--fuente-familia);
+  outline: none;
+  transition: all var(--transicion-normal);
+}
+
+input:hover {
+  border-color: var(--borde-destacado);
+}
+
+input:focus {
+  border-color: var(--borde-focus);
+  box-shadow: 0 0 0 3px var(--color-primario-fondo);
+}
+
+input::placeholder {
+  color: var(--texto-deshabilitado);
+}
+
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espacio-sm);
+  padding: var(--espacio-md) var(--espacio-xl);
+  border-radius: var(--radio-md);
+  border: none;
+  background: var(--color-primario);
+  color: white;
+  font-size: var(--fuente-tamano-base);
+  font-weight: var(--fuente-peso-semibold);
+  font-family: var(--fuente-familia);
+  cursor: pointer;
+  transition: all var(--transicion-normal);
+  box-shadow: var(--sombra-boton);
+  letter-spacing: 0.01em;
+  width: 100%;
+}
+
+button:hover {
+  background: var(--color-primario-hover);
+  box-shadow: var(--sombra-boton-hover);
+}
+
+button:active {
+  background: var(--color-primario-active);
+  box-shadow: var(--sombra-xs);
+}
+
+@media (max-width: 768px) {
+  .card {
+    padding: var(--espacio-lg);
+  }
+
+  .card h1 {
+    font-size: var(--fuente-tamano-xl);
+  }
+}

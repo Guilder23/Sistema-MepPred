@@ -1,0 +1,38 @@
+/* ===== ESTILOS ESPECÍFICOS - PANEL ESTUDIANTE ===== */
+
+.card {
+  background: var(--fondo-panel);
+  border: 1px solid var(--borde-sutil);
+  border-radius: var(--radio-xl);
+  box-shadow: var(--sombra-card);
+  padding: var(--espacio-2xl);
+  transition: all var(--transicion-normal);
+  width: 100%;
+}
+
+.card:hover {
+  box-shadow: var(--sombra-md);
+}
+
+.card h1 {
+  font-size: var(--fuente-tamano-2xl);
+  font-weight: var(--fuente-peso-bold);
+  margin: 0 0 var(--espacio-lg) 0;
+  color: var(--texto-principal);
+  line-height: 1.2;
+}
+
+.card p {
+  margin: 0 0 var(--espacio-md) 0;
+  color: var(--texto-secundario);
+}
+
+@media (max-width: 768px) {
+  .card {
+    padding: var(--espacio-lg);
+  }
+
+  .card h1 {
+    font-size: var(--fuente-tamano-xl);
+  }
+}

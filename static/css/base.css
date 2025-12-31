@@ -1,10 +1,7 @@
-body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#0b1220;color:#e6e8ef}
-.container{max-width:960px;margin:0 auto;padding:16px}
-.topbar{background:#111a2e;border-bottom:1px solid rgba(255,255,255,.08)}
-.brand{color:#fff;text-decoration:none;font-weight:700}
-.nav a{color:#c9d2ff;text-decoration:none;margin-left:12px}
-.mensajes{margin:12px 0;display:flex;flex-direction:column;gap:8px}
-.mensaje{padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.12)}
-.mensaje-error{background:rgba(255,0,0,.08)}
-.mensaje-success{background:rgba(0,255,140,.08)}
-.mensaje-info{background:rgba(120,160,255,.08)}
+/* ===== ESTILOS BASE - MEETWIN ===== */
+/* Este archivo importa los estilos base del sistema de diseño */
+
+@import url('base/base.css');
+
+/* Estilos adicionales específicos si son necesarios */
+/* Los estilos principales están en base/base.css */

@@ -1,6 +1,60 @@
-.navbar{position:sticky;top:0;z-index:50;background:rgba(11,18,32,.75);backdrop-filter:saturate(140%) blur(10px);border-bottom:1px solid rgba(255,255,255,.08)}
-.navbar__container{max-width:1080px;margin:0 auto;padding:14px 18px;display:flex;align-items:center;justify-content:space-between}
-.navbar__brand{font-weight:800;letter-spacing:.3px;color:var(--text);text-decoration:none}
-.navbar__links{display:flex;gap:10px;align-items:center}
-.navbar__link{color:var(--muted);text-decoration:none;padding:8px 10px;border-radius:12px;transition:background .15s ease,color .15s ease}
-.navbar__link:hover{background:rgba(255,255,255,.06);color:var(--text)}
+/* ===== NAVBAR ===== */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  background: var(--fondo-panel);
+  border-bottom: 1px solid var(--borde-sutil);
+  box-shadow: var(--sombra-sm);
+  transition: all var(--transicion-normal);
+}
+
+.navbar__container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: var(--espacio-md) var(--espacio-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navbar__brand {
+  font-weight: var(--fuente-peso-bold);
+  font-size: var(--fuente-tamano-xl);
+  letter-spacing: -0.02em;
+  color: var(--color-primario);
+  text-decoration: none;
+  transition: all var(--transicion-normal);
+}
+
+.navbar__brand:hover {
+  color: var(--color-primario-hover);
+}
+
+.navbar__links {
+  display: flex;
+  gap: var(--espacio-xs);
+  align-items: center;
+}
+
+.navbar__link {
+  color: var(--texto-secundario);
+  text-decoration: none;
+  padding: var(--espacio-sm) var(--espacio-md);
+  border-radius: var(--radio-md);
+  transition: all var(--transicion-normal);
+  font-size: var(--fuente-tamano-sm);
+  font-weight: var(--fuente-peso-medium);
+  position: relative;
+}
+
+.navbar__link:hover {
+  background: var(--fondo-panel-hover);
+  color: var(--texto-principal);
+}
+
+.navbar__link--activo {
+  color: var(--color-primario);
+  background: var(--color-primario-fondo);
+  font-weight: var(--fuente-peso-semibold);
+}

@@ -13,13 +13,13 @@
 <body>
   {% include 'componentes/navbar.html' %}
 
-  <main class="layout">
-    <div class="layout__container">
+  <main class="layout {% if not request.user.is_authenticated %}layout--centrado{% endif %}">
+    <div class="layout__container {% if not request.user.is_authenticated %}layout__container--sin-sidebar{% endif %}">
       {% if request.user.is_authenticated %}
         {% include 'componentes/sidebar.html' %}
       {% endif %}
 
-      <div class="layout__content">
+      <div class="layout__content {% if not request.user.is_authenticated %}layout__content--centrado{% endif %}">
     {% if messages %}
       <div class="mensajes">
         {% for message in messages %}

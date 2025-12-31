@@ -76,21 +76,21 @@ def registro_estudiante(request):
 
         if not email or not password1 or not password2:
             messages.error(request, 'Debes completar todos los campos requeridos.')
-            return render(request, 'usuarios/registro.html')
+            return render(request, 'usuarios/autenticacion/registro.html')
 
         if password1 != password2:
             messages.error(request, 'Las contraseñas no coinciden.')
-            return render(request, 'usuarios/registro.html')
+            return render(request, 'usuarios/autenticacion/registro.html')
 
         if User.objects.filter(email=email).exists():
             messages.error(request, 'Este correo ya está registrado.')
-            return render(request, 'usuarios/registro.html')
+            return render(request, 'usuarios/autenticacion/registro.html')
 
         try:
             validate_password(password1)
         except ValidationError as exc:
             messages.error(request, ' '.join(exc.messages))
-            return render(request, 'usuarios/registro.html')
+            return render(request, 'usuarios/autenticacion/registro.html')
 
         base_username = slugify(username) if username else slugify(email.split('@')[0])
         if not base_username:
@@ -115,11 +115,11 @@ def registro_estudiante(request):
         _enviar_correo_verificacion(request, user)
         return redirect('usuarios:verificacion_enviada')
 
-    return render(request, 'usuarios/registro.html')
+    return render(request, 'usuarios/autenticacion/registro.html')
 
 
 def verificacion_enviada(request):
-    return render(request, 'usuarios/verificacion_enviada.html')
+    return render(request, 'usuarios/verificacion/verificacion_enviada.html')
 
 
 def reenviar_verificacion(request):
@@ -129,7 +129,7 @@ def reenviar_verificacion(request):
             user = User.objects.get(email=email)
         except User.DoesNotExist:
             messages.error(request, 'No existe una cuenta con ese correo.')
-            return render(request, 'usuarios/reenviar_verificacion.html')
+            return render(request, 'usuarios/verificacion/reenviar_verificacion.html')
 
         if user.email_verificado:
             messages.info(request, 'Tu correo ya está verificado. Ya puedes iniciar sesión.')
@@ -138,13 +138,13 @@ def reenviar_verificacion(request):
         ok, msg = _puede_reenviar_verificacion(user)
         if not ok:
             messages.error(request, msg)
-            return render(request, 'usuarios/reenviar_verificacion.html')
+            return render(request, 'usuarios/verificacion/reenviar_verificacion.html')
 
         _enviar_correo_verificacion(request, user)
         messages.success(request, 'Correo de verificación reenviado.')
         return redirect('usuarios:verificacion_enviada')
 
-    return render(request, 'usuarios/reenviar_verificacion.html')
+    return render(request, 'usuarios/verificacion/reenviar_verificacion.html')
 
 
 def verificar_email(request, token: str):
@@ -152,14 +152,14 @@ def verificar_email(request, token: str):
     try:
         unsigned = signer.unsign(token, max_age=max_age)
     except SignatureExpired:
-        return render(request, 'usuarios/verificacion_resultado.html', {'estado': 'expirado'})
+        return render(request, 'usuarios/verificacion/verificacion_resultado.html', {'estado': 'expirado'})
     except BadSignature:
-        return render(request, 'usuarios/verificacion_resultado.html', {'estado': 'invalido'})
+        return render(request, 'usuarios/verificacion/verificacion_resultado.html', {'estado': 'invalido'})
 
     user = get_object_or_404(User, pk=int(unsigned))
     user.email_verificado = True
     user.save(update_fields=['email_verificado'])
-    return render(request, 'usuarios/verificacion_resultado.html', {'estado': 'ok'})
+    return render(request, 'usuarios/verificacion/verificacion_resultado.html', {'estado': 'ok'})
 
 
 def login_view(request):
@@ -170,7 +170,7 @@ def login_view(request):
         user = authenticate(request, username=email, password=password)
         if user is None:
             messages.error(request, 'Credenciales incorrectas.')
-            return render(request, 'usuarios/login.html')
+            return render(request, 'usuarios/autenticacion/login.html')
 
         if not getattr(user, 'email_verificado', False):
             messages.error(request, 'Debes verificar tu correo antes de iniciar sesión.')
@@ -179,7 +179,7 @@ def login_view(request):
         login(request, user)
         return redirect('usuarios:panel')
 
-    return render(request, 'usuarios/login.html')
+    return render(request, 'usuarios/autenticacion/login.html')
 
 
 def logout_view(request):
@@ -206,8 +206,8 @@ def _normalizar_superuser(user: User) -> None:
 def panel(request):
     _normalizar_superuser(request.user)
     if getattr(request.user, 'role', 'student') == 'admin':
-        return render(request, 'usuarios/panel_admin.html')
-    return render(request, 'usuarios/panel_estudiante.html')
+        return render(request, 'usuarios/paneles/panel_admin.html')
+    return render(request, 'usuarios/paneles/panel_estudiante.html')
 
 
 def solicitar_recuperacion(request):
@@ -217,7 +217,7 @@ def solicitar_recuperacion(request):
             user = User.objects.get(email=email)
         except User.DoesNotExist:
             messages.error(request, 'No existe una cuenta con ese correo.')
-            return render(request, 'usuarios/recuperar.html')
+            return render(request, 'usuarios/recuperacion/recuperar.html')
 
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
@@ -232,7 +232,7 @@ def solicitar_recuperacion(request):
         messages.success(request, 'Se envió un correo de recuperación (si el email existe).')
         return redirect('usuarios:login')
 
-    return render(request, 'usuarios/recuperar.html')
+    return render(request, 'usuarios/recuperacion/recuperar.html')
 
 
 def confirmar_recuperacion(request, uidb64: str, token: str):
@@ -243,25 +243,25 @@ def confirmar_recuperacion(request, uidb64: str, token: str):
         user = None
 
     if user is None or not default_token_generator.check_token(user, token):
-        return render(request, 'usuarios/restablecer.html', {'token_valido': False})
+        return render(request, 'usuarios/recuperacion/restablecer.html', {'token_valido': False})
 
     if request.method == 'POST':
         password1 = request.POST.get('password1') or ''
         password2 = request.POST.get('password2') or ''
         if password1 != password2:
             messages.error(request, 'Las contraseñas no coinciden.')
-            return render(request, 'usuarios/restablecer.html', {'token_valido': True})
+            return render(request, 'usuarios/recuperacion/restablecer.html', {'token_valido': True})
         try:
             validate_password(password1, user=user)
         except ValidationError as exc:
             messages.error(request, ' '.join(exc.messages))
-            return render(request, 'usuarios/restablecer.html', {'token_valido': True})
+            return render(request, 'usuarios/recuperacion/restablecer.html', {'token_valido': True})
         user.set_password(password1)
         user.save()
         messages.success(request, 'Contraseña actualizada. Inicia sesión.')
         return redirect('usuarios:login')
 
-    return render(request, 'usuarios/restablecer.html', {'token_valido': True})
+    return render(request, 'usuarios/recuperacion/restablecer.html', {'token_valido': True})
 
 
 def _es_admin(user: User) -> bool:
@@ -284,12 +284,12 @@ def asignar_administrador(request):
             objetivo = User.objects.get(email=email)
         except User.DoesNotExist:
             messages.error(request, 'No existe un usuario con ese correo.')
-            return render(request, 'usuarios/asignar_admin.html')
+            return render(request, 'usuarios/admin/asignar_admin.html')
 
         rol_anterior = objetivo.role
         if rol_anterior == 'admin':
             messages.info(request, 'El usuario ya es administrador.')
-            return render(request, 'usuarios/asignar_admin.html')
+            return render(request, 'usuarios/admin/asignar_admin.html')
 
         objetivo.role = 'admin'
         objetivo.is_staff = True
@@ -310,4 +310,4 @@ def asignar_administrador(request):
         messages.success(request, 'Rol actualizado a Administrador.')
         return redirect('usuarios:panel')
 
-    return render(request, 'usuarios/asignar_admin.html')
+    return render(request, 'usuarios/admin/asignar_admin.html')
