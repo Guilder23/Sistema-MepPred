@@ -1,0 +1,125 @@
+/* ===== ESTILOS PARA HOME ===== */
+
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  background: linear-gradient(135deg, var(--color-primario-fondo) 0%, var(--color-secundario-fondo) 100%);
+  padding: var(--espacio-2xl) var(--espacio-lg);
+  text-align: center;
+}
+
+.hero__content {
+  max-width: 600px;
+  width: 100%;
+}
+
+.hero h1 {
+  font-size: var(--fuente-tamano-3xl);
+  font-weight: var(--fuente-peso-bold);
+  color: var(--texto-principal);
+  margin: 0 0 var(--espacio-lg) 0;
+  line-height: 1.2;
+}
+
+.hero p {
+  font-size: var(--fuente-tamano-lg);
+  color: var(--texto-secundario);
+  margin: 0 0 var(--espacio-2xl) 0;
+  line-height: 1.6;
+}
+
+.hero__buttons {
+  display: flex;
+  gap: var(--espacio-lg);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espacio-sm);
+  padding: var(--espacio-md) var(--espacio-xl);
+  border-radius: var(--radio-md);
+  border: none;
+  background: var(--color-primario);
+  color: white;
+  font-size: var(--fuente-tamano-base);
+  font-weight: var(--fuente-peso-semibold);
+  font-family: var(--fuente-familia);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--transicion-normal);
+  box-shadow: var(--sombra-boton);
+  letter-spacing: 0.01em;
+  min-width: 150px;
+}
+
+.btn:hover {
+  background: var(--color-primario-hover);
+  box-shadow: var(--sombra-boton-hover);
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  background: var(--color-primario-active);
+  box-shadow: var(--sombra-xs);
+  transform: translateY(0);
+}
+
+.btn--primary {
+  background: var(--color-primario);
+}
+
+.btn--primary:hover {
+  background: var(--color-primario-hover);
+}
+
+.btn--primary:active {
+  background: var(--color-primario-active);
+}
+
+.btn--secondary {
+  background: var(--color-secundario);
+  color: white;
+}
+
+.btn--secondary:hover {
+  background: var(--color-secundario-hover);
+}
+
+.btn--secondary:active {
+  background: var(--color-secundario-active);
+}
+
+@media (max-width: 768px) {
+  .hero {
+    min-height: 70vh;
+    padding: var(--espacio-xl) var(--espacio-md);
+  }
+
+  .hero h1 {
+    font-size: var(--fuente-tamano-2xl);
+  }
+
+  .hero p {
+    font-size: var(--fuente-tamano-base);
+  }
+
+  .hero__buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .btn {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+/* ===== MODALES ===== */
+/* Los estilos de los modales se han movido a login.css y registro.css */
+

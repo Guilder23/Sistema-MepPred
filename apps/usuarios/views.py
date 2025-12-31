@@ -15,6 +15,7 @@ from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.http import JsonResponse
 
 from .models import CambioRol
 
@@ -40,7 +41,7 @@ def _enviar_correo_verificacion(request, user: User) -> None:
 def home(request):
     if request.user.is_authenticated:
         return redirect('usuarios:panel')
-    return redirect('usuarios:login')
+    return render(request, 'home.html')
 
 
 def _puede_reenviar_verificacion(user: User) -> tuple[bool, str]:
@@ -75,20 +76,28 @@ def registro_estudiante(request):
         password2 = request.POST.get('password2') or ''
 
         if not email or not password1 or not password2:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'message': 'Debes completar todos los campos requeridos.'})
             messages.error(request, 'Debes completar todos los campos requeridos.')
             return render(request, 'usuarios/autenticacion/registro.html')
 
         if password1 != password2:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'message': 'Las contraseñas no coinciden.'})
             messages.error(request, 'Las contraseñas no coinciden.')
             return render(request, 'usuarios/autenticacion/registro.html')
 
         if User.objects.filter(email=email).exists():
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'message': 'Este correo ya está registrado.'})
             messages.error(request, 'Este correo ya está registrado.')
             return render(request, 'usuarios/autenticacion/registro.html')
 
         try:
             validate_password(password1)
         except ValidationError as exc:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'message': ' '.join(exc.messages)})
             messages.error(request, ' '.join(exc.messages))
             return render(request, 'usuarios/autenticacion/registro.html')
 
@@ -113,6 +122,9 @@ def registro_estudiante(request):
         user.set_password(password1)
         user.save()
         _enviar_correo_verificacion(request, user)
+        
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': True, 'redirect_url': reverse('usuarios:verificacion_enviada')})
         return redirect('usuarios:verificacion_enviada')
 
     return render(request, 'usuarios/autenticacion/registro.html')
@@ -169,14 +181,20 @@ def login_view(request):
 
         user = authenticate(request, username=email, password=password)
         if user is None:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'message': 'Credenciales incorrectas.'})
             messages.error(request, 'Credenciales incorrectas.')
             return render(request, 'usuarios/autenticacion/login.html')
 
         if not getattr(user, 'email_verificado', False):
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'message': 'Debes verificar tu correo antes de iniciar sesión.', 'redirect_url': reverse('usuarios:reenviar_verificacion')})
             messages.error(request, 'Debes verificar tu correo antes de iniciar sesión.')
             return redirect('usuarios:reenviar_verificacion')
 
         login(request, user)
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': True, 'redirect_url': reverse('usuarios:panel')})
         return redirect('usuarios:panel')
 
     return render(request, 'usuarios/autenticacion/login.html')

@@ -1,0 +1,89 @@
+{% extends 'base/base.html' %}
+
+{% block titulo %}Inicio - MeetWin{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="/static/css/home.css" />
+<link rel="stylesheet" href="/static/css/usuarios/autenticacion/login.css" />
+<link rel="stylesheet" href="/static/css/usuarios/autenticacion/registro.css" />
+{% endblock %}
+
+{% block contenido %}
+<section class="hero">
+  <div class="hero__content">
+    <h1>Bienvenido a MeetWin</h1>
+    <p>La plataforma educativa para estudiantes universitarios.</p>
+    <div class="hero__buttons">
+      <button class="btn btn--primary" id="open-login-modal">Iniciar Sesión</button>
+      <button class="btn btn--secondary" id="open-registro-modal">Registrarse</button>
+    </div>
+  </div>
+</section>
+
+<!-- Modal de Login -->
+<div id="login-modal" class="modal">
+  <div class="modal__content">
+    <span class="modal__close" id="close-login-modal">&times;</span>
+    <h2>Iniciar Sesión</h2>
+    <form method="post" action="/login/" novalidate>
+      {% csrf_token %}
+      <label for="login-email">Correo electrónico</label>
+      <input type="email" id="login-email" name="email" required />
+
+      <label for="login-password">Contraseña</label>
+      <input type="password" id="login-password" name="password" required />
+
+      <button type="submit" class="btn btn--primary">Ingresar</button>
+    </form>
+    <div class="modal__links">
+      <a href="/recuperar/">¿Olvidaste tu contraseña?</a>
+      <a href="/verificacion/reenviar/">Reenviar verificación</a>
+      <a href="/registro/" class="js-switch-to-registro">Crear cuenta</a>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Registro -->
+<div id="registro-modal" class="modal">
+  <div class="modal__content">
+    <span class="modal__close" id="close-registro-modal">&times;</span>
+    <h2>Registro de Estudiante</h2>
+    <form method="post" action="/registro/" novalidate>
+      {% csrf_token %}
+
+      <label for="registro-email">Correo electrónico</label>
+      <input type="email" id="registro-email" name="email" required />
+
+      <label for="registro-username">Usuario</label>
+      <input type="text" id="registro-username" name="username" />
+
+      <label for="registro-study-year">Año de estudio</label>
+      <select id="registro-study-year" name="study_year">
+        <option value="pre_uni">Pre-universitario</option>
+        <option value="year_1">Año 1</option>
+        <option value="year_2">Año 2</option>
+        <option value="year_3">Año 3</option>
+        <option value="year_4">Año 4</option>
+        <option value="year_5">Año 5</option>
+      </select>
+
+      <label for="registro-password1">Contraseña</label>
+      <input type="password" id="registro-password1" name="password1" required />
+
+      <label for="registro-password2">Confirmar contraseña</label>
+      <input type="password" id="registro-password2" name="password2" required />
+
+      <button type="submit" class="btn btn--primary">Crear cuenta</button>
+    </form>
+    <div class="modal__links">
+      <a href="/login/" class="js-switch-to-login">Ya tengo cuenta</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="/static/js/home.js"></script>
+<script src="/static/js/usuarios/autenticacion/login.js"></script>
+<script src="/static/js/usuarios/autenticacion/registro.js"></script>
+{% endblock %}
