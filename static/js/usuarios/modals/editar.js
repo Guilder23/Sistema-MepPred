@@ -21,23 +21,10 @@ function abrirModalEditar(usuarioId) {
                 studyYearInput.value = usuario.study_year || 'pre_uni';
             }
             
-            // Manejar toggle switch
-            const toggleSwitch = document.getElementById('editActivo');
-            if (toggleSwitch) {
-                // Limpiar event listeners previos clonando el nodo
-                const newToggle = toggleSwitch.cloneNode(true);
-                toggleSwitch.parentNode.replaceChild(newToggle, toggleSwitch);
-                
-                if (usuario.is_active) {
-                    newToggle.classList.add('active');
-                } else {
-                    newToggle.classList.remove('active');
-                }
-                
-                // Agregar evento click al toggle
-                newToggle.addEventListener('click', function() {
-                    this.classList.toggle('active');
-                });
+            // Manejar select de estado
+            const activeSelect = document.getElementById('editActivoSelect');
+            if (activeSelect) {
+                activeSelect.value = usuario.is_active ? 'true' : 'false';
             }
             
             mostrarModal('modalEditarOverlay');
@@ -48,13 +35,12 @@ function abrirModalEditar(usuarioId) {
 function editarUsuario(e) {
     e.preventDefault();
     
-    const usuarioId = document.getElementById('usuarioIdEditar').value;
-    const toggleSwitch = document.getElementById('editActivo');
-    const isActive = toggleSwitch.classList.contains('active');
-    
     const formData = new FormData(this);
+    
+    // El input hidden ya maneja el valor de is_active, pero nos aseguramos
+    // de enviar el ID que a veces puede faltar en el formData si es un campo deshabilitado
+    const usuarioId = document.getElementById('usuarioIdEditar').value;
     formData.set('id', usuarioId);
-    formData.set('is_active', isActive);
     
     fetch('/usuarios/api/editar/', {
         method: 'POST',

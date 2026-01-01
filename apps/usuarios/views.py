@@ -162,7 +162,10 @@ def editar_usuario(request):
         email = request.POST.get('email', '').strip().lower()
         role = request.POST.get('role', 'student')
         study_year = request.POST.get('study_year', 'pre_uni')
-        is_active = request.POST.get('is_active') == 'on'
+        
+        # Manejar diferentes formatos de is_active ('true', 'on', '1', True)
+        is_active_val = request.POST.get('is_active')
+        is_active = str(is_active_val).lower() in ['true', 'on', '1']
         
         usuario = User.objects.get(id=usuario_id)
         
