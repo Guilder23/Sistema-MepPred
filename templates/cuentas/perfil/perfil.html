@@ -1,0 +1,70 @@
+{% extends 'base/base.html' %}
+
+{% block titulo %}Mi Perfil - MeetWin{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="/static/css/cuentas/perfil/perfil.css">
+{% endblock %}
+
+{% block contenido %}
+<div class="perfil-container">
+    <div class="perfil-header">
+        <h1>Mi Perfil</h1>
+        <p>Gestiona tu información personal</p>
+    </div>
+
+    <form method="POST" class="perfil-form">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="email" class="form-label">Correo Electrónico</label>
+            <input type="email" id="email" value="{{ user.email }}" disabled class="form-control readonly" title="No se puede cambiar el correo">
+            <small class="form-text text-muted">El correo electrónico no se puede modificar.</small>
+        </div>
+
+        <div class="form-group">
+            <label for="username" class="form-label">Nombre de Usuario</label>
+            <input type="text" id="username" value="{{ user.username }}" disabled class="form-control readonly" title="No se puede cambiar el nombre de usuario">
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="first_name" class="form-label">Nombres</label>
+                <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" class="form-control" required placeholder="Ingresa tus nombres">
+            </div>
+
+            <div class="form-group">
+                <label for="last_name" class="form-label">Apellidos</label>
+                <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}" class="form-control" required placeholder="Ingresa tus apellidos">
+            </div>
+        </div>
+
+        {% if user.role == 'student' %}
+        <div class="form-group">
+            <label for="study_year" class="form-label">Año de Estudio</label>
+            <select id="study_year" name="study_year" class="form-select">
+                <option value="pre_uni" {% if user.study_year == 'pre_uni' %}selected{% endif %}>Pre-universitario</option>
+                <option value="year_1" {% if user.study_year == 'year_1' %}selected{% endif %}>Año 1</option>
+                <option value="year_2" {% if user.study_year == 'year_2' %}selected{% endif %}>Año 2</option>
+                <option value="year_3" {% if user.study_year == 'year_3' %}selected{% endif %}>Año 3</option>
+                <option value="year_4" {% if user.study_year == 'year_4' %}selected{% endif %}>Año 4</option>
+                <option value="year_5" {% if user.study_year == 'year_5' %}selected{% endif %}>Año 5</option>
+            </select>
+        </div>
+        {% endif %}
+
+        <div class="form-group">
+            <label class="form-label">Rol</label>
+            <input type="text" value="{{ user.get_role_display }}" disabled class="form-control readonly">
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="/static/js/cuentas/perfil/perfil.js"></script>
+{% endblock %}

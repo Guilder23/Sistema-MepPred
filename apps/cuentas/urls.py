@@ -16,5 +16,6 @@ urlpatterns = [
     path('recuperar/', views.solicitar_recuperacion, name='solicitar_recuperacion'),
     path('recuperar/<str:uidb64>/<str:token>/', views.confirmar_recuperacion, name='confirmar_recuperacion'),
     path('panel/', views.panel, name='panel'),
+    path('perfil/', views.perfil_view, name='perfil'),
     path('admin/asignar/', views.asignar_administrador, name='asignar_administrador'),
 ]

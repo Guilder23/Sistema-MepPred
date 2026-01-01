@@ -329,3 +329,27 @@ def asignar_administrador(request):
         return redirect('cuentas:panel')
 
     return render(request, 'cuentas/admin/asignar_admin.html')
+
+
+@login_required
+def perfil_view(request):
+    user = request.user
+    if request.method == 'POST':
+        first_name = (request.POST.get('first_name') or '').strip()
+        last_name = (request.POST.get('last_name') or '').strip()
+        
+        user.first_name = first_name
+        user.last_name = last_name
+        
+        if getattr(user, 'role', '') == 'student':
+            study_year = (request.POST.get('study_year') or '').strip()
+            # Simple validation to ensure it's a valid choice if needed, 
+            # otherwise relying on frontend select
+            if study_year:
+                user.study_year = study_year
+        
+        user.save()
+        messages.success(request, 'Perfil actualizado correctamente.')
+        return redirect('cuentas:perfil')
+        
+    return render(request, 'cuentas/perfil/perfil.html')
