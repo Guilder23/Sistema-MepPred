@@ -1,18 +1,19 @@
 /* ===== SIDEBAR ===== */
 .sidebar {
   position: sticky;
-  top: 72px;
+  top: 60px; /* Adjusted to match navbar height roughly */
   align-self: start;
   background: var(--fondo-panel);
-  border: 1px solid var(--borde-sutil);
-  border-radius: var(--radio-xl);
+  border-right: 1px solid var(--borde-sutil);
+  /* Removed border-radius and card styles */
   padding: var(--espacio-lg);
-  box-shadow: var(--sombra-card);
+  height: calc(100vh - 60px); /* Full height minus navbar */
+  overflow-y: auto;
   transition: all var(--transicion-normal);
 }
 
 .sidebar:hover {
-  box-shadow: var(--sombra-md);
+  /* No hover effect needed for fixed panel */
 }
 
 .sidebar__section {

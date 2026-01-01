@@ -210,36 +210,38 @@ a {
 
 /* ===== LAYOUT (base.html) ===== */
 .layout {
-  padding: var(--espacio-xl);
-  min-height: calc(100vh - 140px);
+  padding: 0; /* Removed padding to allow full width */
+  min-height: calc(100vh - 60px);
 }
 
 .layout--centrado {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: var(--espacio-xl);
 }
 
 .layout__container {
-  max-width: 1080px;
+  max-width: 100%; /* Full width */
   width: 100%;
-  margin: 0 auto;
+  margin: 0;
   display: grid;
   grid-template-columns: 260px 1fr;
-  gap: var(--espacio-xl);
+  gap: 0; /* Remove gap, handle spacing in content */
   align-items: start;
 }
 
 .layout__container--sin-sidebar {
   grid-template-columns: 1fr;
-  max-width: 600px;
-  display: flex;
-  justify-content: center;
+  max-width: 1080px; /* Keep max-width for non-sidebar pages */
+  margin: 0 auto;
+  padding: var(--espacio-xl);
 }
 
 .layout__content {
-  min-height: calc(100vh - 140px);
+  min-height: calc(100vh - 60px);
   width: 100%;
+  padding: var(--espacio-xl); /* Add padding here */
 }
 
 .layout__content--centrado {
