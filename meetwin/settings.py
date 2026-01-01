@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'apps.suscripciones',
     'apps.ranking',
     'apps.notificaciones',
+    'apps.usuarios',
 ]
 
 MIDDLEWARE = [

@@ -1,0 +1,79 @@
+{% extends 'base/base.html' %}
+
+{% block titulo %}Gestión de Usuarios - MeetWin{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="/static/css/usuarios/usuarios.css">
+<link rel="stylesheet" href="/static/css/usuarios/modals/modal-base.css">
+<link rel="stylesheet" href="/static/css/usuarios/modals/crear.css">
+<link rel="stylesheet" href="/static/css/usuarios/modals/ver.css">
+<link rel="stylesheet" href="/static/css/usuarios/modals/editar.css">
+<link rel="stylesheet" href="/static/css/usuarios/modals/eliminar.css">
+{% endblock %}
+
+{% block contenido %}
+<div class="container-fluid py-4">
+    <!-- Encabezado -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h1>Gestión de Usuarios</h1>
+        </div>
+        <div class="col-md-6 text-end">
+            <button class="btn btn-primary" id="btnAbrirCrear">
+                <i class="fas fa-plus"></i> Nuevo Usuario
+            </button>
+        </div>
+    </div>
+
+    <!-- Búsqueda y filtros -->
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <input type="text" class="form-control" id="buscar" placeholder="Buscar por nombre...">
+        </div>
+        <div class="col-md-6">
+            <select class="form-select" id="filtroEstado">
+                <option value="">Todos los estados</option>
+                <option value="activo">Activo</option>
+                <option value="inactivo">Inactivo</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Tabla de usuarios -->
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" id="usuariosTable">
+                <thead class="table-dark">
+                    <tr>
+                        <th>NOMBRE</th>
+                        <th>EMAIL</th>
+                        <th>ROL</th>
+                        <th>ESTADO</th>
+                        <th>ACCIONES</th>
+                    </tr>
+                </thead>
+                <tbody id="usuariosTableBody">
+                    <!-- Se cargará dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Incluir modales -->
+{% include 'usuarios/modals/crear.html' %}
+{% include 'usuarios/modals/ver.html' %}
+{% include 'usuarios/modals/editar.html' %}
+{% include 'usuarios/modals/eliminar.html' %}
+
+{% endblock %}
+
+{% block js %}
+<script src="/static/js/usuarios/utils.js"></script>
+<script src="/static/js/usuarios/modals/crear.js"></script>
+<script src="/static/js/usuarios/modals/ver.js"></script>
+<script src="/static/js/usuarios/modals/editar.js"></script>
+<script src="/static/js/usuarios/modals/eliminar.js"></script>
+<script src="/static/js/usuarios/usuarios.js"></script>
+{% endblock %}
+

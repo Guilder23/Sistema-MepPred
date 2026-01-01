@@ -1,0 +1,61 @@
+/* Estilos específicos para el modal de crear usuario */
+
+#modalCrearOverlay {
+    --modal-color: #28a745;
+}
+
+#modalCrear .modal-header {
+    background-color: #28a745;
+    color: white;
+}
+
+#modalCrear .modal-header-title {
+    color: white;
+}
+
+#modalCrear .form-control:focus,
+#modalCrear .form-select:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+/* Estilos específicos para el modal de crear usuario */
+
+#modalCrearOverlay {
+    --modal-color: #28a745;
+}
+
+#modalCrear .modal-header {
+    background-color: #28a745;
+    color: white;
+}
+
+#modalCrear .modal-header-title {
+    color: white;
+}
+
+#modalCrear .form-control:focus,
+#modalCrear .form-select:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+#modalCrear .btn-success {
+    background-color: #28a745;
+}
+
+#modalCrear .btn-success:hover:not(:disabled) {
+    background-color: #218838;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #modalCrear .modal-body {
+        padding: 1rem;
+    }
+
+    #modalCrear .form-label {
+        font-size: 0.9rem;
+    }
+}
+

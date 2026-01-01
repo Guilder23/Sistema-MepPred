@@ -1,0 +1,61 @@
+<!-- Modal Editar Usuario -->
+<div class="modal-overlay" id="modalEditarOverlay">
+    <div class="modal-content" id="modalEditar">
+        <div class="modal-header">
+            <h5 class="modal-header-title">Editar Usuario</h5>
+            <button type="button" class="modal-close-btn" onclick="ocultarModal('modalEditarOverlay')">×</button>
+        </div>
+        <form id="formEditar" method="POST">
+            {% csrf_token %}
+            <div class="modal-body">
+                <input type="hidden" id="usuarioIdEditar" name="usuario_id">
+                
+                <div class="form-group">
+                    <label class="form-label">Nombre Completo</label>
+                    <input type="text" class="form-control" id="editNombre" name="nombre" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" id="editEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Rol</label>
+                    <select class="form-select" id="editRole" name="role" required>
+                        <option value="student">Estudiante</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Año de Estudio</label>
+                    <select class="form-select" id="editStudyYear" name="study_year">
+                        <option value="pre_uni">Pre-universitario</option>
+                        <option value="year_1">Año 1</option>
+                        <option value="year_2">Año 2</option>
+                        <option value="year_3">Año 3</option>
+                        <option value="year_4">Año 4</option>
+                        <option value="year_5">Año 5</option>
+                    </select>
+                </div>
+                
+                <hr>
+                <h6>Cambiar Estado</h6>
+                <div class="form-group">
+                    <label class="form-label">Usuario Activo</label>
+                    <div class="toggle-switch" id="editActivo">
+                        <div class="toggle-switch-ball"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="ocultarModal('modalEditarOverlay')">Cancelar</button>
+                <button type="submit" class="btn btn-warning">Actualizar Usuario</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,80 @@
+/* Estilos para el modal de ver usuario */
+
+#modalVer .modal-header {
+    background-color: #17a2b8;
+    color: white;
+}
+
+#modalVer .modal-header-title {
+    color: white;
+}
+
+#modalVer .modal-body {
+    padding: 1.5rem;
+}
+
+/* Información de usuario */
+#modalVer .info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+#modalVer .info-row label {
+    font-weight: 600;
+    color: #2c3e50;
+    width: 30%;
+}
+
+#modalVer .info-row span {
+    color: #495057;
+}
+
+#modalVer .info-row:last-child {
+    border-bottom: none;
+}
+
+#modalVer .badge {
+    display: inline-block;
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+#modalVer .badge-activo {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+#modalVer .badge-inactivo {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #modalVer .modal-body {
+        padding: 1rem;
+    }
+
+    #modalVer .info-row {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    #modalVer .info-row label {
+        width: 100%;
+    }
+
+    #modalVer .info-row {
+        flex-direction: column;
+        padding: 0.5rem 0;
+    }
+
+    #modalVer .info-row label {
+        width: 100%;
+        margin-bottom: 0.25rem;
+    }
+}
