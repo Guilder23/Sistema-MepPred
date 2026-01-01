@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'apps.usuarios',
+    'apps.cuentas',
     'apps.contenido',
     'apps.evaluaciones',
     'apps.suscripciones',
@@ -133,7 +133,7 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-AUTH_USER_MODEL = 'usuarios.User'
+AUTH_USER_MODEL = 'cuentas.User'
 
 LOGIN_URL = '/login/'
 
