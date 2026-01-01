@@ -1,5 +1,68 @@
-// Variables globales
-let usuarioSeleccionado = null;
+// usuarios.js - Lógica principal y utilidades
+
+// ==========================================
+// UTILIDADES (Anteriormente en utils.js)
+// ==========================================
+
+// Función para obtener CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Función para mostrar alertas (Sin Bootstrap)
+function mostrarAlerta(mensaje, tipo) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${tipo}`;
+    alertDiv.style.cssText = 'padding: 1rem; border-radius: 4px; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;';
+    
+    // Establecer colores según el tipo
+    const colores = {
+        'success': { bg: '#d4edda', border: '#c3e6cb', color: '#155724' },
+        'danger': { bg: '#f8d7da', border: '#f5c6cb', color: '#721c24' },
+        'warning': { bg: '#fff3cd', border: '#ffeaa7', color: '#856404' },
+        'info': { bg: '#d1ecf1', border: '#bee5eb', color: '#0c5460' }
+    };
+    
+    const color = colores[tipo] || colores['info'];
+    alertDiv.style.backgroundColor = color.bg;
+    alertDiv.style.borderLeft = `4px solid ${color.border}`;
+    alertDiv.style.color = color.color;
+    
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = '×';
+    closeBtn.style.cssText = 'background: none; border: none; font-size: 1.5rem; cursor: pointer; color: inherit;';
+    closeBtn.onclick = () => alertDiv.remove();
+    
+    const contenedor = document.createElement('div');
+    contenedor.textContent = mensaje;
+    
+    alertDiv.appendChild(contenedor);
+    alertDiv.appendChild(closeBtn);
+    
+    const container = document.querySelector('.container-fluid');
+    if (container) {
+        container.insertBefore(alertDiv, container.firstChild);
+    }
+
+    setTimeout(() => {
+        alertDiv.remove();
+    }, 4000);
+}
+
+// ==========================================
+// LÓGICA PRINCIPAL
+// ==========================================
 
 console.log('usuarios.js cargado');
 
@@ -38,25 +101,14 @@ window.addEventListener('load', function() {
     try {
         console.log('Inicializando aplicación de usuarios...');
         
-        // Event listeners
+        // Event listeners globales (Búsqueda y Filtro)
         const buscarEl = document.getElementById('buscar');
         const filtroEl = document.getElementById('filtroEstado');
-        const formCrearEl = document.getElementById('formCrear');
-        const formEditarEl = document.getElementById('formEditar');
-        const btnConfirmarEl = document.getElementById('btnConfirmarEliminar');
-        const btnAbrirCrearEl = document.getElementById('btnAbrirCrear');
         
         if (buscarEl) buscarEl.addEventListener('keyup', cargarUsuarios);
         if (filtroEl) filtroEl.addEventListener('change', cargarUsuarios);
-        if (formCrearEl) formCrearEl.addEventListener('submit', crearUsuario);
-        if (formEditarEl) formEditarEl.addEventListener('submit', editarUsuario);
-        if (btnConfirmarEl) btnConfirmarEl.addEventListener('click', confirmarEliminar);
-        if (btnAbrirCrearEl) btnAbrirCrearEl.addEventListener('click', function() {
-            mostrarModal('modalCrearOverlay');
-        });
         
-        console.log('Event listeners configurados');
-        
+        console.log('Event listeners globales configurados');
         console.log('Llamando cargarUsuarios()...');
         cargarUsuarios();
     } catch (error) {
@@ -110,192 +162,28 @@ function mostrarUsuarios(usuarios) {
 
         const fila = `
             <tr>
-                <td><strong>${usuario.first_name || usuario.username}</strong></td>
-                <td>${usuario.email}</td>
-                <td><span class="badge">${usuario.role === 'admin' ? 'Administrador' : 'Estudiante'}</span></td>
-                <td>${estadoBadge}</td>
                 <td>
-                    <button class="btn-accion btn-ver" onclick="verUsuario(${usuario.id})">Ver</button>
-                    <button class="btn-accion btn-editar" onclick="abrirModalEditar(${usuario.id})">Editar</button>
-                    <button class="btn-accion btn-eliminar" onclick="abrirModalEliminar(${usuario.id})">Eliminar</button>
+                    <div class="d-flex align-items-center">
+                        <div class="avatar-circle me-2">${(usuario.first_name || usuario.username).charAt(0).toUpperCase()}</div>
+                        <strong>${usuario.first_name || usuario.username}</strong>
+                    </div>
+                </td>
+                <td>${usuario.email}</td>
+                <td><span class="badge ${usuario.role === 'admin' ? 'bg-primary' : 'bg-secondary'}">${usuario.role === 'admin' ? 'Administrador' : 'Estudiante'}</span></td>
+                <td>${estadoBadge}</td>
+                <td style="white-space: nowrap;">
+                    <button class="btn-accion btn-ver" onclick="verUsuario('${usuario.id}')" title="Ver detalles">
+                        <i class="fas fa-eye"></i> Ver
+                    </button>
+                    <button class="btn-accion btn-editar" onclick="abrirModalEditar('${usuario.id}')" title="Editar usuario">
+                        <i class="fas fa-edit"></i> Editar
+                    </button>
+                    <button class="btn-accion btn-eliminar" onclick="abrirModalEliminar('${usuario.id}')" title="Eliminar usuario">
+                        <i class="fas fa-trash-alt"></i> Eliminar
+                    </button>
                 </td>
             </tr>
         `;
         tbody.innerHTML += fila;
-    });
-}
-
-// Ver usuario
-function verUsuario(usuarioId) {
-    console.log('Obteniendo usuario:', usuarioId);
-    fetch(`/usuarios/api/obtener/${usuarioId}/`)
-        .then(response => response.json())
-        .then(usuario => {
-            console.log('Usuario obtenido:', usuario);
-            let htmlContenido = `
-                <div class="info-row">
-                    <label>Nombre:</label>
-                    <span>${usuario.first_name || usuario.username}</span>
-                </div>
-                <div class="info-row">
-                    <label>Usuario:</label>
-                    <span>${usuario.username}</span>
-                </div>
-                <div class="info-row">
-                    <label>Email:</label>
-                    <span>${usuario.email}</span>
-                </div>
-                <div class="info-row">
-                    <label>Rol:</label>
-                    <span class="badge">${usuario.role === 'admin' ? 'Administrador' : 'Estudiante'}</span>
-                </div>
-                <div class="info-row">
-                    <label>Estado:</label>
-                    <span class="badge ${usuario.is_active ? 'badge-activo' : 'badge-inactivo'}">
-                        ${usuario.is_active ? 'Activo' : 'Inactivo'}
-                    </span>
-                </div>
-                <div class="info-row">
-                    <label>Fecha Creación:</label>
-                    <span>${new Date(usuario.date_joined).toLocaleDateString()}</span>
-                </div>
-            `;
-            document.getElementById('verUsuarioContent').innerHTML = htmlContenido;
-            mostrarModal('modalVerOverlay');
-        })
-        .catch(error => console.error('Error:', error));
-}
-
-// Crear usuario
-function crearUsuario(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(this);
-    
-    fetch('/usuarios/api/crear/', {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-        },
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            mostrarAlerta('¡Usuario creado exitosamente!', 'success');
-            ocultarModal('modalCrearOverlay');
-            this.reset();
-            cargarUsuarios();
-        } else {
-            mostrarAlerta(data.error || 'Error al crear usuario', 'danger');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        mostrarAlerta('Error al crear usuario', 'danger');
-    });
-}
-
-// Abrir modal editar
-function abrirModalEditar(usuarioId) {
-    console.log('Abriendo modal editar para usuario:', usuarioId);
-    fetch(`/usuarios/api/obtener/${usuarioId}/`)
-        .then(response => response.json())
-        .then(usuario => {
-            document.getElementById('usuarioIdEditar').value = usuario.id;
-            document.getElementById('editNombre').value = usuario.first_name || '';
-            document.getElementById('editEmail').value = usuario.email;
-            document.getElementById('editRole').value = usuario.role || 'student';
-            document.getElementById('editStudyYear').value = usuario.study_year || 'pre_uni';
-            
-            // Manejar toggle switch
-            const toggleSwitch = document.getElementById('editActivo');
-            if (usuario.is_active) {
-                toggleSwitch.classList.add('active');
-            } else {
-                toggleSwitch.classList.remove('active');
-            }
-            
-            // Agregar evento click al toggle
-            toggleSwitch.addEventListener('click', function() {
-                this.classList.toggle('active');
-            });
-            
-            mostrarModal('modalEditarOverlay');
-        })
-        .catch(error => console.error('Error:', error));
-}
-
-// Editar usuario
-function editarUsuario(e) {
-    e.preventDefault();
-    
-    const usuarioId = document.getElementById('usuarioIdEditar').value;
-    const toggleSwitch = document.getElementById('editActivo');
-    const isActive = toggleSwitch.classList.contains('active');
-    
-    const formData = new FormData(this);
-    formData.set('id', usuarioId);
-    formData.set('is_active', isActive);
-    
-    fetch('/usuarios/api/editar/', {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-        },
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            mostrarAlerta('¡Usuario actualizado exitosamente!', 'success');
-            ocultarModal('modalEditarOverlay');
-            cargarUsuarios();
-        } else {
-            mostrarAlerta(data.error || 'Error al actualizar usuario', 'danger');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        mostrarAlerta('Error al actualizar usuario', 'danger');
-    });
-}
-
-// Abrir modal eliminar
-function abrirModalEliminar(usuarioId) {
-    console.log('Abriendo modal eliminar para usuario:', usuarioId);
-    fetch(`/usuarios/api/obtener/${usuarioId}/`)
-        .then(response => response.json())
-        .then(usuario => {
-            usuarioSeleccionado = usuario;
-            document.getElementById('eliminarNombre').textContent = usuario.first_name || usuario.username;
-            mostrarModal('modalEliminarOverlay');
-        })
-        .catch(error => console.error('Error:', error));
-}
-
-// Confirmar eliminación
-function confirmarEliminar() {
-    if (!usuarioSeleccionado) return;
-    
-    fetch(`/usuarios/api/eliminar/${usuarioSeleccionado.id}/`, {
-        method: 'DELETE',
-        headers: {
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            mostrarAlerta('¡Usuario eliminado exitosamente!', 'success');
-            ocultarModal('modalEliminarOverlay');
-            cargarUsuarios();
-        } else {
-            mostrarAlerta(data.error || 'Error al eliminar usuario', 'danger');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        mostrarAlerta('Error al eliminar usuario', 'danger');
     });
 }
