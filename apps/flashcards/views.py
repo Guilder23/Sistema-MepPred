@@ -52,7 +52,7 @@ def flashcards_view(request):
         'tarjetas_json': json.dumps(tarjetas_data),
     }
     
-    return render(request, 'flashcards/flashcards/flashcards.html', context)
+    return render(request, 'flashcards/flashcards.html', context)
 
 
 @login_required
