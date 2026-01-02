@@ -1,25 +1,128 @@
-/* FORM */
-.flashcard-form {
+/* FLASHCARDS SECTION */
+.flashcards-section {
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 20px;
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 40px 20px;
-    text-align: center;
 }
 
-.flashcard-form h3 {
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-header h3 {
     margin: 0;
     color: #333;
     font-size: 1.5rem;
 }
 
-.flashcard-form .btn {
-    padding: 12px 30px;
-    font-size: 1rem;
-    .flashcard-form {
-        max-width: 100%;
-    }
+/* TABLA DE FLASHCARDS */
+.flashcards-table-container {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.flashcards-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.flashcards-table thead {
+    background: #667eea;
+    color: white;
+}
+
+.flashcards-table th {
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.flashcards-table tbody tr {
+    border-bottom: 1px solid #eee;
+    transition: background 0.2s;
+}
+
+.flashcards-table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+.flashcards-table td {
+    padding: 15px;
+    font-size: 0.95rem;
+}
+
+.flashcard-pregunta {
+    font-weight: 600;
+    color: #333;
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.flashcard-respuesta {
+    color: #666;
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.flashcard-categoria {
+    color: #888;
+    font-size: 0.9rem;
+}
+
+.flashcard-mazo {
+    color: #667eea;
+    font-weight: 500;
+}
+
+.flashcard-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.btn-icon {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: transparent;
+    color: #666;
+}
+
+.btn-icon:hover {
+    transform: translateY(-2px);
+}
+
+.btn-editar-flashcard:hover {
+    background: #2196F3;
+    color: white;
+}
+
+.btn-eliminar-flashcard:hover {
+    background: #f44336;
+    color: white;
+}
+
+/* Empty state */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.3;
 }

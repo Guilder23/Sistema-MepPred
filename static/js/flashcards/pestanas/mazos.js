@@ -11,15 +11,15 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (btnEditar) {
                 const mazoId = btnEditar.dataset.mazoId;
-                const mazoItem = btnEditar.closest('.mazo-item');
-                const mazoNombre = mazoItem.querySelector('.mazo-header h4').textContent;
+                const mazoRow = btnEditar.closest('.mazo-row');
+                const mazoNombre = mazoRow ? mazoRow.querySelector('.mazo-nombre').textContent : '';
                 abrirModalEditarMazo(mazoId);
             }
             
             if (btnEliminar) {
                 const mazoId = btnEliminar.dataset.mazoId;
-                const mazoItem = btnEliminar.closest('.mazo-item');
-                const mazoNombre = mazoItem.querySelector('.mazo-header h4').textContent;
+                const mazoRow = btnEliminar.closest('.mazo-row');
+                const mazoNombre = mazoRow ? mazoRow.querySelector('.mazo-nombre').textContent : '';
                 abrirModalEliminarMazo(mazoId, mazoNombre);
             }
             

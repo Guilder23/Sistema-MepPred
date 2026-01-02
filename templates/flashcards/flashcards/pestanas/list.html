@@ -1,24 +1,31 @@
 <div id="list" class="tab-content">
-    <div class="flashcards-section">
-        <h3>Mis Flashcards</h3>
+    <div class="list-flashcards-section">
+        <div class="list-section-header">
+            <h3>Todas mis Flashcards</h3>
+        </div>
+        
         <div id="flashcards-container">
             {% if tarjetas %}
-                <div id="flashcards-list" class="flashcards-list">
+                <div class="list-flashcards-grid">
                     {% for tarjeta in tarjetas %}
-                        <div class="flashcard-item" data-flashcard-id="{{ tarjeta.id }}">
-                            <div class="flashcard-header">
-                                <h4>{{ tarjeta.pregunta }}</h4>
-                                <span class="flashcard-mazo">{{ tarjeta.mazo.nombre }}</span>
+                        <div class="list-card" data-flashcard-id="{{ tarjeta.id }}">
+                            <div class="list-card-header">
+                                <h4 class="list-card-pregunta">{{ tarjeta.pregunta }}</h4>
+                                <span class="list-card-mazo">{{ tarjeta.mazo.nombre }}</span>
                             </div>
-                            <p class="flashcard-respuesta">{{ tarjeta.respuesta }}</p>
-                            {% if tarjeta.categoria %}
-                                <p class="flashcard-categoria"><strong>Categoría:</strong> {{ tarjeta.categoria }}</p>
-                            {% endif %}
+                            <div class="list-card-body">
+                                <p class="list-card-respuesta">{{ tarjeta.respuesta }}</p>
+                                {% if tarjeta.categoria %}
+                                    <span class="list-card-categoria">
+                                        <i class="fas fa-tag"></i> {{ tarjeta.categoria }}
+                                    </span>
+                                {% endif %}
+                            </div>
                         </div>
                     {% endfor %}
                 </div>
             {% else %}
-                <div class="empty-state" id="flashcards-list-empty">
+                <div class="list-empty-state" id="flashcards-list-empty">
                     <i class="fas fa-inbox"></i>
                     <p>No tienes flashcards creadas todavía.</p>
                 </div>

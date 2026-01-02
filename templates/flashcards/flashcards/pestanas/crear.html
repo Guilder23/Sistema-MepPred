@@ -1,47 +1,51 @@
 <div id="create" class="tab-content">
     <div class="flashcards-section">
-        <div class="flashcard-crear">
-            <h3>Crear Nueva Flashcard</h3>
-            <div class="flashcard-form">
-                <button class="btn btn-primary" id="btn-abrir-crear-flashcard">
-                    <i class="fas fa-plus-circle"></i> Crear Nueva Flashcard
-                </button>
-            </div>
+        <div class="section-header">
+            <h3>Mis Flashcards</h3>
+            <button class="btn btn-primary" id="btn-abrir-crear-flashcard">
+                <i class="fas fa-plus-circle"></i> Crear Nueva Flashcard
+            </button>
         </div>
         
-        <div class="flashcards-list-preview">
-            <h3>Mis Flashcards</h3>
-            <div id="flashcards-preview">
-                {% if tarjetas %}
-                    <div class="flashcards-list">
-                        {% for tarjeta in tarjetas %}
-                            <div class="flashcard-item" data-flashcard-id="{{ tarjeta.id }}">
-                                <div class="flashcard-header">
-                                    <h4>{{ tarjeta.pregunta }}</h4>
-                                    <span class="flashcard-mazo">{{ tarjeta.mazo.nombre }}</span>
-                                </div>
-                                <p class="flashcard-respuesta">{{ tarjeta.respuesta }}</p>
-                                {% if tarjeta.categoria %}
-                                    <p class="flashcard-categoria"><strong>Categoría:</strong> {{ tarjeta.categoria }}</p>
-                                {% endif %}
-                                <div class="flashcard-actions">
-                                    <button class="btn-small btn-editar-flashcard" data-flashcard-id="{{ tarjeta.id }}">
-                                        <i class="fas fa-edit"></i> Editar
-                                    </button>
-                                    <button class="btn-small btn-eliminar-flashcard" data-flashcard-id="{{ tarjeta.id }}">
-                                        <i class="fas fa-trash"></i> Eliminar
-                                    </button>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <div class="empty-state">
-                        <i class="fas fa-inbox"></i>
-                        <p>No tienes flashcards creadas todavía.</p>
-                    </div>
-                {% endif %}
-            </div>
+        <div id="flashcards-preview">
+            {% if tarjetas %}
+                <div class="flashcards-table-container">
+                    <table class="flashcards-table">
+                        <thead>
+                            <tr>
+                                <th>Pregunta</th>
+                                <th>Respuesta</th>
+                                <th>Categoría</th>
+                                <th>Mazo</th>
+                                <th style="text-align: center;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tarjeta in tarjetas %}
+                                <tr class="flashcard-row" data-flashcard-id="{{ tarjeta.id }}">
+                                    <td class="flashcard-pregunta">{{ tarjeta.pregunta }}</td>
+                                    <td class="flashcard-respuesta">{{ tarjeta.respuesta }}</td>
+                                    <td class="flashcard-categoria">{{ tarjeta.categoria|default:"-" }}</td>
+                                    <td class="flashcard-mazo">{{ tarjeta.mazo.nombre }}</td>
+                                    <td class="flashcard-actions">
+                                        <button class="btn-icon btn-editar-flashcard" data-flashcard-id="{{ tarjeta.id }}" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn-icon btn-eliminar-flashcard" data-flashcard-id="{{ tarjeta.id }}" title="Eliminar">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <p>No tienes flashcards creadas todavía.</p>
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>

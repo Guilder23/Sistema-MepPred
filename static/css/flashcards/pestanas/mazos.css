@@ -1,117 +1,124 @@
-/* MAZOS */
+/* MAZOS SECTION */
 .mazos-section {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 25px;
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
-.mazo-crear,
-.mazos-list {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 20px;
 }
 
-.mazo-crear h3,
-.mazos-list h3 {
-    color: #333;
-    font-size: 1.3rem;
-    margin-bottom: 10px;
-}
-
-.mazo-form {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    background: #f8f9fa;
-    padding: 20px;
-    border-radius: 10px;
-}
-
-.mazo-form input,
-.mazo-form textarea {
-    padding: 12px;
-    border: 2px solid #ddd;
-    border-radius: 6px;
-    font-family: inherit;
-}
-
-.mazo-form input:focus,
-.mazo-form textarea:focus {
-    border-color: #667eea;
-    outline: none;
-}
-
-.mazos-list {
-    max-height: 600px;
-    overflow-y: auto;
-}
-
-#mazos-container {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.mazo-item {
-    background: white;
-    border: 2px solid #e5e7eb;
-    border-radius: 10px;
-    padding: 15px;
-    transition: all 0.3s;
-    cursor: pointer;
-}
-
-.mazo-item:hover {
-    border-color: #667eea;
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
-}
-
-.mazo-header {
+.section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
-.mazo-header h4 {
-    color: #333;
-    font-size: 1.1rem;
+.section-header h3 {
     margin: 0;
+    color: #333;
+    font-size: 1.5rem;
 }
 
-.mazo-stats {
-    background: #e9ecef;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    color: #666;
+/* TABLA DE MAZOS */
+.mazos-table-container {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.mazo-description {
+.mazos-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.mazos-table thead {
+    background: #667eea;
+    color: white;
+}
+
+.mazos-table th {
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.mazos-table tbody tr {
+    border-bottom: 1px solid #eee;
+    transition: background 0.2s;
+}
+
+.mazos-table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+.mazos-table td {
+    padding: 15px;
+    font-size: 0.95rem;
+}
+
+.mazo-nombre {
+    font-weight: 600;
+    color: #333;
+}
+
+.mazo-descripcion {
     color: #666;
-    font-size: 0.9rem;
-    margin: 10px 0;
-    font-style: italic;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.mazo-tarjetas, .mazo-vencidas {
+    text-align: center;
+    font-weight: 500;
 }
 
 .mazo-actions {
     display: flex;
     gap: 8px;
-    margin-top: 10px;
+    justify-content: center;
 }
 
-/* RESPONSIVE */
-@media (max-width: 768px) {
-    .mazos-section {
-        grid-template-columns: 1fr;
-    }
-    
-    .mazo-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-    }
+.btn-icon {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: transparent;
+    color: #666;
+}
+
+.btn-icon:hover {
+    transform: translateY(-2px);
+}
+
+.btn-estudiar:hover {
+    background: #4CAF50;
+    color: white;
+}
+
+.btn-editar:hover {
+    background: #2196F3;
+    color: white;
+}
+
+.btn-eliminar:hover {
+    background: #f44336;
+    color: white;
+}
+
+/* Empty state */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.3;
 }
