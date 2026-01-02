@@ -56,8 +56,55 @@ def flashcards_view(request):
 
 
 @login_required
-@require_http_methods(["POST"])
-def crear_flashcard(request):
+@require_http_methods(["GET"])
+def api_get_data(request):
+    """API para obtener datos de flashcards"""
+    usuario = request.user
+    
+    if getattr(usuario, 'role', '') != 'student':
+        return JsonResponse({'success': False, 'message': 'No autorizado'}, status=403)
+    
+    try:
+        mazos = Mazo.objects.filter(usuario=usuario)
+        tarjetas = Flashcard.objects.filter(mazo__usuario=usuario)
+        
+        # Preparar datos para JavaScript
+        mazos_data = []
+        for mazo in mazos:
+            mazos_data.append({
+                'id': mazo.id,
+                'nombre': mazo.nombre,
+                'descripcion': mazo.descripcion,
+                'tarjetas_count': mazo.contar_tarjetas(),
+                'vencidas_count': mazo.contar_vencidas(),
+            })
+        
+        tarjetas_data = []
+        for tarjeta in tarjetas:
+            tarjetas_data.append({
+                'id': tarjeta.id,
+                'pregunta': tarjeta.pregunta,
+                'respuesta': tarjeta.respuesta,
+                'categoria': tarjeta.categoria,
+                'mazo_id': tarjeta.mazo.id,
+                'proximo_repaso': tarjeta.proximo_repaso.isoformat(),
+                'intervalo': tarjeta.intervalo,
+                'factor_facilidad': tarjeta.factor_facilidad,
+                'repeticiones': tarjeta.repeticiones,
+            })
+        
+        return JsonResponse({
+            'success': True,
+            'mazos': mazos_data,
+            'tarjetas': tarjetas_data,
+            'csrfToken': request.META.get('CSRF_COOKIE', '')
+        })
+    
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)}, status=500)
+
+
+
     """Crear nueva flashcard"""
     usuario = request.user
     

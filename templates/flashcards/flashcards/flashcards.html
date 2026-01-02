@@ -18,7 +18,10 @@
 {% endblock %}
 
 {% block contenido %}
-<div class="flashcard-container">
+<div class="flashcard-container" 
+     data-mazos='{{ mazos_json|safe }}'
+     data-tarjetas='{{ tarjetas_json|safe }}'
+     data-csrf='{{ csrf_token }}'>
     <header class="flashcard-header">
         <h1><i class="fas fa-layer-group"></i> Sistema de Flashcards</h1>
         <p class="subtitle">Método de repetición espaciada al estilo Anki</p>
@@ -73,21 +76,10 @@
 
 <!-- Modal para eliminar flashcard -->
 {% include 'flashcards/flashcards/modals/eliminar_flashcard.html' %}
-
-<!-- Datos para JavaScript - DEBE ir ANTES de los scripts -->
-<script>
-    // Pasar datos de Django a JavaScript
-    window.flashcardsData = {
-        mazos: {{ mazos_json|safe }},
-        tarjetas: {{ tarjetas_json|safe }},
-        csrfToken: '{{ csrf_token }}'
-    };
-    console.log('Datos cargados:', window.flashcardsData);
-</script>
 {% endblock %}
 
 {% block js %}
-<script src="/static/js/flashcards/system.js"></script>
+<script src="/static/js/flashcards/flashcards.js"></script>
 <script src="/static/js/flashcards/pestanas/estudiar.js"></script>
 <script src="/static/js/flashcards/pestanas/MisFlashcards.js"></script>
 <script src="/static/js/flashcards/pestanas/MisMazos.js"></script>
@@ -98,5 +90,4 @@
 <script src="/static/js/flashcards/modals/crear_flashcard.js"></script>
 <script src="/static/js/flashcards/modals/editar_flashcard.js"></script>
 <script src="/static/js/flashcards/modals/eliminar_flashcard.js"></script>
-<script src="/static/js/flashcards/flashcards.js"></script>
 {% endblock %}
