@@ -1,5 +1,5 @@
 .perfil-container {
-    max_width: 800px;
+    max-width: 900px;
     margin: 2rem auto;
     background-color: #fff;
     border-radius: 8px;
@@ -27,13 +27,34 @@
 .perfil-form {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 2rem;
+}
+
+.form-section {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1.5rem;
+    background-color: #f9fafb;
+}
+
+.form-section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e5e7eb;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.form-group:last-child {
+    margin-bottom: 0;
 }
 
 .form-row {
@@ -55,6 +76,7 @@
     font-size: 0.95rem;
     width: 100%;
     transition: border-color 0.15s ease-in-out;
+    font-family: inherit;
 }
 
 .form-control:focus, .form-select:focus {
@@ -64,7 +86,7 @@
 }
 
 .form-control.readonly {
-    background-color: #f9fafb;
+    background-color: #f3f4f6;
     cursor: not-allowed;
     color: #6b7280;
 }
@@ -75,22 +97,24 @@
 }
 
 .form-actions {
-    margin-top: 1rem;
+    margin-top: 1.5rem;
     display: flex;
     justify-content: flex-end;
+    gap: 1rem;
 }
 
 .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0.625rem 1.25rem;
+    padding: 0.75rem 1.5rem;
     border-radius: 6px;
     font-weight: 500;
     font-size: 0.95rem;
     cursor: pointer;
     transition: all 0.2s;
     border: none;
+    text-decoration: none;
 }
 
 .btn-primary {
@@ -100,9 +124,11 @@
 
 .btn-primary:hover {
     background-color: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
     .form-row {
         grid-template-columns: 1fr;
     }
@@ -111,4 +137,24 @@
         margin: 1rem;
         padding: 1.5rem;
     }
+    
+    .form-section {
+        padding: 1.25rem;
+    }
 }
+
+@media (max-width: 480px) {
+    .perfil-container {
+        padding: 1rem;
+        margin: 0.5rem;
+    }
+    
+    .perfil-header h1 {
+        font-size: 1.25rem;
+    }
+    
+    .form-section-title {
+        font-size: 1rem;
+    }
+}
+

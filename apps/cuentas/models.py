@@ -8,6 +8,11 @@ class UserRole(models.TextChoices):
     ADMIN = 'admin', 'Administrador'
 
 
+class StudentStatus(models.TextChoices):
+    ASPIRANT = 'aspirant', 'Postulante'
+    UNIVERSITY = 'university', 'Universitario'
+
+
 class StudyYear(models.TextChoices):
     PRE_UNI = 'pre_uni', 'Pre-universitario'
     YEAR_1 = 'year_1', 'Año 1'
@@ -15,6 +20,13 @@ class StudyYear(models.TextChoices):
     YEAR_3 = 'year_3', 'Año 3'
     YEAR_4 = 'year_4', 'Año 4'
     YEAR_5 = 'year_5', 'Año 5'
+
+
+class Gender(models.TextChoices):
+    MALE = 'male', 'Masculino'
+    FEMALE = 'female', 'Femenino'
+    OTHER = 'other', 'Otro'
+    PREFER_NOT = 'prefer_not', 'Prefiero no decirlo'
 
 
 class CustomUserManager(UserManager):
@@ -42,10 +54,68 @@ class User(AbstractUser):
         choices=UserRole.choices,
         default=UserRole.STUDENT,
     )
+    
+    # Estado del estudiante (Postulante o Universitario)
+    student_status = models.CharField(
+        max_length=20,
+        choices=StudentStatus.choices,
+        default=StudentStatus.ASPIRANT,
+        blank=True,
+        null=True,
+    )
+    
+    # Información universitaria (si es universitario)
+    university = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        help_text="Universidad donde estudias"
+    )
+    faculty = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        help_text="Facultad"
+    )
+    career = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        help_text="Carrera"
+    )
+    
+    # Año de estudio
     study_year = models.CharField(
         max_length=20,
         choices=StudyYear.choices,
         default=StudyYear.PRE_UNI,
+        blank=True,
+        null=True,
+    )
+    
+    # Información personal
+    birth_date = models.DateField(blank=True, null=True)
+    gender = models.CharField(
+        max_length=20,
+        choices=Gender.choices,
+        blank=True,
+        null=True,
+    )
+    identity_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        help_text="Número de cédula o carnet de identidad"
+    )
+    nationality = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+    )
+    phone_number = models.CharField(
+        max_length=20,
+        blank=True,
+        null=True,
     )
 
     USERNAME_FIELD = 'email'

@@ -71,7 +71,6 @@ def registro_estudiante(request):
     if request.method == 'POST':
         email = (request.POST.get('email') or '').strip().lower()
         username = (request.POST.get('username') or '').strip()
-        study_year = (request.POST.get('study_year') or '').strip() or 'pre_uni'
         password1 = request.POST.get('password1') or ''
         password2 = request.POST.get('password2') or ''
 
@@ -114,7 +113,7 @@ def registro_estudiante(request):
             email=email,
             username=candidate,
             role='student',
-            study_year=study_year,
+            student_status='aspirant',  # Por defecto, nuevo usuario es postulante
             email_verificado=False,
             is_staff=False,
             is_superuser=False,
@@ -342,11 +341,44 @@ def perfil_view(request):
         user.last_name = last_name
         
         if getattr(user, 'role', '') == 'student':
-            study_year = (request.POST.get('study_year') or '').strip()
-            # Simple validation to ensure it's a valid choice if needed, 
-            # otherwise relying on frontend select
-            if study_year:
-                user.study_year = study_year
+            # Estado del estudiante
+            student_status = (request.POST.get('student_status') or '').strip()
+            if student_status:
+                user.student_status = student_status
+            
+            # Si es universitario, obtener datos universitarios
+            if student_status == 'university':
+                university = (request.POST.get('university') or '').strip()
+                faculty = (request.POST.get('faculty') or '').strip()
+                career = (request.POST.get('career') or '').strip()
+                study_year = (request.POST.get('study_year') or '').strip()
+                
+                if university:
+                    user.university = university
+                if faculty:
+                    user.faculty = faculty
+                if career:
+                    user.career = career
+                if study_year:
+                    user.study_year = study_year
+            
+            # Información personal (para todos los estudiantes)
+            birth_date = (request.POST.get('birth_date') or '').strip()
+            gender = (request.POST.get('gender') or '').strip()
+            identity_number = (request.POST.get('identity_number') or '').strip()
+            nationality = (request.POST.get('nationality') or '').strip()
+            phone_number = (request.POST.get('phone_number') or '').strip()
+            
+            if birth_date:
+                user.birth_date = birth_date
+            if gender:
+                user.gender = gender
+            if identity_number:
+                user.identity_number = identity_number
+            if nationality:
+                user.nationality = nationality
+            if phone_number:
+                user.phone_number = phone_number
         
         user.save()
         messages.success(request, 'Perfil actualizado correctamente.')
