@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('apps.cuentas.urls')),
     path('usuarios/', include('apps.usuarios.urls')),
+    path('flashcards/', include('apps.flashcards.urls')),
 ]
 
 if settings.DEBUG:

@@ -1,0 +1,224 @@
+{% extends 'base/base.html' %}
+
+{% block titulo %}Flashcards - MeetWin{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="/static/css/flashcards/flashcards.css">
+{% endblock %}
+
+{% block contenido %}
+<div class="flashcard-container">
+    <header class="flashcard-header">
+        <h1><i class="fas fa-layer-group"></i> Sistema de Flashcards</h1>
+        <p class="subtitle">Método de repetición espaciada al estilo Anki</p>
+    </header>
+    
+    <div class="app-container">
+        <div class="control-panel">
+            <div class="tabs">
+                <div class="tab active" data-tab="study">
+                    <i class="fas fa-book"></i> Estudiar
+                </div>
+                <div class="tab" data-tab="create">
+                    <i class="fas fa-plus-circle"></i> Crear
+                </div>
+                <div class="tab" data-tab="mazos">
+                    <i class="fas fa-folder"></i> Mis Mazos
+                </div>
+                <div class="tab" data-tab="list">
+                    <i class="fas fa-list"></i> Ver Todas
+                </div>
+            </div>
+            
+            <!-- PESTAÑA: ESTUDIAR -->
+            <div id="study" class="tab-content active">
+                <div class="study-area">
+                    <div class="stats">
+                        <div class="stat">
+                            <div class="stat-value" id="total-cards">0</div>
+                            <div class="stat-label">Total</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="due-cards">0</div>
+                            <div class="stat-label">Por Repasar</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="today-cards">0</div>
+                            <div class="stat-label">Hoy</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="reviewed-cards">0</div>
+                            <div class="stat-label">Repasadas</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flashcard-card" id="study-card">
+                        <div class="flashcard-front">
+                            <div class="card-category" id="front-category">General</div>
+                            <div class="card-content" id="front-content">
+                                No hay flashcards para repasar. ¡Crea algunas!
+                            </div>
+                            <div class="hint">Haz clic para voltear la tarjeta</div>
+                        </div>
+                        <div class="flashcard-back">
+                            <div class="card-category" id="back-category">General</div>
+                            <div class="card-content" id="back-content">
+                                Respuesta de la flashcard.
+                            </div>
+                            <div class="hint">Selecciona la dificultad de tu respuesta</div>
+                        </div>
+                    </div>
+                    
+                    <div class="study-controls">
+                        <button class="difficulty-btn again" data-difficulty="0">
+                            <i class="fas fa-redo"></i> Otra vez (0-1 días)
+                        </button>
+                        <button class="difficulty-btn hard" data-difficulty="1">
+                            <i class="fas fa-hard-hat"></i> Difícil (1-3 días)
+                        </button>
+                        <button class="difficulty-btn good" data-difficulty="2">
+                            <i class="fas fa-thumbs-up"></i> Bien (3-7 días)
+                        </button>
+                        <button class="difficulty-btn easy" data-difficulty="3">
+                            <i class="fas fa-star"></i> Fácil (7+ días)
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- PESTAÑA: CREAR FLASHCARD -->
+            <div id="create" class="tab-content">
+                <div class="flashcard-form">
+                    <div class="form-group">
+                        <label for="mazo-select">Seleccionar Mazo:</label>
+                        <select id="mazo-select" required>
+                            <option value="">-- Selecciona un mazo --</option>
+                            {% for mazo in mazos %}
+                                <option value="{{ mazo.id }}">{{ mazo.nombre }} ({{ mazo.contar_tarjetas }} tarjetas)</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="categoria">Categoría:</label>
+                        <input type="text" id="categoria" placeholder="Ej: Programación, Historia, Inglés...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="pregunta">Pregunta/Frente:</label>
+                        <textarea id="pregunta" placeholder="Escribe la pregunta o concepto aquí..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="respuesta">Respuesta/Reverso:</label>
+                        <textarea id="respuesta" placeholder="Escribe la respuesta o definición aquí..." required></textarea>
+                    </div>
+                    
+                    <button class="btn btn-primary" id="add-card">
+                        <i class="fas fa-plus-circle"></i> Crear Flashcard
+                    </button>
+                </div>
+            </div>
+            
+            <!-- PESTAÑA: MIS MAZOS -->
+            <div id="mazos" class="tab-content">
+                <div class="mazos-section">
+                    <div class="mazo-crear">
+                        <h3>Crear Nuevo Mazo</h3>
+                        <div class="mazo-form">
+                            <input type="text" id="nuevo-mazo-nombre" placeholder="Nombre del mazo..." required>
+                            <textarea id="nuevo-mazo-desc" placeholder="Descripción (opcional)..." style="max-height: 80px;"></textarea>
+                            <button class="btn btn-primary" id="crear-mazo-btn">
+                                <i class="fas fa-folder-plus"></i> Crear Mazo
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="mazos-list">
+                        <h3>Tus Mazos</h3>
+                        <div id="mazos-container">
+                            {% if mazos %}
+                                {% for mazo in mazos %}
+                                    <div class="mazo-item" data-mazo-id="{{ mazo.id }}">
+                                        <div class="mazo-header">
+                                            <h4>{{ mazo.nombre }}</h4>
+                                            <span class="mazo-stats">{{ mazo.contar_tarjetas }} tarjetas | {{ mazo.contar_vencidas }} vencidas</span>
+                                        </div>
+                                        {% if mazo.descripcion %}
+                                            <p class="mazo-description">{{ mazo.descripcion }}</p>
+                                        {% endif %}
+                                        <div class="mazo-actions">
+                                            <button class="btn-small btn-estudiar" data-mazo-id="{{ mazo.id }}">
+                                                <i class="fas fa-book"></i> Estudiar
+                                            </button>
+                                            <button class="btn-small btn-editar" data-mazo-id="{{ mazo.id }}">
+                                                <i class="fas fa-edit"></i> Editar
+                                            </button>
+                                            <button class="btn-small btn-eliminar" data-mazo-id="{{ mazo.id }}">
+                                                <i class="fas fa-trash"></i> Eliminar
+                                            </button>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="empty-state">
+                                    <i class="fas fa-inbox"></i>
+                                    <p>No tienes mazos creados todavía.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- PESTAÑA: VER TODAS -->
+            <div id="list" class="tab-content">
+                <div id="flashcards-container">
+                    <div class="empty-state" id="empty-list">
+                        <i class="fas fa-inbox"></i>
+                        <p>No hay flashcards creadas todavía.</p>
+                    </div>
+                    <div class="flashcards-list" id="flashcards-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para editar mazo -->
+<div id="modal-editar-mazo" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Editar Mazo</h3>
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="edit-mazo-nombre">Nombre:</label>
+                <input type="text" id="edit-mazo-nombre" required>
+            </div>
+            <div class="form-group">
+                <label for="edit-mazo-desc">Descripción:</label>
+                <textarea id="edit-mazo-desc"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" id="cancelar-editar">Cancelar</button>
+            <button class="btn btn-primary" id="guardar-editar">Guardar Cambios</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="/static/js/flashcards/flashcards.js"></script>
+<script>
+    // Pasar datos de Django a JavaScript
+    const flashcardsData = {
+        mazos: {{ mazos_json|safe }},
+        tarjetas: {{ tarjetas_json|safe }},
+        csrfToken: '{{ csrf_token }}'
+    };
+</script>
+{% endblock %}
