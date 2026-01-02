@@ -6,9 +6,9 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="/static/css/flashcards/flashcards.css">
 <link rel="stylesheet" href="/static/css/flashcards/pestanas/estudiar.css">
-<link rel="stylesheet" href="/static/css/flashcards/pestanas/crear.css">
-<link rel="stylesheet" href="/static/css/flashcards/pestanas/mazos.css">
-<link rel="stylesheet" href="/static/css/flashcards/pestanas/list.css">
+<link rel="stylesheet" href="/static/css/flashcards/pestanas/MisFlashcards.css">
+<link rel="stylesheet" href="/static/css/flashcards/pestanas/MisMazos.css">
+<link rel="stylesheet" href="/static/css/flashcards/pestanas/VerFlashcards.css">
 <link rel="stylesheet" href="/static/css/flashcards/modals/editar_mazo.css">
 <link rel="stylesheet" href="/static/css/flashcards/modals/crear_mazo.css">
 <link rel="stylesheet" href="/static/css/flashcards/modals/eliminar_mazo.css">
@@ -30,13 +30,13 @@
                 <div class="tab active" data-tab="study">
                     <i class="fas fa-book"></i> Estudiar
                 </div>
-                <div class="tab" data-tab="create">
+                <div class="tab" data-tab="mis-flashcards">
                     <i class="fas fa-plus-circle"></i> Crear
                 </div>
-                <div class="tab" data-tab="mazos">
+                <div class="tab" data-tab="mis-mazos">
                     <i class="fas fa-folder"></i> Mis Mazos
                 </div>
-                <div class="tab" data-tab="list">
+                <div class="tab" data-tab="ver-flashcards">
                     <i class="fas fa-list"></i> Ver Todas
                 </div>
             </div>
@@ -45,13 +45,13 @@
             {% include 'flashcards/flashcards/pestanas/estudiar.html' %}
             
             <!-- PESTAÑA: CREAR FLASHCARD -->
-            {% include 'flashcards/flashcards/pestanas/crear.html' %}
+            {% include 'flashcards/flashcards/pestanas/MisFlashcards.html' %}
             
             <!-- PESTAÑA: MIS MAZOS -->
-            {% include 'flashcards/flashcards/pestanas/mazos.html' %}
+            {% include 'flashcards/flashcards/pestanas/MisMazos.html' %}
             
             <!-- PESTAÑA: VER TODAS -->
-            {% include 'flashcards/flashcards/pestanas/list.html' %}
+            {% include 'flashcards/flashcards/pestanas/VerFlashcards.html' %}
         </div>
     </div>
 </div>
@@ -89,9 +89,9 @@
 {% block js %}
 <script src="/static/js/flashcards/system.js"></script>
 <script src="/static/js/flashcards/pestanas/estudiar.js"></script>
-<script src="/static/js/flashcards/pestanas/crear.js"></script>
-<script src="/static/js/flashcards/pestanas/mazos.js"></script>
-<script src="/static/js/flashcards/pestanas/list.js"></script>
+<script src="/static/js/flashcards/pestanas/MisFlashcards.js"></script>
+<script src="/static/js/flashcards/pestanas/MisMazos.js"></script>
+<script src="/static/js/flashcards/pestanas/VerFlashcards.js"></script>
 <script src="/static/js/flashcards/modals/editar_mazo.js"></script>
 <script src="/static/js/flashcards/modals/crear_mazo.js"></script>
 <script src="/static/js/flashcards/modals/eliminar_mazo.js"></script>
