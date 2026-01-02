@@ -10,4 +10,13 @@ urlpatterns = [
     path('responder/', views.responder_tarjeta, name='responder'),
     path('mazo/<int:mazo_id>/editar/', views.editar_mazo, name='editar_mazo'),
     path('mazo/<int:mazo_id>/eliminar/', views.eliminar_mazo, name='eliminar_mazo'),
+    # API endpoints para mazos
+    path('api/crear-mazo/', views.crear_mazo_api, name='crear_mazo_api'),
+    path('api/eliminar-mazo/<int:mazo_id>/', views.eliminar_mazo_api, name='eliminar_mazo_api'),
+    path('api/editar-mazo/<int:mazo_id>/', views.editar_mazo_api, name='editar_mazo_api'),
+    # API endpoints para flashcards
+    path('api/crear-flashcard/', views.crear_flashcard_api, name='crear_flashcard_api'),
+    path('api/editar-flashcard/<int:flashcard_id>/', views.editar_flashcard_api, name='editar_flashcard_api'),
+    path('api/eliminar-flashcard/<int:flashcard_id>/', views.eliminar_flashcard_api, name='eliminar_flashcard_api'),
 ]
+

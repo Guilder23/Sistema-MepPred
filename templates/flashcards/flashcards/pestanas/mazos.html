@@ -1,0 +1,47 @@
+<div id="mazos" class="tab-content">
+    <div class="mazos-section">
+        <div class="mazo-crear">
+            <h3>Crear Nuevo Mazo</h3>
+            <div class="mazo-form">
+                <button class="btn btn-primary" id="btn-abrir-crear-mazo">
+                    <i class="fas fa-folder-plus"></i> Crear Nuevo Mazo
+                </button>
+            </div>
+        </div>
+        
+        <div class="mazos-list">
+            <h3>Tus Mazos</h3>
+            <div id="mazos-container">
+                {% if mazos %}
+                    {% for mazo in mazos %}
+                        <div class="mazo-item" data-mazo-id="{{ mazo.id }}">
+                            <div class="mazo-header">
+                                <h4>{{ mazo.nombre }}</h4>
+                                <span class="mazo-stats">{{ mazo.contar_tarjetas }} tarjetas | {{ mazo.contar_vencidas }} vencidas</span>
+                            </div>
+                            {% if mazo.descripcion %}
+                                <p class="mazo-description">{{ mazo.descripcion }}</p>
+                            {% endif %}
+                            <div class="mazo-actions">
+                                <button class="btn-small btn-estudiar" data-mazo-id="{{ mazo.id }}">
+                                    <i class="fas fa-book"></i> Estudiar
+                                </button>
+                                <button class="btn-small btn-editar" data-mazo-id="{{ mazo.id }}">
+                                    <i class="fas fa-edit"></i> Editar
+                                </button>
+                                <button class="btn-small btn-eliminar" data-mazo-id="{{ mazo.id }}">
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>No tienes mazos creados todavía.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

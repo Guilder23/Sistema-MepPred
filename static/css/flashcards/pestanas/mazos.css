@@ -1,0 +1,117 @@
+/* MAZOS */
+.mazos-section {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 25px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.mazo-crear,
+.mazos-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.mazo-crear h3,
+.mazos-list h3 {
+    color: #333;
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+}
+
+.mazo-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.mazo-form input,
+.mazo-form textarea {
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    font-family: inherit;
+}
+
+.mazo-form input:focus,
+.mazo-form textarea:focus {
+    border-color: #667eea;
+    outline: none;
+}
+
+.mazos-list {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+#mazos-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.mazo-item {
+    background: white;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 15px;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.mazo-item:hover {
+    border-color: #667eea;
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+}
+
+.mazo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.mazo-header h4 {
+    color: #333;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.mazo-stats {
+    background: #e9ecef;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.mazo-description {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 10px 0;
+    font-style: italic;
+}
+
+.mazo-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .mazos-section {
+        grid-template-columns: 1fr;
+    }
+    
+    .mazo-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+}

@@ -38,6 +38,7 @@ def flashcards_view(request):
             'pregunta': tarjeta.pregunta,
             'respuesta': tarjeta.respuesta,
             'categoria': tarjeta.categoria,
+            'mazo_id': tarjeta.mazo.id,
             'proximo_repaso': tarjeta.proximo_repaso.isoformat(),
             'intervalo': tarjeta.intervalo,
             'factor_facilidad': tarjeta.factor_facilidad,
@@ -209,3 +210,200 @@ def eliminar_mazo(request, mazo_id):
         return JsonResponse({'success': False, 'message': 'Mazo no encontrado'})
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)})
+
+
+# ==================== API ENDPOINTS JSON ====================
+
+@login_required
+@require_http_methods(["POST"])
+def crear_mazo_api(request):
+    """API para crear nuevo mazo con JSON"""
+    usuario = request.user
+    
+    if getattr(usuario, 'role', '') != 'student':
+        return JsonResponse({'success': False, 'error': 'Solo estudiantes pueden crear mazos'}, status=403)
+    
+    try:
+        data = json.loads(request.body)
+        nombre = data.get('nombre', '').strip()
+        descripcion = data.get('descripcion', '').strip()
+        
+        if not nombre:
+            return JsonResponse({'success': False, 'error': 'El nombre es requerido'}, status=400)
+        
+        mazo = Mazo.objects.create(
+            usuario=usuario,
+            nombre=nombre,
+            descripcion=descripcion,
+        )
+        
+        return JsonResponse({
+            'success': True,
+            'error': None,
+            'id': mazo.id,
+            'nombre': mazo.nombre,
+        })
+    
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': 'JSON inválido'}, status=400)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+
+@login_required
+@require_http_methods(["DELETE"])
+def eliminar_mazo_api(request, mazo_id):
+    """API para eliminar un mazo con JSON"""
+    usuario = request.user
+    
+    try:
+        mazo = Mazo.objects.get(id=mazo_id, usuario=usuario)
+        mazo.delete()
+        
+        return JsonResponse({
+            'success': True,
+            'error': None,
+        })
+    
+    except Mazo.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Mazo no encontrado'}, status=404)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+
+@login_required
+@require_http_methods(["PUT"])
+def editar_mazo_api(request, mazo_id):
+    """API para editar un mazo con JSON"""
+    usuario = request.user
+    
+    try:
+        data = json.loads(request.body)
+        mazo = Mazo.objects.get(id=mazo_id, usuario=usuario)
+        
+        nombre = data.get('nombre', '').strip()
+        descripcion = data.get('descripcion', '').strip()
+        
+        if not nombre:
+            return JsonResponse({'success': False, 'error': 'El nombre es requerido'}, status=400)
+        
+        mazo.nombre = nombre
+        mazo.descripcion = descripcion
+        mazo.save()
+        
+        return JsonResponse({
+            'success': True,
+            'error': None,
+            'id': mazo.id,
+            'nombre': mazo.nombre,
+        })
+    
+    except Mazo.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Mazo no encontrado'}, status=404)
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': 'JSON inválido'}, status=400)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+
+@login_required
+@require_http_methods(["POST"])
+def crear_flashcard_api(request):
+    """API para crear nueva flashcard con JSON"""
+    usuario = request.user
+    
+    if getattr(usuario, 'role', '') != 'student':
+        return JsonResponse({'success': False, 'error': 'Solo estudiantes pueden crear flashcards'}, status=403)
+    
+    try:
+        data = json.loads(request.body)
+        mazo_id = data.get('mazo_id')
+        pregunta = data.get('pregunta', '').strip()
+        respuesta = data.get('respuesta', '').strip()
+        categoria = data.get('categoria', '').strip()
+        
+        if not mazo_id or not pregunta or not respuesta:
+            return JsonResponse({'success': False, 'error': 'Campos requeridos faltantes'}, status=400)
+        
+        mazo = Mazo.objects.get(id=mazo_id, usuario=usuario)
+        
+        tarjeta = Flashcard.objects.create(
+            mazo=mazo,
+            pregunta=pregunta,
+            respuesta=respuesta,
+            categoria=categoria,
+            proximo_repaso=timezone.now(),
+        )
+        
+        return JsonResponse({
+            'success': True,
+            'error': None,
+            'id': tarjeta.id,
+        })
+    
+    except Mazo.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Mazo no encontrado'}, status=404)
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': 'JSON inválido'}, status=400)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+
+@login_required
+@require_http_methods(["PUT"])
+def editar_flashcard_api(request, flashcard_id):
+    """API para editar una flashcard con JSON"""
+    usuario = request.user
+    
+    try:
+        data = json.loads(request.body)
+        tarjeta = Flashcard.objects.get(id=flashcard_id, mazo__usuario=usuario)
+        
+        pregunta = data.get('pregunta', '').strip()
+        respuesta = data.get('respuesta', '').strip()
+        categoria = data.get('categoria', '').strip()
+        
+        if not pregunta:
+            return JsonResponse({'success': False, 'error': 'La pregunta es requerida'}, status=400)
+        
+        if not respuesta:
+            return JsonResponse({'success': False, 'error': 'La respuesta es requerida'}, status=400)
+        
+        tarjeta.pregunta = pregunta
+        tarjeta.respuesta = respuesta
+        tarjeta.categoria = categoria
+        tarjeta.save()
+        
+        return JsonResponse({
+            'success': True,
+            'error': None,
+            'id': tarjeta.id,
+        })
+    
+    except Flashcard.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Flashcard no encontrada'}, status=404)
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': 'JSON inválido'}, status=400)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+
+@login_required
+@require_http_methods(["DELETE"])
+def eliminar_flashcard_api(request, flashcard_id):
+    """API para eliminar una flashcard con JSON"""
+    usuario = request.user
+    
+    try:
+        tarjeta = Flashcard.objects.get(id=flashcard_id, mazo__usuario=usuario)
+        tarjeta.delete()
+        
+        return JsonResponse({
+            'success': True,
+            'error': None,
+        })
+    
+    except Flashcard.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Flashcard no encontrada'}, status=404)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
