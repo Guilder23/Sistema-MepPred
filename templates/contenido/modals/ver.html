@@ -1,0 +1,93 @@
+<!-- Modal Ver Contenido -->
+<div class="modal-overlay" id="modalVerOverlay">
+    <div class="modal-content modal-lg" id="modalVer">
+        <div class="modal-header">
+            <h5 class="modal-header-title">Detalle del Contenido</h5>
+            <button type="button" class="modal-close-btn" onclick="ocultarModal('modalVerOverlay')">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="detalle-grupo">
+                <label class="detalle-label">Título:</label>
+                <p class="detalle-valor" id="verTitulo"></p>
+            </div>
+            
+            <div class="detalle-grupo">
+                <label class="detalle-label">Descripción:</label>
+                <p class="detalle-valor" id="verDescripcion"></p>
+            </div>
+            
+            <div class="detalle-grupo">
+                <label class="detalle-label">Contenido del tema:</label>
+                <p class="detalle-valor contenido-texto" id="verContenidoTema"></p>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="detalle-grupo">
+                        <label class="detalle-label">Materia:</label>
+                        <p class="detalle-valor" id="verMateria"></p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="detalle-grupo">
+                        <label class="detalle-label">Nivel/Curso:</label>
+                        <p class="detalle-valor" id="verNivelCurso"></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="detalle-grupo">
+                        <label class="detalle-label">Estado:</label>
+                        <p class="detalle-valor" id="verEstado"></p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="detalle-grupo">
+                        <label class="detalle-label">Publicación:</label>
+                        <p class="detalle-valor" id="verPublicacion"></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detalle-grupo">
+                <label class="detalle-label">Videos:</label>
+                <div id="verVideos"></div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="detalle-grupo">
+                        <label class="detalle-label">Creado por:</label>
+                        <p class="detalle-valor" id="verCreadoPor"></p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="detalle-grupo">
+                        <label class="detalle-label">Fecha de creación:</label>
+                        <p class="detalle-valor" id="verFechaCreacion"></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="detalle-grupo">
+                        <label class="detalle-label">Editado por:</label>
+                        <p class="detalle-valor" id="verEditadoPor"></p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="detalle-grupo">
+                        <label class="detalle-label">Fecha de edición:</label>
+                        <p class="detalle-valor" id="verFechaEdicion"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="ocultarModal('modalVerOverlay')">Cerrar</button>
+        </div>
+    </div>
+</div>

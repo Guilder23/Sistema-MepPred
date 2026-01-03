@@ -24,6 +24,7 @@ urlpatterns = [
     path('', include('apps.cuentas.urls')),
     path('usuarios/', include('apps.usuarios.urls')),
     path('flashcards/', include('apps.flashcards.urls')),
+    path('contenido/', include('apps.contenido.urls')),
 ]
 
 if settings.DEBUG:

@@ -1,0 +1,41 @@
+/* Estilos específicos para el modal de editar contenido */
+
+#modalEditarOverlay .modal-header {
+    background-color: #f39c12;
+}
+
+#editarVideosContainer .video-input-group {
+    position: relative;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+#editarVideosContainer .video-input-group input {
+    flex: 1;
+}
+
+#editarVideosContainer .btn-remove-video {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.6rem 0.8rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 0.875rem;
+}
+
+#editarVideosContainer .btn-remove-video:hover {
+    background-color: #c0392b;
+}
+
+.btn-primary {
+    background-color: #4a90e2;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #357abd;
+}

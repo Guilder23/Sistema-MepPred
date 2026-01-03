@@ -1,0 +1,80 @@
+<!-- Modal Crear Contenido -->
+<div class="modal-overlay" id="modalCrearOverlay">
+    <div class="modal-content modal-lg" id="modalCrear">
+        <div class="modal-header">
+            <h5 class="modal-header-title">Crear Nuevo Contenido</h5>
+            <button type="button" class="modal-close-btn" onclick="ocultarModal('modalCrearOverlay')">×</button>
+        </div>
+        <form id="formCrear" method="POST">
+            {% csrf_token %}
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Título del contenido / tema *</label>
+                    <input type="text" class="form-control" name="titulo" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Descripción del contenido / tema *</label>
+                    <textarea class="form-control" name="descripcion" rows="3" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Contenido del tema *</label>
+                    <textarea class="form-control" name="contenido_tema" rows="5" required></textarea>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Materia *</label>
+                            <input type="text" class="form-control" name="materia" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Nivel / Curso *</label>
+                            <input type="text" class="form-control" name="nivel_curso" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Estado</label>
+                            <select class="form-select" name="estado">
+                                <option value="activo">Activo</option>
+                                <option value="inactivo">Inactivo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Publicación</label>
+                            <select class="form-select" name="publicacion">
+                                <option value="no_publicado">No Publicado</option>
+                                <option value="publicado">Publicado</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Videos</label>
+                    <div id="videosContainer">
+                        <div class="video-input-group mb-2">
+                            <input type="url" class="form-control" name="videos[]" placeholder="Enlace del video">
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-primary mt-2" id="btnAgregarVideo">
+                        <i class="fas fa-plus"></i> Agregar más video
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="ocultarModal('modalCrearOverlay')">Cancelar</button>
+                <button type="submit" class="btn btn-success">Crear Contenido</button>
+            </div>
+        </form>
+    </div>
+</div>

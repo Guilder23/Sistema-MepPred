@@ -1,0 +1,102 @@
+/* Estilos específicos para el modal de ver contenido */
+
+#modalVerOverlay .modal-header {
+    background-color: #3498db;
+}
+
+.detalle-grupo {
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.detalle-grupo:last-child {
+    border-bottom: none;
+}
+
+.detalle-label {
+    display: block;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detalle-valor {
+    color: #34495e;
+    font-size: 0.95rem;
+    margin: 0;
+    padding: 0.5rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+
+.contenido-texto {
+    white-space: pre-wrap;
+    line-height: 1.6;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+#verVideos {
+    margin-top: 0.5rem;
+}
+
+#verVideos .video-item {
+    padding: 0.75rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+#verVideos .video-item i {
+    color: #3498db;
+}
+
+#verVideos .video-item a {
+    color: #3498db;
+    text-decoration: none;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#verVideos .video-item a:hover {
+    text-decoration: underline;
+}
+
+/* Badge en modal ver */
+.badge {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-radius: 20px;
+    text-transform: capitalize;
+}
+
+.badge-activo {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.badge-inactivo {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.badge-publicado {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+.badge-no-publicado {
+    background-color: #fff3cd;
+    color: #856404;
+}

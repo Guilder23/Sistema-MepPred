@@ -1,0 +1,125 @@
+/* Estilos específicos para el modal de eliminar contenido */
+
+#modalEliminarOverlay .modal-content {
+    background: white;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+#modalEliminarOverlay .modal-header {
+    background-color: #e74c3c;
+    color: white;
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 8px 8px 0 0;
+}
+
+#modalEliminarOverlay .modal-header-title {
+    color: white;
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+#modalEliminarOverlay .modal-close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+#modalEliminarOverlay .modal-close-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+#modalEliminarOverlay .modal-body {
+    padding: 0.75rem 1rem;
+    background-color: #fff;
+}
+
+#modalEliminarOverlay .modal-body p {
+    color: #2c3e50;
+    font-size: 1rem;
+    margin: 0 0 0.4rem 0;
+    line-height: 1.4;
+}
+
+#modalEliminarOverlay .modal-body p:last-child {
+    margin-bottom: 0;
+}
+
+#modalEliminarOverlay .modal-body strong {
+    color: #e74c3c;
+    font-weight: 600;
+}
+
+#modalEliminarOverlay .modal-body .text-center {
+    text-align: left;
+}
+
+#modalEliminarOverlay .modal-body i {
+    display: none;
+}
+
+#modalEliminarOverlay .mb-3 {
+    display: none !important;
+}
+
+#modalEliminarOverlay .text-muted {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+#modalEliminarOverlay .modal-footer {
+    padding: 0.65rem 1rem;
+    background-color: #f8f9fa;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    border-radius: 0 0 8px 8px;
+}
+
+#modalEliminarOverlay .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.45rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#modalEliminarOverlay .btn-secondary {
+    background-color: #95a5a6;
+    color: white;
+}
+
+#modalEliminarOverlay .btn-secondary:hover {
+    background-color: #7f8c8d;
+}
+
+#modalEliminarOverlay .btn-danger {
+    background-color: #e74c3c;
+    color: white;
+}
+
+#modalEliminarOverlay .btn-danger:hover {
+    background-color: #c0392b;
+}
