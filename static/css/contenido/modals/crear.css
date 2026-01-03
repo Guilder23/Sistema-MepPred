@@ -1,7 +1,7 @@
 /* Estilos específicos para el modal de crear contenido */
 
 /* Overlay del modal */
-.modal-overlay {
+#modalCrearOverlay {
     display: none;
     position: fixed;
     top: 0;
@@ -10,26 +10,17 @@
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 9999;
-    animation: fadeIn 0.3s ease;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
-.modal-overlay.active {
+#modalCrearOverlay.active {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
 /* Contenido del modal */
-.modal-content {
+#modalCrearOverlay .modal-content {
     background: white;
     border-radius: 8px;
     width: 90%;
@@ -37,26 +28,10 @@
     max-height: 90vh;
     overflow-y: auto;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    animation: slideIn 0.3s ease;
-}
-
-.modal-content.modal-lg {
-    max-width: 800px;
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateY(-50px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
 }
 
 /* Header del modal */
-.modal-header {
+#modalCrearOverlay .modal-header {
     background-color: #28a745;
     color: white;
     padding: 1.25rem 1.5rem;
@@ -66,14 +41,14 @@
     border-radius: 8px 8px 0 0;
 }
 
-.modal-header-title {
+#modalCrearOverlay .modal-header-title {
     color: white;
     margin: 0;
     font-size: 1.25rem;
     font-weight: 600;
 }
 
-.modal-close-btn {
+#modalCrearOverlay .modal-close-btn {
     background: none;
     border: none;
     color: white;
@@ -89,20 +64,20 @@
     transition: background-color 0.2s;
 }
 
-.modal-close-btn:hover {
+#modalCrearOverlay .modal-close-btn:hover {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
 /* Body del modal */
-.modal-body {
+#modalCrearOverlay .modal-body {
     padding: 1.5rem;
 }
 
-.form-group {
+#modalCrearOverlay .form-group {
     margin-bottom: 1.25rem;
 }
 
-.form-label {
+#modalCrearOverlay .form-label {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 500;
@@ -110,8 +85,8 @@
     font-size: 0.95rem;
 }
 
-.form-control,
-.form-select {
+#modalCrearOverlay .form-control,
+#modalCrearOverlay .form-select {
     width: 100%;
     padding: 0.6rem 0.9rem;
     font-size: 0.95rem;
@@ -120,27 +95,32 @@
     transition: all 0.2s ease;
 }
 
-.form-control:focus,
-.form-select:focus {
+#modalCrearOverlay .form-control:focus,
+#modalCrearOverlay .form-select:focus {
     outline: none;
     border-color: #28a745;
     box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
 }
 
-textarea.form-control {
+#modalCrearOverlay textarea.form-control {
     resize: vertical;
     min-height: 80px;
 }
 
 /* Contenedor de videos dinámico */
-#videosContainer .video-input-group {
+#modalCrearOverlay #videosContainer .video-input-group {
     position: relative;
     display: flex;
     gap: 0.5rem;
     align-items: center;
+    margin-bottom: 0.5rem;
 }
 
-#videosContainer .video-input-group .btn-remove-video {
+#modalCrearOverlay #videosContainer .video-input-group input {
+    flex: 1;
+}
+
+#modalCrearOverlay #videosContainer .video-input-group .btn-remove-video {
     background-color: #e74c3c;
     color: white;
     border: none;
@@ -150,12 +130,12 @@ textarea.form-control {
     transition: background-color 0.2s;
 }
 
-#videosContainer .video-input-group .btn-remove-video:hover {
+#modalCrearOverlay #videosContainer .video-input-group .btn-remove-video:hover {
     background-color: #c0392b;
 }
 
 /* Footer del modal */
-.modal-footer {
+#modalCrearOverlay .modal-footer {
     padding: 1rem 1.5rem;
     background-color: #f8f9fa;
     border-top: 1px solid #e0e0e0;
@@ -166,7 +146,7 @@ textarea.form-control {
 }
 
 /* Botones */
-.btn {
+#modalCrearOverlay .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -180,40 +160,40 @@ textarea.form-control {
     gap: 0.5rem;
 }
 
-.btn-secondary {
+#modalCrearOverlay .btn-secondary {
     background-color: #95a5a6;
     color: white;
 }
 
-.btn-secondary:hover {
+#modalCrearOverlay .btn-secondary:hover {
     background-color: #7f8c8d;
 }
 
-.btn-success {
+#modalCrearOverlay .btn-success {
     background-color: #28a745;
     color: white;
 }
 
-.btn-success:hover {
+#modalCrearOverlay .btn-success:hover {
     background-color: #218838;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    .modal-content {
+    #modalCrearOverlay .modal-content {
         width: 95%;
         margin: 1rem;
     }
 
-    .modal-body {
+    #modalCrearOverlay .modal-body {
         padding: 1rem;
     }
 
-    .modal-footer {
+    #modalCrearOverlay .modal-footer {
         flex-direction: column;
     }
 
-    .modal-footer .btn {
+    #modalCrearOverlay .modal-footer .btn {
         width: 100%;
     }
 }

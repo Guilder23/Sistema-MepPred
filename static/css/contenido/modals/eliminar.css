@@ -1,17 +1,38 @@
 /* Estilos específicos para el modal de eliminar contenido */
 
+/* Overlay */
+#modalEliminarOverlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+#modalEliminarOverlay.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Modal content */
 #modalEliminarOverlay .modal-content {
     background: white;
     border-radius: 8px;
     width: 90%;
-    max-width: 500px;
+    max-width: 450px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
+/* Header */
 #modalEliminarOverlay .modal-header {
     background-color: #e74c3c;
     color: white;
-    padding: 0.75rem 1rem;
+    padding: 0.85rem 1.25rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -21,7 +42,7 @@
 #modalEliminarOverlay .modal-header-title {
     color: white;
     margin: 0;
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     font-weight: 600;
 }
 
@@ -45,15 +66,16 @@
     background-color: rgba(255, 255, 255, 0.2);
 }
 
+/* Body */
 #modalEliminarOverlay .modal-body {
-    padding: 0.75rem 1rem;
+    padding: 0.85rem 1.25rem;
     background-color: #fff;
 }
 
 #modalEliminarOverlay .modal-body p {
     color: #2c3e50;
-    font-size: 1rem;
-    margin: 0 0 0.4rem 0;
+    font-size: 0.95rem;
+    margin: 0 0 0.35rem 0;
     line-height: 1.4;
 }
 
@@ -66,25 +88,14 @@
     font-weight: 600;
 }
 
-#modalEliminarOverlay .modal-body .text-center {
-    text-align: left;
-}
-
-#modalEliminarOverlay .modal-body i {
-    display: none;
-}
-
-#modalEliminarOverlay .mb-3 {
-    display: none !important;
-}
-
 #modalEliminarOverlay .text-muted {
     color: #7f8c8d;
     font-size: 0.9rem;
 }
 
+/* Footer */
 #modalEliminarOverlay .modal-footer {
-    padding: 0.65rem 1rem;
+    padding: 0.75rem 1.25rem;
     background-color: #f8f9fa;
     border-top: 1px solid #e0e0e0;
     display: flex;
@@ -93,12 +104,13 @@
     border-radius: 0 0 8px 8px;
 }
 
+/* Botones */
 #modalEliminarOverlay .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0.45rem 1rem;
-    font-size: 0.9rem;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.95rem;
     font-weight: 500;
     border-radius: 6px;
     border: none;
