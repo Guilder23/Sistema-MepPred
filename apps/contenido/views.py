@@ -93,11 +93,15 @@ def listar_contenidos(request):
 @require_http_methods(["GET"])
 def obtener_contenido(request, contenido_id):
     """API para obtener información de un contenido"""
-    if not (request.user.is_superuser or getattr(request.user, 'role', '') == 'admin'):
-        return JsonResponse({'error': 'No tienes permisos'}, status=403)
-    
     try:
         contenido = Contenido.objects.get(id=contenido_id)
+        
+        # Los estudiantes solo pueden ver contenidos publicados y activos
+        es_admin = request.user.is_superuser or getattr(request.user, 'role', '') == 'admin'
+        if not es_admin:
+            if contenido.estado != 'activo' or contenido.publicacion != 'publicado':
+                return JsonResponse({'error': 'No tienes permisos para ver este contenido'}, status=403)
+        
         videos = list(contenido.videos.all().values('id', 'enlace', 'orden'))
     except Contenido.DoesNotExist:
         return JsonResponse({'error': 'Contenido no encontrado'}, status=404)
@@ -250,3 +254,33 @@ def eliminar_contenido(request, contenido_id):
         return JsonResponse({'success': False, 'error': 'Contenido no encontrado'})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
+
+
+@login_required
+def biblioteca_contenidos(request):
+    """Vista de biblioteca de contenidos para estudiantes y administradores"""
+    return render(request, 'contenido/biblioteca.html')
+
+
+@login_required
+@require_http_methods(["GET"])
+def listar_contenidos_publicados(request):
+    """API para listar solo contenidos publicados y activos"""
+    # Filtrar solo contenidos publicados y activos
+    contenidos = Contenido.objects.filter(
+        estado='activo',
+        publicacion='publicado'
+    ).order_by('-fecha_creacion')
+    
+    contenidos_data = []
+    for contenido in contenidos:
+        contenidos_data.append({
+            'id': contenido.id,
+            'titulo': contenido.titulo,
+            'descripcion': contenido.descripcion,
+            'materia': contenido.materia,
+            'nivel_curso': contenido.nivel_curso,
+            'fecha_creacion': contenido.fecha_creacion.isoformat(),
+        })
+    
+    return JsonResponse(contenidos_data, safe=False)

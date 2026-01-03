@@ -3,6 +3,7 @@
     <div class="sidebar__title">Navegación</div>
     <a class="sidebar__link" href="/panel/">Inicio</a>
     <a class="sidebar__link" href="{% url 'cuentas:perfil' %}">Mi Perfil</a>
+    <a class="sidebar__link" href="/contenido/biblioteca/"><i class="fas fa-book"></i> Biblioteca de Contenidos</a>
     {% if request.user.role == 'student' %}
       <a class="sidebar__link" href="{% url 'flashcards:flashcards' %}"><i class="fas fa-layer-group"></i> Flashcards</a>
     {% endif %}

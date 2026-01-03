@@ -1,0 +1,92 @@
+{% extends 'base/base.html' %}
+
+{% block titulo %}Biblioteca de Contenidos - MeetWin{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="/static/css/contenido/biblioteca.css">
+<!-- <link rel="stylesheet" href="/static/css/contenido/modals/ver-estudiante.css"> -->
+{% endblock %}
+
+{% block contenido %}
+<div class="container-fluid py-4">
+    <!-- Encabezado -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1>Biblioteca de Contenidos</h1>
+            <p class="subtitle">Explora y aprende con nuestros contenidos educativos</p>
+        </div>
+    </div>
+
+    <!-- Búsqueda y filtros -->
+    <div class="filtros-container mb-4">
+        <input type="text" class="form-control" id="buscar" placeholder="Buscar por título o materia...">
+        <select class="form-select" id="filtroMateria">
+            <option value="">Todas las materias</option>
+        </select>
+        <select class="form-select" id="filtroNivel">
+            <option value="">Todos los niveles</option>
+        </select>
+        <button type="button" class="btn btn-secondary" onclick="cargarContenidos()">
+            <i class="fas fa-search"></i> Buscar
+        </button>
+    </div>
+
+    <!-- Grid de contenidos -->
+    <div id="contenidosGrid" class="contenidos-grid">
+        <!-- Se cargará dinámicamente -->
+    </div>
+
+    <!-- Mensaje de carga -->
+    <div id="loadingMessage" class="text-center py-5" style="display: none;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="mt-3">Cargando contenidos...</p>
+    </div>
+
+    <!-- Mensaje sin resultados -->
+    <div id="noResultsMessage" class="text-center py-5" style="display: none;">
+        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+        <p class="text-muted">No se encontraron contenidos publicados</p>
+    </div>
+</div>
+
+<!-- Modal para ver contenido -->
+<div id="modalVerContenido" class="modal-overlay">
+    <div class="modal-content modal-content-large">
+        <div class="modal-header">
+            <h3 class="modal-header-title">Detalle del Contenido</h3>
+            <button type="button" class="modal-close-btn" onclick="cerrarModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="contenido-detalle">
+                <h2 id="detalleTitulo" class="contenido-titulo"></h2>
+                <div class="contenido-meta">
+                    <span class="badge badge-materia" id="detalleMateria"></span>
+                    <span class="badge badge-nivel" id="detalleNivel"></span>
+                </div>
+                <div class="contenido-descripcion">
+                    <h4>Descripción</h4>
+                    <p id="detalleDescripcion"></p>
+                </div>
+                <div class="contenido-tema">
+                    <h4>Contenido del Tema</h4>
+                    <div id="detalleContenido"></div>
+                </div>
+                <div class="contenido-videos" id="contenedorVideos" style="display: none;">
+                    <h4>Videos Educativos</h4>
+                    <div id="detalleVideos" class="videos-list"></div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="cerrarModal()">Cerrar</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script src="/static/js/contenido/biblioteca.js"></script>
+{% endblock %}
