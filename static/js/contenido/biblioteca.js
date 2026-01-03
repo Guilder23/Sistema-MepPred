@@ -154,7 +154,22 @@ function mostrarContenidos(contenidos) {
 function crearCardContenido(contenido) {
     const card = document.createElement('div');
     card.className = 'contenido-card';
-    card.onclick = () => verContenido(contenido.id);
+    
+    // Agregar clases según estado
+    if (!contenido.esta_disponible) {
+        card.classList.add('bloqueado');
+    } else if (contenido.completado) {
+        card.classList.add('completado');
+    }
+    
+    // Solo permitir click si está disponible
+    if (contenido.esta_disponible) {
+        card.onclick = () => verContenido(contenido.id);
+        card.style.cursor = 'pointer';
+    } else {
+        card.style.cursor = 'not-allowed';
+        card.style.opacity = '0.6';
+    }
     
     const fecha = contenido.fecha_creacion ? 
         new Date(contenido.fecha_creacion).toLocaleDateString('es-ES', {
@@ -162,6 +177,14 @@ function crearCardContenido(contenido) {
             month: '2-digit',
             year: 'numeric'
         }) : '-';
+    
+    // Badges adicionales para estado
+    let badgesEstado = '';
+    if (contenido.completado) {
+        badgesEstado = '<span class="badge badge-activo"><i class="fas fa-check-circle"></i> Completado</span>';
+    } else if (!contenido.esta_disponible) {
+        badgesEstado = '<span class="badge badge-inactivo"><i class="fas fa-lock"></i> Bloqueado</span>';
+    }
     
     card.innerHTML = `
         <div class="contenido-card-header">
@@ -172,13 +195,17 @@ function crearCardContenido(contenido) {
             <div class="contenido-card-meta">
                 <span class="badge badge-materia">${contenido.materia}</span>
                 <span class="badge badge-nivel">${contenido.nivel_curso}</span>
+                ${badgesEstado}
             </div>
             <div class="contenido-card-footer">
                 <span class="contenido-fecha">
                     <i class="fas fa-calendar"></i> ${fecha}
                 </span>
-                <button class="btn-ver-contenido" onclick="event.stopPropagation(); verContenido(${contenido.id})">
-                    Ver más <i class="fas fa-arrow-right"></i>
+                <button class="btn-ver-contenido" 
+                    onclick="event.stopPropagation(); ${contenido.esta_disponible ? `verContenido(${contenido.id})` : 'return false;'}" 
+                    ${!contenido.esta_disponible ? 'disabled' : ''}>
+                    ${contenido.esta_disponible ? 'Ver más' : 'Bloqueado'} 
+                    <i class="fas fa-${contenido.esta_disponible ? 'arrow-right' : 'lock'}"></i>
                 </button>
             </div>
         </div>

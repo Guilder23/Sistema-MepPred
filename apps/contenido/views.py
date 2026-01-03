@@ -2,11 +2,12 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
-from django.db.models import Q
+from django.db.models import Q, Count, Case, When
 from django.db import transaction
+from django.utils import timezone
 import json
 
-from .models import Contenido, VideoContenido
+from .models import Contenido, VideoContenido, ProgresoContenido
 
 
 @login_required
@@ -270,10 +271,24 @@ def listar_contenidos_publicados(request):
     contenidos = Contenido.objects.filter(
         estado='activo',
         publicacion='publicado'
-    ).order_by('-fecha_creacion')
+    ).order_by('orden', '-fecha_creacion')
+    
+    es_admin = request.user.is_superuser or getattr(request.user, 'role', '') == 'admin'
     
     contenidos_data = []
     for contenido in contenidos:
+        # Verificar si está disponible para el estudiante
+        esta_disponible = contenido.esta_disponible_para(request.user)
+        
+        # Verificar progreso
+        try:
+            progreso = ProgresoContenido.objects.get(usuario=request.user, contenido=contenido)
+            completado = progreso.completado
+            porcentaje = progreso.porcentaje_avance
+        except ProgresoContenido.DoesNotExist:
+            completado = False
+            porcentaje = 0
+        
         contenidos_data.append({
             'id': contenido.id,
             'titulo': contenido.titulo,
@@ -281,6 +296,170 @@ def listar_contenidos_publicados(request):
             'materia': contenido.materia,
             'nivel_curso': contenido.nivel_curso,
             'fecha_creacion': contenido.fecha_creacion.isoformat(),
+            'orden': contenido.orden,
+            'esta_disponible': esta_disponible,
+            'completado': completado,
+            'porcentaje_avance': porcentaje,
+            'tiene_prerequisito': contenido.prerequisito is not None,
+            'prerequisito_titulo': contenido.prerequisito.titulo if contenido.prerequisito else None,
         })
     
     return JsonResponse(contenidos_data, safe=False)
+
+
+@login_required
+def vista_progreso(request):
+    """Vista de progreso del estudiante"""
+    return render(request, 'contenido/progreso.html')
+
+
+@login_required
+@require_http_methods(["GET"])
+def obtener_progreso_usuario(request):
+    """API para obtener el progreso completo del usuario"""
+    # Obtener todos los contenidos publicados
+    contenidos = Contenido.objects.filter(
+        estado='activo',
+        publicacion='publicado'
+    ).order_by('materia', 'orden')
+    
+    # Obtener progresos del usuario
+    progresos = ProgresoContenido.objects.filter(usuario=request.user)
+    progresos_dict = {p.contenido_id: p for p in progresos}
+    
+    # Agrupar por materia
+    materias_data = {}
+    for contenido in contenidos:
+        if contenido.materia not in materias_data:
+            materias_data[contenido.materia] = {
+                'materia': contenido.materia,
+                'contenidos': [],
+                'total': 0,
+                'completados': 0,
+                'porcentaje': 0
+            }
+        
+        progreso = progresos_dict.get(contenido.id)
+        completado = progreso.completado if progreso else False
+        porcentaje_avance = progreso.porcentaje_avance if progreso else 0
+        esta_disponible = contenido.esta_disponible_para(request.user)
+        
+        materias_data[contenido.materia]['contenidos'].append({
+            'id': contenido.id,
+            'titulo': contenido.titulo,
+            'descripcion': contenido.descripcion,
+            'orden': contenido.orden,
+            'completado': completado,
+            'porcentaje_avance': porcentaje_avance,
+            'esta_disponible': esta_disponible,
+            'tiene_prerequisito': contenido.prerequisito is not None,
+            'prerequisito_titulo': contenido.prerequisito.titulo if contenido.prerequisito else None,
+        })
+        
+        materias_data[contenido.materia]['total'] += 1
+        if completado:
+            materias_data[contenido.materia]['completados'] += 1
+    
+    # Calcular porcentajes
+    for materia_data in materias_data.values():
+        if materia_data['total'] > 0:
+            materia_data['porcentaje'] = round((materia_data['completados'] / materia_data['total']) * 100)
+    
+    # Calcular progreso general
+    total_contenidos = sum(m['total'] for m in materias_data.values())
+    total_completados = sum(m['completados'] for m in materias_data.values())
+    porcentaje_general = round((total_completados / total_contenidos) * 100) if total_contenidos > 0 else 0
+    
+    return JsonResponse({
+        'materias': list(materias_data.values()),
+        'estadisticas': {
+            'total_contenidos': total_contenidos,
+            'completados': total_completados,
+            'pendientes': total_contenidos - total_completados,
+            'porcentaje_general': porcentaje_general
+        }
+    })
+
+
+@login_required
+@require_http_methods(["POST"])
+def marcar_contenido_completado(request, contenido_id):
+    """API para marcar un contenido como completado"""
+    try:
+        contenido = Contenido.objects.get(id=contenido_id)
+        
+        # Verificar que el contenido esté disponible
+        if not contenido.esta_disponible_para(request.user):
+            return JsonResponse({
+                'success': False, 
+                'error': 'Este contenido no está disponible aún. Debes completar el contenido anterior primero.'
+            }, status=403)
+        
+        # Crear o actualizar progreso
+        progreso, created = ProgresoContenido.objects.get_or_create(
+            usuario=request.user,
+            contenido=contenido,
+            defaults={
+                'completado': True,
+                'porcentaje_avance': 100,
+                'fecha_completado': timezone.now()
+            }
+        )
+        
+        if not created:
+            progreso.completado = True
+            progreso.porcentaje_avance = 100
+            progreso.fecha_completado = timezone.now()
+            progreso.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': '¡Contenido completado! Sigue avanzando.',
+            'siguiente_disponible': _obtener_siguiente_contenido(request.user, contenido)
+        })
+    
+    except Contenido.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Contenido no encontrado'}, status=404)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+
+@login_required
+@require_http_methods(["POST"])
+def desmarcar_contenido_completado(request, contenido_id):
+    """API para desmarcar un contenido como completado"""
+    try:
+        progreso = ProgresoContenido.objects.get(
+            usuario=request.user,
+            contenido_id=contenido_id
+        )
+        progreso.completado = False
+        progreso.porcentaje_avance = 0
+        progreso.fecha_completado = None
+        progreso.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Contenido desmarcado'
+        })
+    
+    except ProgresoContenido.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Progreso no encontrado'}, status=404)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+
+def _obtener_siguiente_contenido(usuario, contenido_actual):
+    """Helper para obtener el siguiente contenido disponible"""
+    siguiente = Contenido.objects.filter(
+        estado='activo',
+        publicacion='publicado',
+        prerequisito=contenido_actual
+    ).first()
+    
+    if siguiente:
+        return {
+            'id': siguiente.id,
+            'titulo': siguiente.titulo
+        }
+    return None

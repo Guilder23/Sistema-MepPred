@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Contenido, VideoContenido
+from .models import Contenido, VideoContenido, ProgresoContenido
 
 
 class VideoContenidoInline(admin.TabularInline):
@@ -9,8 +9,8 @@ class VideoContenidoInline(admin.TabularInline):
 
 @admin.register(Contenido)
 class ContenidoAdmin(admin.ModelAdmin):
-    list_display = ['titulo', 'materia', 'nivel_curso', 'estado', 'publicacion', 'fecha_creacion']
-    list_filter = ['estado', 'publicacion', 'materia']
+    list_display = ['orden', 'titulo', 'materia', 'nivel_curso', 'prerequisito', 'estado', 'publicacion', 'fecha_creacion']
+    list_filter = ['estado', 'publicacion', 'materia', 'es_obligatorio']
     search_fields = ['titulo', 'descripcion', 'materia']
     inlines = [VideoContenidoInline]
     readonly_fields = ['fecha_creacion', 'fecha_edicion']
@@ -21,6 +21,10 @@ class ContenidoAdmin(admin.ModelAdmin):
         }),
         ('Clasificación', {
             'fields': ('materia', 'nivel_curso')
+        }),
+        ('Sistema de Progreso', {
+            'fields': ('orden', 'prerequisito', 'es_obligatorio'),
+            'description': 'Configura el orden y los prerequisitos para el aprendizaje secuencial.'
         }),
         ('Estado y Publicación', {
             'fields': ('estado', 'publicacion')
@@ -42,3 +46,23 @@ class VideoContenidoAdmin(admin.ModelAdmin):
     list_display = ['contenido', 'enlace', 'orden']
     list_filter = ['contenido']
     search_fields = ['contenido__titulo', 'enlace']
+
+
+@admin.register(ProgresoContenido)
+class ProgresoContenidoAdmin(admin.ModelAdmin):
+    list_display = ['usuario', 'contenido', 'completado', 'porcentaje_avance', 'fecha_inicio', 'fecha_completado']
+    list_filter = ['completado', 'fecha_inicio', 'fecha_completado']
+    search_fields = ['usuario__username', 'usuario__email', 'contenido__titulo']
+    readonly_fields = ['fecha_inicio']
+    
+    fieldsets = (
+        ('Información', {
+            'fields': ('usuario', 'contenido')
+        }),
+        ('Progreso', {
+            'fields': ('completado', 'porcentaje_avance')
+        }),
+        ('Fechas', {
+            'fields': ('fecha_inicio', 'fecha_completado')
+        }),
+    )
