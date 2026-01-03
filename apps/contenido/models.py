@@ -46,7 +46,12 @@ class Contenido(models.Model):
         return self.titulo
     
     def esta_disponible_para(self, usuario):
-        """Verifica si el contenido está disponible para el usuario"""
+        """
+        Verifica si el contenido está disponible para el usuario.
+        Reglas:
+        1. Dentro de una materia: solo se desbloquea si el contenido anterior está completado
+        2. Entre materias: solo se desbloquea si TODA la materia anterior está 100% completada
+        """
         # Si es admin, siempre disponible
         if usuario.is_superuser or getattr(usuario, 'role', '') == 'admin':
             return True
@@ -55,19 +60,77 @@ class Contenido(models.Model):
         if self.estado != 'activo' or self.publicacion != 'publicado':
             return False
         
-        # Si no tiene prerequisito, está disponible
-        if not self.prerequisito:
-            return True
+        # Obtener todos los contenidos publicados ordenados por materia y orden
+        todos_contenidos = Contenido.objects.filter(
+            estado='activo',
+            publicacion='publicado'
+        ).order_by('materia', 'orden')
         
-        # Verificar si completó el prerequisito
+        # Agrupar por materia
+        materias = {}
+        for cont in todos_contenidos:
+            if cont.materia not in materias:
+                materias[cont.materia] = []
+            materias[cont.materia].append(cont)
+        
+        # Obtener lista de materias ordenadas
+        materias_ordenadas = list(materias.keys())
+        
+        # Verificar si es el primer contenido de la primera materia
+        if materias_ordenadas and materias[materias_ordenadas[0]]:
+            primer_contenido = materias[materias_ordenadas[0]][0]
+            if self.id == primer_contenido.id:
+                return True  # El primer contenido siempre está disponible
+        
+        # Encontrar la posición de este contenido
+        materia_actual = self.materia
+        contenidos_materia = materias.get(materia_actual, [])
+        
         try:
-            progreso = ProgresoContenido.objects.get(
-                usuario=usuario,
-                contenido=self.prerequisito
-            )
-            return progreso.completado
-        except ProgresoContenido.DoesNotExist:
+            indice_contenido = next(i for i, c in enumerate(contenidos_materia) if c.id == self.id)
+        except StopIteration:
             return False
+        
+        # Si NO es el primer contenido de la materia, verificar que el anterior esté completado
+        if indice_contenido > 0:
+            contenido_anterior = contenidos_materia[indice_contenido - 1]
+            try:
+                progreso_anterior = ProgresoContenido.objects.get(
+                    usuario=usuario,
+                    contenido=contenido_anterior
+                )
+                return progreso_anterior.completado
+            except ProgresoContenido.DoesNotExist:
+                return False
+        
+        # Si ES el primer contenido de la materia (pero no la primera materia)
+        # verificar que TODA la materia anterior esté completada
+        try:
+            indice_materia = materias_ordenadas.index(materia_actual)
+        except ValueError:
+            return False
+        
+        if indice_materia > 0:
+            # Hay una materia anterior
+            materia_anterior = materias_ordenadas[indice_materia - 1]
+            contenidos_materia_anterior = materias[materia_anterior]
+            
+            # Verificar que TODOS los contenidos de la materia anterior estén completados
+            for contenido_ant in contenidos_materia_anterior:
+                try:
+                    progreso = ProgresoContenido.objects.get(
+                        usuario=usuario,
+                        contenido=contenido_ant
+                    )
+                    if not progreso.completado:
+                        return False  # Falta completar un contenido de la materia anterior
+                except ProgresoContenido.DoesNotExist:
+                    return False  # No ha iniciado un contenido de la materia anterior
+            
+            return True  # Todos los contenidos de la materia anterior están completados
+        
+        # Es el primer contenido de la primera materia
+        return True
 
 
 class ProgresoContenido(models.Model):
