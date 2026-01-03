@@ -59,6 +59,7 @@ def listar_usuarios(request):
             'last_name': user.last_name,
             'role': getattr(user, 'role', 'student'),
             'is_active': user.is_active,
+            'date_joined': user.date_joined.isoformat(),
         })
     
     return JsonResponse(usuarios_data, safe=False)

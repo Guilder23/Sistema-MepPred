@@ -108,16 +108,20 @@ h1 {
 }
 
 /* Búsqueda y Filtros */
-.row.mb-3 {
-    background: white;
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: var(--shadow-sm);
-    margin-bottom: 1.5rem;
+.filtros-container {
     display: flex;
     gap: 1rem;
-    flex-wrap: wrap;
     align-items: center;
+}
+
+.filtros-container .form-control,
+.filtros-container .form-select {
+    flex: 1;
+    min-width: 200px;
+}
+
+.filtros-container .btn {
+    flex-shrink: 0;
 }
 
 .form-control, .form-select {
@@ -155,8 +159,8 @@ h1 {
 }
 
 .table thead {
-    background-color: #f8f9fa;
-    border-bottom: 2px solid var(--border-color);
+    background-color: #34495e;
+    color: white;
 }
 
 .table th {
@@ -164,9 +168,9 @@ h1 {
     text-align: left;
     font-size: 0.85rem;
     font-weight: 600;
-    color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    border: none;
 }
 
 .table td {
@@ -174,6 +178,10 @@ h1 {
     vertical-align: middle;
     border-bottom: 1px solid var(--border-color);
     color: var(--text-primary);
+}
+
+.table tbody tr {
+    transition: all 0.2s ease;
 }
 
 .table tbody tr:hover {
@@ -186,22 +194,56 @@ h1 {
 
 /* Badges */
 .badge {
-    padding: 0.35rem 0.65rem;
-    border-radius: 50px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: capitalize;
+    display: inline-block;
 }
 
 .badge-activo {
-    background-color: rgba(46, 204, 113, 0.15);
-    color: var(--success-color);
+    background-color: #d4edda;
+    color: #155724;
 }
 
 .badge-inactivo {
-    background-color: rgba(231, 76, 60, 0.15);
-    color: var(--danger-color);
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.badge-rol-administrador {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+.badge-rol-profesor {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.badge-rol-estudiante {
+    background-color: #e7e7ff;
+    color: #383874;
+}
+
+.text-center {
+    text-align: center;
+    padding: 2rem;
+    color: #7f8c8d;
+}
+
+/* Espaciado */
+.mb-3 {
+    margin-bottom: 1rem;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+.text-end {
+    text-align: right;
 }
 
 /* Utilities */
@@ -234,54 +276,73 @@ h1 {
     overflow: hidden;
 }
 
+/* Celda de acciones */
+.acciones-cell {
+    white-space: nowrap;
+}
+
+.acciones-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+}
+
 /* Botones de Acción en Tabla */
-.btn-accion {
+.btn-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0.4rem 0.6rem;
-    font-size: 0.85rem;
-    border-radius: 6px;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    font-size: 0.875rem;
     border: none;
+    border-radius: 6px;
     cursor: pointer;
-    transition: all 0.2s;
-    margin-right: 0.25rem;
-    font-weight: 500;
-    gap: 0.4rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.btn-accion i {
-    font-size: 0.9rem;
+.btn-icon:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.btn-icon:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-icon i {
+    font-size: 1rem;
 }
 
 .btn-ver {
-    background-color: rgba(52, 152, 219, 0.1);
-    color: var(--info-color);
+    background-color: #3498db;
+    color: white;
 }
 
 .btn-ver:hover {
-    background-color: var(--info-color);
-    color: white;
+    background-color: #2980b9;
 }
 
 .btn-editar {
-    background-color: rgba(241, 196, 15, 0.1);
-    color: #d35400;
+    background-color: #f39c12;
+    color: white;
 }
 
 .btn-editar:hover {
-    background-color: var(--warning-color);
-    color: #2c3e50;
+    background-color: #e67e22;
 }
 
 .btn-eliminar {
-    background-color: rgba(231, 76, 60, 0.1);
-    color: var(--danger-color);
+    background-color: #e74c3c;
+    color: white;
 }
 
 .btn-eliminar:hover {
-    background-color: var(--danger-color);
-    color: white;
+    background-color: #c0392b;
 }
 
 /* =========================================
@@ -411,6 +472,32 @@ h1 {
 @media (max-width: 768px) {
     .container-fluid {
         padding: 1rem;
+    }
+    
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    .filtros-container {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .filtros-container .form-control,
+    .filtros-container .form-select {
+        min-width: 100%;
+    }
+
+    .table thead th,
+    .table tbody td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .btn-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
     }
     
     .btn {

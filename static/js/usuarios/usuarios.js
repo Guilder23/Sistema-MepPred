@@ -151,7 +151,7 @@ function mostrarUsuarios(usuarios) {
     tbody.innerHTML = '';
 
     if (!Array.isArray(usuarios) || usuarios.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4">No hay usuarios para mostrar</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">No hay usuarios para mostrar</td></tr>';
         return;
     }
 
@@ -159,6 +159,15 @@ function mostrarUsuarios(usuarios) {
         const estadoBadge = usuario.is_active ? 
             '<span class="badge badge-activo">Activo</span>' : 
             '<span class="badge badge-inactivo">Inactivo</span>';
+
+        // Formatear fecha de registro
+        const fechaRegistro = usuario.date_joined ? new Date(usuario.date_joined).toLocaleDateString('es-ES', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        }) : '-';
 
         const fila = `
             <tr>
@@ -171,16 +180,19 @@ function mostrarUsuarios(usuarios) {
                 <td>${usuario.email}</td>
                 <td><span class="badge ${usuario.role === 'admin' ? 'bg-primary' : 'bg-secondary'}">${usuario.role === 'admin' ? 'Administrador' : 'Estudiante'}</span></td>
                 <td>${estadoBadge}</td>
-                <td style="white-space: nowrap;">
-                    <button class="btn-accion btn-ver" onclick="verUsuario('${usuario.id}')" title="Ver detalles">
-                        <i class="fas fa-eye"></i> Ver
-                    </button>
-                    <button class="btn-accion btn-editar" onclick="abrirModalEditar('${usuario.id}')" title="Editar usuario">
-                        <i class="fas fa-edit"></i> Editar
-                    </button>
-                    <button class="btn-accion btn-eliminar" onclick="abrirModalEliminar('${usuario.id}')" title="Eliminar usuario">
-                        <i class="fas fa-trash-alt"></i> Eliminar
-                    </button>
+                <td>${fechaRegistro}</td>
+                <td class="acciones-cell">
+                    <div class="acciones-buttons">
+                        <button class="btn-icon btn-ver" onclick="verUsuario('${usuario.id}')" title="Ver">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn-icon btn-editar" onclick="abrirModalEditar('${usuario.id}')" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-icon btn-eliminar" onclick="abrirModalEliminar('${usuario.id}')" title="Eliminar">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
                 </td>
             </tr>
         `;
