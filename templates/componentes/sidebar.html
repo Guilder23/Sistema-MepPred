@@ -11,6 +11,7 @@
     {% if request.user.is_superuser or request.user.role == 'admin' %}
       <a class="sidebar__link" href="/usuarios/">Gestión de Usuarios</a>
       <a class="sidebar__link" href="/materias/">Gestión de Materias</a>
+      <a class="sidebar__link" href="/examenes/"><i class="fas fa-file-alt"></i> Gestión de Exámenes</a>
       <a class="sidebar__link" href="/contenido/admin/contenidos/">Gestión de Contenidos</a>
       <a class="sidebar__link" href="{% url 'flashcards_premium:dashboard' %}"><i class="fas fa-crown"></i> Flashcards Premium</a>
       <a class="sidebar__link" href="/admin/asignar/">Asignar admin</a>

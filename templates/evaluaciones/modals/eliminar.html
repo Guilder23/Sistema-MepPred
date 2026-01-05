@@ -1,0 +1,35 @@
+<!-- Modal Eliminar Examen -->
+<div class="modal-eliminar-overlay" id="modalEliminarOverlay">
+    <div class="modal-eliminar-container">
+        <div class="modal-eliminar-header">
+            <h2>Eliminar Examen</h2>
+            <button class="modal-eliminar-btn-close" type="button">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="modal-eliminar-body">
+            <div class="modal-eliminar-warning-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+
+            <p>¿Estás seguro de que deseas eliminar este examen?</p>
+            
+            <div class="modal-eliminar-examen-name" id="nombreExamenEliminar"></div>
+            
+            <p><strong>Esta acción no se puede deshacer.</strong></p>
+            <p>Se eliminarán todas las preguntas, enunciados y opciones asociadas.</p>
+
+            <input type="hidden" id="idExamenEliminar">
+        </div>
+
+        <div class="modal-eliminar-footer">
+            <button type="button" class="modal-eliminar-btn modal-eliminar-btn-cancelar" id="btnCancelarEliminarExamen">
+                Cancelar
+            </button>
+            <button type="button" class="modal-eliminar-btn modal-eliminar-btn-eliminar" id="btnEliminarExamen">
+                <i class="fas fa-trash"></i> Eliminar
+            </button>
+        </div>
+    </div>
+</div>

@@ -24,6 +24,7 @@ urlpatterns = [
     path('', include('apps.cuentas.urls')),
     path('usuarios/', include('apps.usuarios.urls')),
     path('materias/', include('apps.materias.urls')),
+    path('examenes/', include('apps.evaluaciones.urls')),
     path('flashcards/', include('apps.flashcards.urls')),
     path('flashcards-premium/', include('apps.flashcards_premium.urls')),
     path('contenido/', include('apps.contenido.urls')),
