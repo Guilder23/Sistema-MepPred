@@ -75,3 +75,25 @@
         </div>
     </div>
 </div>
+
+<!-- Modal Confirmación Eliminar Pregunta -->
+<div class="modal-confirmar-overlay" id="modalConfirmarEliminarPregunta">
+    <div class="modal-confirmar-container">
+        <div class="modal-confirmar-header">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h3>Confirmar Eliminación</h3>
+        </div>
+        <div class="modal-confirmar-body">
+            <p>¿Estás seguro de eliminar esta pregunta?</p>
+            <p class="modal-confirmar-warning">Esta acción no se puede deshacer.</p>
+        </div>
+        <div class="modal-confirmar-footer">
+            <button type="button" class="btn-cancelar-confirmar" onclick="cerrarModalConfirmarEliminar()">
+                Cancelar
+            </button>
+            <button type="button" class="btn-aceptar-confirmar" id="btnConfirmarEliminarPregunta">
+                Aceptar
+            </button>
+        </div>
+    </div>
+</div>

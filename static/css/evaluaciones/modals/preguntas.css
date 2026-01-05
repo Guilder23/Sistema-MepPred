@@ -533,3 +533,112 @@
     color: #6366f1;
     min-width: 25px;
 }
+
+/* Modal de confirmación eliminar */
+.modal-confirmar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-confirmar-overlay.active {
+    display: flex;
+}
+
+.modal-confirmar-container {
+    background: white;
+    border-radius: 12px;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    animation: modalConfirmarSlideIn 0.3s ease;
+}
+
+@keyframes modalConfirmarSlideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-confirmar-header {
+    padding: 1.5rem;
+    text-align: center;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-confirmar-header i {
+    font-size: 3rem;
+    color: #dc3545;
+    margin-bottom: 0.5rem;
+}
+
+.modal-confirmar-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #1f2937;
+}
+
+.modal-confirmar-body {
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.modal-confirmar-body p {
+    margin: 0.5rem 0;
+    color: #4b5563;
+}
+
+.modal-confirmar-warning {
+    font-size: 0.875rem;
+    color: #dc3545;
+    font-weight: 500;
+}
+
+.modal-confirmar-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.btn-cancelar-confirmar,
+.btn-aceptar-confirmar {
+    padding: 0.625rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-cancelar-confirmar {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-cancelar-confirmar:hover {
+    background: #5a6268;
+}
+
+.btn-aceptar-confirmar {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-aceptar-confirmar:hover {
+    background: #c82333;
+}

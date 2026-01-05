@@ -318,11 +318,31 @@ function editarPregunta(index) {
 }
 
 // Eliminar pregunta
+let indicePreguntaEliminar = null;
+
 function eliminarPregunta(index) {
-    if (confirm('¿Estás seguro de eliminar esta pregunta?')) {
-        preguntasExamen.splice(index, 1);
-        guardarPreguntasExamen();
+    indicePreguntaEliminar = index;
+    document.getElementById('modalConfirmarEliminarPregunta').classList.add('active');
+}
+
+// Confirmar eliminación de pregunta
+document.addEventListener('DOMContentLoaded', function() {
+    const btnConfirmar = document.getElementById('btnConfirmarEliminarPregunta');
+    if (btnConfirmar) {
+        btnConfirmar.addEventListener('click', function() {
+            if (indicePreguntaEliminar !== null) {
+                preguntasExamen.splice(indicePreguntaEliminar, 1);
+                guardarPreguntasExamen();
+                cerrarModalConfirmarEliminar();
+                indicePreguntaEliminar = null;
+            }
+        });
     }
+});
+
+function cerrarModalConfirmarEliminar() {
+    document.getElementById('modalConfirmarEliminarPregunta').classList.remove('active');
+    indicePreguntaEliminar = null;
 }
 
 // Cancelar formulario de pregunta
