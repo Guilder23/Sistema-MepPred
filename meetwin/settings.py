@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'apps.flashcards',
     'apps.flashcards_premium',
     'apps.usuarios',
+    'apps.materias',
 ]
 
 MIDDLEWARE = [

@@ -1,0 +1,67 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block titulo %}Gestión de Materias{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/materias/materias.css' %}">
+<link rel="stylesheet" href="{% static 'css/materias/modals/crear.css' %}">
+<link rel="stylesheet" href="{% static 'css/materias/modals/ver.css' %}">
+<link rel="stylesheet" href="{% static 'css/materias/modals/editar.css' %}">
+<link rel="stylesheet" href="{% static 'css/materias/modals/eliminar.css' %}">
+{% endblock %}
+
+{% block contenido %}
+<div class="container-fluid py-4">
+    <!-- Encabezado -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h1>Gestión de Materias</h1>
+        </div>
+        <div class="col-md-6 text-end">
+            <button class="btn btn-primary" id="btnNuevaMateria">
+                <i class="fas fa-plus"></i> Nueva Materia
+            </button>
+        </div>
+    </div>
+
+    <!-- Búsqueda -->
+    <div class="filtros-container mb-3">
+        <input type="text" class="form-control" id="searchInput" placeholder="Buscar por nombre o descripción...">
+    </div>
+
+    <!-- Tabla de materias -->
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>NOMBRE</th>
+                        <th>DESCRIPCIÓN</th>
+                        <th>FECHA CREACIÓN</th>
+                        <th>ACCIONES</th>
+                    </tr>
+                </thead>
+                <tbody id="tableMaterias">
+                    <!-- Se llena dinámicamente con JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modales -->
+{% include 'materias/modals/crear.html' %}
+{% include 'materias/modals/ver.html' %}
+{% include 'materias/modals/editar.html' %}
+{% include 'materias/modals/eliminar.html' %}
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/materias/materias.js' %}"></script>
+<script src="{% static 'js/materias/modals/crear.js' %}"></script>
+<script src="{% static 'js/materias/modals/ver.js' %}"></script>
+<script src="{% static 'js/materias/modals/editar.js' %}"></script>
+<script src="{% static 'js/materias/modals/eliminar.js' %}"></script>
+{% endblock %}

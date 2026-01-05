@@ -1,0 +1,26 @@
+<!-- Modal Editar Materia -->
+<div class="modal-editar-overlay" id="modalEditarOverlay">
+    <div class="modal-editar-container">
+        <div class="modal-editar-header">
+            <h2>Editar Materia</h2>
+            <button type="button" class="modal-editar-btn-close">&times;</button>
+        </div>
+        <form id="formEditarMateria">
+            <input type="hidden" id="editarId">
+            <div class="modal-editar-body">
+                <div class="modal-editar-form-group modal-editar-required">
+                    <label for="editarNombre">Nombre de la Materia</label>
+                    <input type="text" class="modal-editar-form-control" id="editarNombre" name="nombre" placeholder="Ej: Matemáticas" required>
+                </div>
+                <div class="modal-editar-form-group">
+                    <label for="editarDescripcion">Descripción</label>
+                    <textarea class="modal-editar-form-control" id="editarDescripcion" name="descripcion" placeholder="Descripción opcional..." rows="4"></textarea>
+                </div>
+            </div>
+            <div class="modal-editar-footer">
+                <button type="button" class="modal-editar-btn modal-editar-btn-cancelar" id="btnCancelarEditarMateria">Cancelar</button>
+                <button type="button" class="modal-editar-btn modal-editar-btn-actualizar" id="btnActualizarMateria">Actualizar</button>
+            </div>
+        </form>
+    </div>
+</div>
