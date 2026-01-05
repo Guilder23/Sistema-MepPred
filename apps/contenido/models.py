@@ -19,7 +19,7 @@ class Contenido(models.Model):
     titulo = models.CharField(max_length=255, verbose_name='Título del contenido')
     descripcion = models.TextField(verbose_name='Descripción del contenido')
     contenido_tema = models.TextField(verbose_name='Contenido del tema')
-    materia = models.CharField(max_length=100, verbose_name='Materia')
+    materia = models.ForeignKey('materias.Materia', on_delete=models.CASCADE, verbose_name='Materia')
     nivel_curso = models.CharField(max_length=100, verbose_name='Nivel/Curso')
     
     # Estado y publicación

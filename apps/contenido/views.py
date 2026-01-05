@@ -28,7 +28,7 @@ def gestion_contenidos(request):
     if busqueda:
         contenidos = contenidos.filter(
             Q(titulo__icontains=busqueda) |
-            Q(materia__icontains=busqueda) |
+            Q(materia__nombre__icontains=busqueda) |
             Q(descripcion__icontains=busqueda)
         )
     
@@ -64,7 +64,7 @@ def listar_contenidos(request):
     if busqueda:
         contenidos = contenidos.filter(
             Q(titulo__icontains=busqueda) |
-            Q(materia__icontains=busqueda) |
+            Q(materia__nombre__icontains=busqueda) |
             Q(descripcion__icontains=busqueda)
         )
     
@@ -79,7 +79,8 @@ def listar_contenidos(request):
         contenidos_data.append({
             'id': contenido.id,
             'titulo': contenido.titulo,
-            'materia': contenido.materia,
+            'materia': contenido.materia.nombre if contenido.materia else '',
+            'materia_id': contenido.materia.id if contenido.materia else None,
             'nivel_curso': contenido.nivel_curso,
             'estado': contenido.estado,
             'publicacion': contenido.publicacion,
@@ -124,7 +125,7 @@ def obtener_contenido(request, contenido_id):
         'titulo': contenido.titulo,
         'descripcion': contenido.descripcion,
         'contenido_tema': contenido.contenido_tema,
-        'materia': contenido.materia,
+        'materia': contenido.materia.nombre if contenido.materia else '',
         'nivel_curso': contenido.nivel_curso,
         'estado': contenido.estado,
         'publicacion': contenido.publicacion,
@@ -147,7 +148,7 @@ def crear_contenido(request):
         titulo = request.POST.get('titulo', '').strip()
         descripcion = request.POST.get('descripcion', '').strip()
         contenido_tema = request.POST.get('contenido_tema', '').strip()
-        materia = request.POST.get('materia', '').strip()
+        materia_nombre = request.POST.get('materia', '').strip()
         nivel_curso = request.POST.get('nivel_curso', '').strip()
         estado = request.POST.get('estado', 'activo')
         publicacion = request.POST.get('publicacion', 'no_publicado')
@@ -156,8 +157,15 @@ def crear_contenido(request):
         videos_enlaces = request.POST.getlist('videos[]')
         
         # Validaciones
-        if not all([titulo, descripcion, contenido_tema, materia, nivel_curso]):
+        if not all([titulo, descripcion, contenido_tema, materia_nombre, nivel_curso]):
             return JsonResponse({'success': False, 'error': 'Todos los campos son requeridos'})
+        
+        # Buscar la materia
+        from apps.materias.models import Materia
+        try:
+            materia = Materia.objects.get(nombre=materia_nombre)
+        except Materia.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Materia no encontrada'})
         
         # Crear contenido con transacción
         with transaction.atomic():
@@ -199,7 +207,7 @@ def editar_contenido(request):
         titulo = request.POST.get('titulo', '').strip()
         descripcion = request.POST.get('descripcion', '').strip()
         contenido_tema = request.POST.get('contenido_tema', '').strip()
-        materia = request.POST.get('materia', '').strip()
+        materia_nombre = request.POST.get('materia', '').strip()
         nivel_curso = request.POST.get('nivel_curso', '').strip()
         estado = request.POST.get('estado', 'activo')
         publicacion = request.POST.get('publicacion', 'no_publicado')
@@ -208,6 +216,13 @@ def editar_contenido(request):
         videos_enlaces = request.POST.getlist('videos[]')
         
         contenido = Contenido.objects.get(id=contenido_id)
+        
+        # Buscar la materia
+        from apps.materias.models import Materia
+        try:
+            materia = Materia.objects.get(nombre=materia_nombre)
+        except Materia.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Materia no encontrada'})
         
         # Actualizar contenido con transacción
         with transaction.atomic():
@@ -293,7 +308,7 @@ def listar_contenidos_publicados(request):
             'id': contenido.id,
             'titulo': contenido.titulo,
             'descripcion': contenido.descripcion,
-            'materia': contenido.materia,
+            'materia': contenido.materia.nombre if contenido.materia else '',
             'nivel_curso': contenido.nivel_curso,
             'fecha_creacion': contenido.fecha_creacion.isoformat(),
             'orden': contenido.orden,
@@ -330,9 +345,11 @@ def obtener_progreso_usuario(request):
     # Agrupar por materia
     materias_data = {}
     for contenido in contenidos:
-        if contenido.materia not in materias_data:
-            materias_data[contenido.materia] = {
-                'materia': contenido.materia,
+        materia_nombre = contenido.materia.nombre if contenido.materia else 'Sin materia'
+        
+        if materia_nombre not in materias_data:
+            materias_data[materia_nombre] = {
+                'materia': materia_nombre,
                 'contenidos': [],
                 'total': 0,
                 'completados': 0,
@@ -344,7 +361,7 @@ def obtener_progreso_usuario(request):
         porcentaje_avance = progreso.porcentaje_avance if progreso else 0
         esta_disponible = contenido.esta_disponible_para(request.user)
         
-        materias_data[contenido.materia]['contenidos'].append({
+        materias_data[materia_nombre]['contenidos'].append({
             'id': contenido.id,
             'titulo': contenido.titulo,
             'descripcion': contenido.descripcion,
@@ -356,9 +373,9 @@ def obtener_progreso_usuario(request):
             'prerequisito_titulo': contenido.prerequisito.titulo if contenido.prerequisito else None,
         })
         
-        materias_data[contenido.materia]['total'] += 1
+        materias_data[materia_nombre]['total'] += 1
         if completado:
-            materias_data[contenido.materia]['completados'] += 1
+            materias_data[materia_nombre]['completados'] += 1
     
     # Calcular porcentajes
     for materia_data in materias_data.values():
