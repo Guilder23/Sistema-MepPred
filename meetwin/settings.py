@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'apps.ranking',
     'apps.notificaciones',
     'apps.flashcards',
+    'apps.flashcards_premium',
     'apps.usuarios',
 ]
 
