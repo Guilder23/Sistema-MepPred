@@ -210,8 +210,10 @@ a {
 
 /* ===== LAYOUT (base.html) ===== */
 .layout {
-  padding: 0; /* Removed padding to allow full width */
-  min-height: calc(100vh - 60px);
+  padding: 0;
+  padding-top: 60px;
+  margin-left: 200px;
+  min-height: 100vh;
 }
 
 .layout--centrado {
@@ -222,12 +224,12 @@ a {
 }
 
 .layout__container {
-  max-width: 100%; /* Full width */
+  max-width: 100%;
   width: 100%;
   margin: 0;
   display: grid;
-  grid-template-columns: 260px 1fr;
-  gap: 0; /* Remove gap, handle spacing in content */
+  grid-template-columns: 1fr;
+  gap: 0;
   align-items: start;
 }
 
@@ -239,9 +241,9 @@ a {
 }
 
 .layout__content {
-  min-height: calc(100vh - 60px);
+  min-height: 100%;
   width: 100%;
-  padding: var(--espacio-xl); /* Add padding here */
+  padding: var(--espacio-xl);
 }
 
 .layout__content--centrado {

@@ -1,15 +1,16 @@
 /* ===== SIDEBAR ===== */
 .sidebar {
-  position: sticky;
-  top: 60px; /* Adjusted to match navbar height roughly */
-  align-self: start;
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 200px;
   background: var(--fondo-panel);
   border-right: 1px solid var(--borde-sutil);
-  /* Removed border-radius and card styles */
   padding: var(--espacio-lg);
-  height: calc(100vh - 60px); /* Full height minus navbar */
+  height: calc(100vh - 60px);
   overflow-y: auto;
   transition: all var(--transicion-normal);
+  z-index: 20;
 }
 
 .sidebar:hover {

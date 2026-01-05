@@ -1,8 +1,10 @@
 /* ===== NAVBAR ===== */
 .navbar {
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: var(--z-sticky);
+  left: 0;
+  right: 0;
+  z-index: 30;
   background: var(--fondo-panel);
   border-bottom: 1px solid var(--borde-sutil);
   box-shadow: var(--sombra-sm);
