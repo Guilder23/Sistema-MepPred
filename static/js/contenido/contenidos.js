@@ -61,6 +61,11 @@ function mostrarModal(overlayId) {
     if (overlay) {
         overlay.classList.add('active');
         document.body.style.overflow = 'hidden';
+        
+        // Cargar materias al abrir modal de crear o editar
+        if (overlayId === 'modalCrearOverlay' || overlayId === 'modalEditarOverlay') {
+            cargarMaterias();
+        }
     }
 }
 
@@ -72,8 +77,43 @@ function ocultarModal(overlayId) {
     }
 }
 
+// Cargar materias desde la API
+function cargarMaterias() {
+    fetch('/materias/api/materias/')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const selectCrear = document.getElementById('crearMateria');
+                const selectEditar = document.getElementById('editarMateria');
+                
+                const options = data.data.map(m => 
+                    `<option value="${m.nombre}">${m.nombre}</option>`
+                ).join('');
+                
+                if (selectCrear) {
+                    selectCrear.innerHTML = '<option value="">Seleccione una materia</option>' + options;
+                }
+                
+                if (selectEditar) {
+                    // No sobreescribir si ya tiene un valor seleccionado
+                    const valorActual = selectEditar.value;
+                    selectEditar.innerHTML = '<option value="">Seleccione una materia</option>' + options;
+                    if (valorActual) {
+                        selectEditar.value = valorActual;
+                    }
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error al cargar materias:', error);
+        });
+}
+
 // Cerrar modal al hacer click en el overlay
 document.addEventListener('DOMContentLoaded', function() {
+    // Cargar materias al iniciar la página
+    cargarMaterias();
+    
     document.querySelectorAll('.modal-overlay').forEach(overlay => {
         overlay.addEventListener('click', function(e) {
             if (e.target === this) {
