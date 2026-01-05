@@ -60,7 +60,6 @@ function eliminarMateria() {
         }
     })
     .catch(error => {
-        console.error('Error:', error);
         mostrarMensaje('Error', 'Error al eliminar la materia', 'error');
     })
     .finally(() => {

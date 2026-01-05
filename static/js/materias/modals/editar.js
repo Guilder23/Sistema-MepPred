@@ -84,7 +84,6 @@ function actualizarMateria() {
         }
     })
     .catch(error => {
-        console.error('Error:', error);
         mostrarMensaje('Error', 'Error al actualizar la materia', 'error');
     })
     .finally(() => {

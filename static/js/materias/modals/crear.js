@@ -83,7 +83,6 @@ function guardarMateria() {
         }
     })
     .catch(error => {
-        console.error('Error:', error);
         mostrarMensaje('Error', 'Error al crear la materia', 'error');
     })
     .finally(() => {
