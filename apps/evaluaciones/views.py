@@ -26,6 +26,25 @@ def examenes_disponibles(request):
     return render(request, 'evaluaciones/estudiante/examenes_disponibles.html')
 
 
+@login_required
+def resolver_examen(request, examen_id):
+    """Vista para resolver un examen específico"""
+    # Solo estudiantes premium (no admins)
+    if not (tiene_suscripcion_activa(request.user) and not request.user.is_staff):
+        return render(request, '404.html', status=403)
+    
+    # Verificar que el examen existe y está activo
+    examen = get_object_or_404(Examen, id=examen_id, activo=True)
+    
+    # Verificar acceso premium si es necesario
+    if examen.es_premium and not tiene_suscripcion_activa(request.user):
+        return render(request, '404.html', status=403)
+    
+    return render(request, 'evaluaciones/estudiante/resolver_examen.html', {
+        'examen_id': examen_id
+    })
+
+
 @require_http_methods(["GET"])
 @login_required
 def obtener_examenes(request):
@@ -70,8 +89,80 @@ def obtener_examenes(request):
 
 @require_http_methods(["GET"])
 @login_required
+def obtener_examen_estudiante(request, examen_id):
+    """API: Obtener un examen para que un estudiante lo resuelva (sin respuestas correctas)"""
+    try:
+        examen = get_object_or_404(Examen, id=examen_id, activo=True)
+        
+        # Verificar acceso premium
+        if examen.es_premium and not request.user.is_staff:
+            if not tiene_suscripcion_activa(request.user):
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Este examen es premium. Necesitas una suscripción activa para acceder.',
+                    'premium_required': True
+                }, status=403)
+        
+        # Obtener preguntas con sus enunciados y opciones (sin mostrar respuestas correctas)
+        preguntas_list = []
+        for pregunta in examen.preguntas.all().order_by('orden'):
+            enunciados_list = [
+                {
+                    'id': enunciado.id,
+                    'numero': enunciado.numero,
+                    'texto': enunciado.texto,
+                }
+                for enunciado in pregunta.enunciados.all().order_by('numero')
+            ]
+            
+            opciones_list = [
+                {
+                    'id': opcion.id,
+                    'letra': opcion.letra,
+                    'descripcion': opcion.descripcion,
+                }
+                for opcion in pregunta.opciones.all().order_by('letra')
+            ]
+            
+            preguntas_list.append({
+                'id': pregunta.id,
+                'texto': pregunta.texto,
+                'orden': pregunta.orden,
+                'enunciados': enunciados_list,
+                'opciones': opciones_list
+            })
+        
+        return JsonResponse({
+            'success': True,
+            'examen': {
+                'id': examen.id,
+                'titulo': examen.titulo,
+                'descripcion': examen.descripcion,
+                'materia_nombre': examen.materia.nombre,
+                'duracion_minutos': examen.duracion_minutos,
+                'total_preguntas': len(preguntas_list),
+                'preguntas': preguntas_list,
+            }
+        })
+    except Examen.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'error': 'El examen no existe o no está activo.'
+        }, status=404)
+    except Exception as e:
+        import traceback
+        print(f"Error en obtener_examen_estudiante: {str(e)}")
+        print(traceback.format_exc())
+        return JsonResponse({
+            'success': False,
+            'error': f'Error del servidor: {str(e)}'
+        }, status=500)
+
+
+@require_http_methods(["GET"])
+@login_required
 def obtener_examen(request, examen_id):
-    """API: Obtener un examen específico con sus preguntas"""
+    """API: Obtener un examen específico con sus preguntas (para admin)"""
     try:
         examen = get_object_or_404(Examen, id=examen_id)
         
@@ -308,3 +399,123 @@ def obtener_materias_select(request):
             'success': False,
             'error': str(e)
         })
+
+
+@require_http_methods(["POST"])
+@login_required
+def calificar_examen(request, examen_id):
+    """API: Calificar un examen completado por un estudiante"""
+    try:
+        examen = get_object_or_404(Examen, id=examen_id)
+        
+        # Verificar acceso
+        if examen.es_premium and not request.user.is_staff:
+            if not tiene_suscripcion_activa(request.user):
+                return JsonResponse({
+                    'success': False,
+                    'error': 'No tienes acceso a este examen'
+                }, status=403)
+        
+        data = json.loads(request.body)
+        respuestas = data.get('respuestas', {})  # {pregunta_id: {enunciado_id: respuesta, ...}}
+        
+        # Calcular calificación
+        total_preguntas = examen.preguntas.count()
+        preguntas_correctas = 0
+        resultados_detallados = []
+        
+        for pregunta in examen.preguntas.all():
+            pregunta_id = str(pregunta.id)
+            respuestas_pregunta = respuestas.get(pregunta_id, {})
+            
+            # Verificar enunciados
+            enunciados_correctos = 0
+            total_enunciados = pregunta.enunciados.count()
+            
+            detalles_enunciados = []
+            for enunciado in pregunta.enunciados.all():
+                enunciado_id = str(enunciado.id)
+                respuesta_estudiante = respuestas_pregunta.get(enunciado_id)
+                
+                # Convertir respuesta a booleano
+                if respuesta_estudiante == 'V':
+                    respuesta_bool = True
+                elif respuesta_estudiante == 'F':
+                    respuesta_bool = False
+                else:
+                    respuesta_bool = None
+                
+                correcto = respuesta_bool == enunciado.es_verdadero
+                if correcto:
+                    enunciados_correctos += 1
+                
+                detalles_enunciados.append({
+                    'id': enunciado.id,
+                    'numero': enunciado.numero,
+                    'texto': enunciado.texto,
+                    'respuesta_correcta': 'V' if enunciado.es_verdadero else 'F',
+                    'respuesta_estudiante': respuesta_estudiante,
+                    'correcto': correcto
+                })
+            
+            # Verificar opciones
+            opcion_seleccionada_id = respuestas_pregunta.get('opcion')
+            opcion_correcta = None
+            opcion_seleccionada = None
+            
+            detalles_opciones = []
+            for opcion in pregunta.opciones.all():
+                if opcion.es_correcta:
+                    opcion_correcta = opcion.letra
+                if str(opcion.id) == str(opcion_seleccionada_id):
+                    opcion_seleccionada = opcion.letra
+                
+                detalles_opciones.append({
+                    'id': opcion.id,
+                    'letra': opcion.letra,
+                    'descripcion': opcion.descripcion,
+                    'es_correcta': opcion.es_correcta,
+                    'seleccionada': str(opcion.id) == str(opcion_seleccionada_id)
+                })
+            
+            # La pregunta es correcta si todos los enunciados están bien Y la opción es correcta
+            pregunta_correcta = (
+                enunciados_correctos == total_enunciados and 
+                opcion_seleccionada == opcion_correcta
+            )
+            
+            if pregunta_correcta:
+                preguntas_correctas += 1
+            
+            resultados_detallados.append({
+                'id': pregunta.id,
+                'orden': pregunta.orden,
+                'texto': pregunta.texto,
+                'correcta': pregunta_correcta,
+                'enunciados': detalles_enunciados,
+                'opciones': detalles_opciones,
+                'opcion_correcta': opcion_correcta,
+                'opcion_seleccionada': opcion_seleccionada
+            })
+        
+        # Calcular porcentaje
+        porcentaje = (preguntas_correctas / total_preguntas * 100) if total_preguntas > 0 else 0
+        aprobado = porcentaje >= 60  # 60% para aprobar
+        
+        return JsonResponse({
+            'success': True,
+            'calificacion': {
+                'total_preguntas': total_preguntas,
+                'preguntas_correctas': preguntas_correctas,
+                'preguntas_incorrectas': total_preguntas - preguntas_correctas,
+                'porcentaje': round(porcentaje, 2),
+                'aprobado': aprobado,
+                'nota': round(porcentaje / 5, 2),  # Nota sobre 20
+            },
+            'resultados': resultados_detallados
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=400)

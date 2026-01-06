@@ -193,9 +193,7 @@ function filtrarExamenes() {
 // Resolver examen
 function resolverExamen(examenId) {
     // Redirigir a la página de resolución del examen
-    // Esta vista debe ser creada en el futuro
-    alert(`Función de resolver examen ${examenId} será implementada próximamente`);
-    // window.location.href = `/examenes/resolver/${examenId}/`;
+    window.location.href = `/examenes/resolver/${examenId}/`;
 }
 
 // Mostrar mensaje cuando no hay exámenes

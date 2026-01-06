@@ -1,0 +1,98 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block titulo %}Resolver Examen{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/evaluaciones/estudiante/resolver_examen.css' %}">
+{% endblock %}
+
+{% block contenido %}
+<div class="examen-container">
+    <!-- Header con información del examen -->
+    <header class="examen-header">
+        <div class="header-info">
+            <h1 id="examenTitulo">Cargando...</h1>
+            <p id="examenMateria" class="materia-nombre"></p>
+        </div>
+        <div class="header-controles">
+            <div class="timer" id="timer">
+                <i class="fas fa-clock"></i>
+                <span id="tiempoRestante">00:00</span>
+            </div>
+            <button class="btn-finalizar" onclick="confirmarFinalizarExamen()">
+                <i class="fas fa-check"></i> Finalizar Examen
+            </button>
+        </div>
+    </header>
+
+    <!-- Barra de progreso -->
+    <div class="progreso-container">
+        <div class="progreso-info">
+            <span>Progreso: <strong id="progresoTexto">0/0</strong></span>
+        </div>
+        <div class="progreso-barra">
+            <div class="progreso-fill" id="progresoFill"></div>
+        </div>
+    </div>
+
+    <!-- Contenedor de preguntas -->
+    <div class="preguntas-wrapper" id="preguntasWrapper">
+        <div class="loading-examen">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Cargando examen...</p>
+        </div>
+    </div>
+
+    <!-- Navegación entre preguntas -->
+    <div class="navegacion-preguntas" id="navegacionPreguntas" style="display: none;">
+        <button class="btn-nav btn-anterior" onclick="preguntaAnterior()" id="btnAnterior">
+            <i class="fas fa-chevron-left"></i> Anterior
+        </button>
+        <div class="indicadores-preguntas" id="indicadoresPreguntas">
+            <!-- Se llena dinámicamente -->
+        </div>
+        <button class="btn-nav btn-siguiente" onclick="preguntaSiguiente()" id="btnSiguiente">
+            Siguiente <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+</div>
+
+<!-- Modal de confirmación -->
+<div class="modal" id="modalConfirmar">
+    <div class="modal-contenido">
+        <h2>¿Finalizar Examen?</h2>
+        <p>¿Estás seguro de que deseas finalizar el examen? No podrás modificar tus respuestas después.</p>
+        <div class="modal-botones">
+            <button class="btn-cancelar" onclick="cerrarModalConfirmar()">Cancelar</button>
+            <button class="btn-confirmar" onclick="finalizarExamen()">Sí, Finalizar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de resultados -->
+<div class="modal" id="modalResultados">
+    <div class="modal-contenido modal-resultados">
+        <div class="resultado-header">
+            <h2>Resultados del Examen</h2>
+        </div>
+        <div class="resultado-calificacion" id="resultadoCalificacion">
+            <!-- Se llena dinámicamente -->
+        </div>
+        <div class="resultado-detalles" id="resultadoDetalles">
+            <!-- Se llena dinámicamente -->
+        </div>
+        <div class="modal-botones">
+            <button class="btn-volver-examenes" onclick="window.location.href='/examenes/disponibles/'">
+                Volver a Exámenes
+            </button>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" id="examenId" value="{{ examen_id }}">
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/evaluaciones/estudiante/resolver_examen.js' %}"></script>
+{% endblock %}
