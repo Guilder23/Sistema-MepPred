@@ -5,7 +5,7 @@ from django.template.loader import render_to_string
 from django.views.decorators.http import require_http_methods
 from django.utils import timezone
 from .models import MazoPremium, FlashcardPremium
-
+from apps.suscripciones.decorators import tiene_suscripcion_activa
 
 
 def _es_admin(usuario) -> bool:
@@ -14,7 +14,7 @@ def _es_admin(usuario) -> bool:
 
 @login_required
 def dashboard(request):
-    """Panel de gestión de flashcards premium."""
+    """Panel de gestión de flashcards premium (solo admin)."""
     if not _es_admin(request.user):
         return render(request, '404.html', status=403)
 
@@ -24,6 +24,16 @@ def dashboard(request):
         'flashcards_premium/flashcards_premium.html',
         {'mazos_premium': mazos_premium},
     )
+
+
+@login_required
+def modo_estudio(request):
+    """Vista de estudio de flashcards premium para estudiantes con suscripción activa."""
+    # Solo estudiantes premium (no admins)
+    if not (tiene_suscripcion_activa(request.user) and not request.user.is_staff):
+        return render(request, '404.html', status=403)
+    
+    return render(request, 'flashcards_premium/estudiante/modo_estudio.html')
 
 
 @login_required
@@ -46,6 +56,33 @@ def api_listar_mazos(request):
                 'tarjetas_count': mazo.contar_tarjetas(),
                 'tarjetas': tarjetas,
                 'created_at': mazo.created_at.strftime('%d/%m/%Y %H:%M'),
+            }
+        )
+
+    return JsonResponse({'success': True, 'mazos': mazos_data})
+
+
+@login_required
+@require_http_methods(["GET"])
+def api_mazos_estudiante(request):
+    """API para estudiantes premium que devuelve todos los mazos con sus flashcards."""
+    # Verificar que el usuario tenga suscripción activa
+    if not tiene_suscripcion_activa(request.user):
+        return JsonResponse({'error': 'Necesitas una suscripción activa'}, status=403)
+    
+    mazos = MazoPremium.objects.all()
+    mazos_data = []
+    for mazo in mazos:
+        tarjetas = list(
+            mazo.tarjetas.all().values('id', 'pregunta', 'respuesta', 'categoria')
+        )
+        mazos_data.append(
+            {
+                'id': mazo.id,
+                'nombre': mazo.nombre,
+                'descripcion': mazo.descripcion,
+                'tarjetas_count': mazo.contar_tarjetas(),
+                'tarjetas': tarjetas,
             }
         )
 

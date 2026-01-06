@@ -12,8 +12,18 @@ from apps.suscripciones.decorators import tiene_suscripcion_activa
 
 @staff_member_required
 def lista_examenes(request):
-    """Vista para mostrar la página de gestión de exámenes"""
+    """Vista para mostrar la página de gestión de exámenes (solo admin)"""
     return render(request, 'evaluaciones/examenes.html')
+
+
+@login_required
+def examenes_disponibles(request):
+    """Vista de exámenes disponibles para estudiantes premium"""
+    # Solo estudiantes premium (no admins)
+    if not (tiene_suscripcion_activa(request.user) and not request.user.is_staff):
+        return render(request, '404.html', status=403)
+    
+    return render(request, 'evaluaciones/estudiante/examenes_disponibles.html')
 
 
 @require_http_methods(["GET"])
