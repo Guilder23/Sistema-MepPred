@@ -1,0 +1,94 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block titulo %}Mi Suscripción - MeetWin{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/suscripciones/estudiante/suscripcion.css' %}">
+{% endblock %}
+
+{% block contenido %}
+<div class="sub-container">
+    <!-- Panel principal - siempre visible -->
+    <div class="sub-card">
+        <div class="card-header">
+            <h1>Suscripción Premium</h1>
+            <p>Accede a todo el contenido exclusivo</p>
+        </div>
+
+        <!-- Estado compacto dentro del card -->
+        <div class="status-alert" id="estadoSuscripcion" style="display: none;">
+            <div class="alert-icon" id="estadoIcon"></div>
+            <div class="alert-content">
+                <h4 id="estadoTitulo"></h4>
+                <p id="estadoDescripcion"></p>
+                <small id="estadoFecha"></small>
+            </div>
+        </div>
+
+        <!-- Formulario de suscripción - se oculta cuando tiene suscripción activa/pendiente -->
+        <div class="card-content" id="formContainer">
+            <!-- Beneficios compactos -->
+            <div class="benefits">
+                <h3>Beneficios Premium</h3>
+                <div class="benefits-grid">
+                    <div class="benefit-item">
+                        <span class="check">✓</span>
+                        <span>Exámenes premium</span>
+                    </div>
+                    <div class="benefit-item">
+                        <span class="check">✓</span>
+                        <span>Flashcards ilimitadas</span>
+                    </div>
+                    <div class="benefit-item">
+                        <span class="check">✓</span>
+                        <span>Todo el contenido</span>
+                    </div>
+                    <div class="benefit-item">
+                        <span class="check">✓</span>
+                        <span>Sin límites</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pago -->
+            <div class="payment-section">
+                <div class="qr-wrapper" id="qrContenedor">
+                    <div class="qr-box">
+                        <img id="qrImagen" src="" alt="QR">
+                        <p id="qrDescripcion" class="qr-text"></p>
+                    </div>
+                </div>
+
+                <form id="formSuscripcion" class="upload-form">
+                    <div class="upload-area">
+                        <label>
+                            <input type="file" id="comprobante" accept="image/*,.pdf" required hidden>
+                            <span class="upload-label">
+                                <span>Seleccionar comprobante</span>
+                            </span>
+                        </label>
+                        <span class="upload-hint">JPG, PNG, PDF (máx. 5MB)</span>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="btnEnviar">
+                        <span class="btn-texto">Enviar Solicitud</span>
+                        <span class="btn-spinner" style="display: none;">
+                            <span class="spinner"></span>Enviando...
+                        </span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="loader" id="mensajeCarga" style="display: none;">
+        <div class="spinner-grande"></div>
+        <p>Cargando...</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/suscripciones/estudiante/suscripcion.js' %}"></script>
+{% endblock %}

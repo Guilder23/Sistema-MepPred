@@ -1,0 +1,107 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block titulo %}Verificación de Pagos - MeetWin{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/suscripciones/admin/verificacion.css' %}">
+{% endblock %}
+
+{% block contenido %}
+<div class="verificacion-contenedor">
+    <div class="verificacion-header">
+        <h1>Verificación de Pagos</h1>
+        <p class="verificacion-subtitulo">Aprobar o rechazar solicitudes de suscripción</p>
+    </div>
+
+    <!-- Filtros -->
+    <div class="verificacion-filtros">
+        <button class="filtro-btn filtro-activo" data-estado="">
+            Todas
+        </button>
+        <button class="filtro-btn" data-estado="PENDIENTE">
+            Pendientes
+            <span class="badge" id="badgePendientes">0</span>
+        </button>
+        <button class="filtro-btn" data-estado="APROBADO">
+            Aprobadas
+        </button>
+        <button class="filtro-btn" data-estado="RECHAZADO">
+            Rechazadas
+        </button>
+        <button class="filtro-btn" data-estado="VENCIDO">
+            Vencidas
+        </button>
+    </div>
+
+    <!-- Lista de suscripciones -->
+    <div class="suscripciones-lista" id="listaSuscripciones">
+        <!-- Las tarjetas se cargan dinámicamente -->
+    </div>
+
+    <!-- Mensaje vacío -->
+    <div class="mensaje-vacio" id="mensajeVacio" style="display: none;">
+        <i>📋</i>
+        <p>No hay suscripciones para mostrar</p>
+    </div>
+
+    <!-- Spinner de carga -->
+    <div class="mensaje-carga" id="mensajeCarga" style="display: none;">
+        <div class="spinner-grande"></div>
+        <p>Cargando suscripciones...</p>
+    </div>
+</div>
+
+<!-- Modal de comprobante -->
+<div class="verificacion-modal" id="modalComprobante" style="display: none;">
+    <div class="verificacion-modal-contenido">
+        <div class="verificacion-modal-header">
+            <h2>Comprobante de Pago</h2>
+            <button class="verificacion-modal-cerrar" id="cerrarModalComprobante">✕</button>
+        </div>
+        <div class="verificacion-modal-body">
+            <img id="imagenComprobante" src="" alt="Comprobante">
+        </div>
+    </div>
+</div>
+
+<!-- Modal de rechazo -->
+<div class="verificacion-modal" id="modalRechazo" style="display: none;">
+    <div class="verificacion-modal-contenido">
+        <div class="verificacion-modal-header">
+            <h2>Rechazar Suscripción</h2>
+            <button class="verificacion-modal-cerrar" id="cerrarModalRechazo">✕</button>
+        </div>
+        <div class="verificacion-modal-body">
+            <form id="formRechazo">
+                <input type="hidden" id="suscripcionRechazarId">
+                <div class="form-grupo">
+                    <label for="motivoRechazo">Motivo del Rechazo</label>
+                    <textarea 
+                        id="motivoRechazo" 
+                        rows="4" 
+                        placeholder="Explica por qué se rechaza esta suscripción..."
+                        required
+                    ></textarea>
+                </div>
+                <div class="verificacion-modal-acciones">
+                    <button type="button" class="btn-cancelar" id="cancelarRechazo">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn-rechazar-confirmar">
+                        <span class="btn-texto">Rechazar Suscripción</span>
+                        <span class="btn-spinner" style="display: none;">
+                            <span class="spinner"></span>
+                            Rechazando...
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/suscripciones/admin/verificacion.js' %}"></script>
+{% endblock %}

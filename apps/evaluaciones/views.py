@@ -2,10 +2,12 @@ from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import login_required
 from django.db import transaction
 import json
 from .models import Examen, Pregunta, Enunciado, Opcion
 from apps.materias.models import Materia
+from apps.suscripciones.decorators import tiene_suscripcion_activa
 
 
 @staff_member_required
@@ -15,13 +17,20 @@ def lista_examenes(request):
 
 
 @require_http_methods(["GET"])
+@login_required
 def obtener_examenes(request):
-    """API: Obtener todos los exámenes"""
+    """API: Obtener todos los exámenes (filtra premium si no tiene suscripción)"""
     try:
         examenes = Examen.objects.select_related('materia').all()
         
+        # Si no es admin, verificar acceso premium
+        tiene_premium = request.user.is_staff or tiene_suscripcion_activa(request.user)
+        
         examenes_list = []
         for examen in examenes:
+            # Si es premium y no tiene acceso, marcar como bloqueado
+            bloqueado = examen.es_premium and not tiene_premium
+            
             examenes_list.append({
                 'id': examen.id,
                 'titulo': examen.titulo,
@@ -30,6 +39,7 @@ def obtener_examenes(request):
                 'materia_nombre': examen.materia.nombre,
                 'duracion_minutos': examen.duracion_minutos,
                 'es_premium': examen.es_premium,
+                'bloqueado': bloqueado,
                 'activo': examen.activo,
                 'total_preguntas': examen.preguntas.count(),
                 'created_at': examen.created_at.strftime('%d/%m/%Y %H:%M'),
@@ -38,7 +48,8 @@ def obtener_examenes(request):
         
         return JsonResponse({
             'success': True,
-            'data': examenes_list
+            'data': examenes_list,
+            'tiene_premium': tiene_premium
         })
     except Exception as e:
         return JsonResponse({
@@ -48,10 +59,20 @@ def obtener_examenes(request):
 
 
 @require_http_methods(["GET"])
+@login_required
 def obtener_examen(request, examen_id):
     """API: Obtener un examen específico con sus preguntas"""
     try:
         examen = get_object_or_404(Examen, id=examen_id)
+        
+        # Verificar acceso premium
+        if examen.es_premium and not request.user.is_staff:
+            if not tiene_suscripcion_activa(request.user):
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Este examen es premium. Necesitas una suscripción activa para acceder.',
+                    'premium_required': True
+                }, status=403)
         
         # Obtener preguntas con sus enunciados y opciones
         preguntas_list = []

@@ -28,6 +28,7 @@ urlpatterns = [
     path('flashcards/', include('apps.flashcards.urls')),
     path('flashcards-premium/', include('apps.flashcards_premium.urls')),
     path('contenido/', include('apps.contenido.urls')),
+    path('suscripciones/', include('apps.suscripciones.urls')),
 ]
 
 if settings.DEBUG:
