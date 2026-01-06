@@ -79,7 +79,9 @@ function mostrarFlashcard() {
     const card = document.getElementById('flashcardCard');
     card.classList.remove('volteada');
     
+    // Actualizar ambas caras
     document.getElementById('flashcardCategoria').textContent = flashcardActual.categoria || flashcardActual.mazo_nombre;
+    document.getElementById('flashcardCategoriaBack').textContent = flashcardActual.categoria || flashcardActual.mazo_nombre;
     document.getElementById('flashcardPregunta').textContent = flashcardActual.pregunta;
     document.getElementById('flashcardRespuesta').textContent = flashcardActual.respuesta;
     
@@ -89,7 +91,7 @@ function mostrarFlashcard() {
     document.getElementById('sinFlashcards').style.display = 'none';
 }
 
-// Voltear tarjeta
+// Voltear tarjeta con efecto 3D
 function voltearTarjeta() {
     const card = document.getElementById('flashcardCard');
     volteada = !volteada;

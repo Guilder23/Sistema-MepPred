@@ -36,13 +36,25 @@
 
     <!-- Tarjeta de Flashcard -->
     <section class="flashcard-section">
-        <div class="flashcard-card" id="flashcardCard">
-            <div class="flashcard-categoria" id="flashcardCategoria">asdaf</div>
-            <div class="flashcard-contenido">
-                <div class="flashcard-pregunta" id="flashcardPregunta">dfdgdfh</div>
-                <div class="flashcard-respuesta" id="flashcardRespuesta" style="display: none;"></div>
+        <div class="flashcard-wrapper" id="flashcardCard">
+            <div class="flashcard-inner">
+                <!-- Cara frontal -->
+                <div class="flashcard-card flashcard-front">
+                    <div class="flashcard-categoria" id="flashcardCategoria">asdaf</div>
+                    <div class="flashcard-contenido">
+                        <div class="flashcard-pregunta" id="flashcardPregunta">dfdgdfh</div>
+                    </div>
+                    <p class="flashcard-instruccion">Haz clic para voltear la tarjeta</p>
+                </div>
+                <!-- Cara trasera -->
+                <div class="flashcard-card flashcard-back">
+                    <div class="flashcard-categoria" id="flashcardCategoriaBack">asdaf</div>
+                    <div class="flashcard-contenido">
+                        <div class="flashcard-respuesta" id="flashcardRespuesta"></div>
+                    </div>
+                    <p class="flashcard-instruccion">Haz clic para ver la pregunta</p>
+                </div>
             </div>
-            <p class="flashcard-instruccion">Haz clic para voltear la tarjeta</p>
         </div>
     </section>
 

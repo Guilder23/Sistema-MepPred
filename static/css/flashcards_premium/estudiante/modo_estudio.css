@@ -68,34 +68,55 @@
     margin-bottom: 2rem;
     display: flex;
     justify-content: center;
+    perspective: 1500px;
+}
+
+/* Wrapper para flip 3D */
+.flashcard-wrapper {
+    max-width: 700px;
+    width: 100%;
+    min-height: 400px;
+    cursor: pointer;
+}
+
+.flashcard-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 400px;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+.flashcard-wrapper.volteada .flashcard-inner {
+    transform: rotateY(180deg);
 }
 
 .flashcard-card {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    min-height: 400px;
+    backface-visibility: hidden;
     background: white;
     border-radius: 16px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     padding: 3rem;
-    max-width: 700px;
-    width: 100%;
-    min-height: 400px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    cursor: pointer;
-    transition: transform 0.3s;
-    position: relative;
 }
 
 .flashcard-card:hover {
-    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
 }
 
-.flashcard-card.volteada .flashcard-pregunta {
-    display: none;
+.flashcard-front {
+    z-index: 2;
 }
 
-.flashcard-card.volteada .flashcard-respuesta {
-    display: block !important;
+.flashcard-back {
+    transform: rotateY(180deg);
 }
 
 .flashcard-categoria {
