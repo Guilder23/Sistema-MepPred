@@ -1,5 +1,8 @@
 from django.db import models
 from apps.materias.models import Materia
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class Examen(models.Model):
@@ -138,3 +141,63 @@ class Opcion(models.Model):
     
     def __str__(self):
         return f"Opción {self.letra} - {self.pregunta}"
+
+
+class IntentoExamen(models.Model):
+    """Modelo para guardar los intentos de examen de los estudiantes"""
+    
+    estudiante = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='intentos_examenes',
+        verbose_name="Estudiante"
+    )
+    examen = models.ForeignKey(
+        Examen,
+        on_delete=models.CASCADE,
+        related_name='intentos',
+        verbose_name="Examen"
+    )
+    numero_intento = models.IntegerField(
+        verbose_name="Número de Intento"
+    )
+    total_preguntas = models.IntegerField(
+        verbose_name="Total de Preguntas"
+    )
+    preguntas_correctas = models.IntegerField(
+        verbose_name="Preguntas Correctas"
+    )
+    preguntas_incorrectas = models.IntegerField(
+        verbose_name="Preguntas Incorrectas"
+    )
+    porcentaje = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        verbose_name="Porcentaje"
+    )
+    nota = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        verbose_name="Nota sobre 20"
+    )
+    aprobado = models.BooleanField(
+        verbose_name="Aprobado"
+    )
+    tiempo_empleado = models.IntegerField(
+        null=True,
+        blank=True,
+        verbose_name="Tiempo Empleado (segundos)"
+    )
+    fecha_intento = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Fecha del Intento"
+    )
+    
+    class Meta:
+        verbose_name = "Intento de Examen"
+        verbose_name_plural = "Intentos de Exámenes"
+        ordering = ['-fecha_intento']
+        unique_together = ['estudiante', 'examen', 'numero_intento']
+    
+    def __str__(self):
+        return f"{self.estudiante.username} - {self.examen.titulo} - Intento {self.numero_intento}"

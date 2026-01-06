@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Examen, Pregunta, Enunciado, Opcion
+from .models import Examen, Pregunta, Enunciado, Opcion, IntentoExamen
 
 
 class EnunciadoInline(admin.TabularInline):
@@ -47,3 +47,12 @@ class EnunciadoAdmin(admin.ModelAdmin):
 class OpcionAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'pregunta', 'letra', 'es_correcta')
     list_filter = ('es_correcta',)
+
+
+@admin.register(IntentoExamen)
+class IntentoExamenAdmin(admin.ModelAdmin):
+    list_display = ('estudiante', 'examen', 'numero_intento', 'nota', 'porcentaje', 'aprobado', 'fecha_intento')
+    list_filter = ('aprobado', 'examen', 'fecha_intento')
+    search_fields = ('estudiante__username', 'estudiante__email', 'examen__titulo')
+    readonly_fields = ('fecha_intento',)
+    ordering = ('-fecha_intento',)

@@ -1,5 +1,6 @@
 // Resolver Examen - Estudiantes
 let examen = null;
+let intentosData = null;
 let preguntaActualIndex = 0;
 let respuestas = {}; // {pregunta_id: {enunciado_id: 'V'/'F', opcion: opcion_id}}
 let tiempoInicio = null;
@@ -33,6 +34,20 @@ async function cargarExamen(examenId) {
                 return;
             }
             
+            // Guardar datos de intentos
+            intentosData = data.intentos;
+            
+            // Verificar si puede intentar
+            if (!intentosData.puede_intentar) {
+                mostrarLimiteIntentosAlcanzado();
+                return;
+            }
+            
+            // Mostrar historial de intentos si existen
+            if (intentosData.realizados && intentosData.realizados.length > 0) {
+                mostrarHistorialIntentos();
+            }
+            
             examen = data.examen;
             inicializarExamen();
         } else {
@@ -44,6 +59,75 @@ async function cargarExamen(examenId) {
         alert('Error de conexión al cargar el examen. Por favor intenta nuevamente.');
         window.location.href = '/examenes/disponibles/';
     }
+}
+
+// Mostrar historial de intentos previos
+function mostrarHistorialIntentos() {
+    const intentosLista = document.getElementById('intentosLista');
+    const intentosInfo = document.getElementById('intentosInfo');
+    
+    let html = '';
+    intentosData.realizados.forEach((intento, index) => {
+        const aprobadoClass = intento.aprobado ? 'aprobado' : 'reprobado';
+        const aprobadoTexto = intento.aprobado ? 'Aprobado' : 'Reprobado';
+        const aprobadoIcono = intento.aprobado ? 'fa-check-circle' : 'fa-times-circle';
+        
+        html += `
+            <div class="intento-card ${aprobadoClass}">
+                <div class="intento-numero">
+                    <i class="fas ${aprobadoIcono}"></i>
+                    Intento ${intento.numero}
+                </div>
+                <div class="intento-detalles">
+                    <div class="intento-nota">
+                        <span class="nota-valor">${intento.nota}/20</span>
+                        <span class="nota-porcentaje">(${intento.porcentaje}%)</span>
+                    </div>
+                    <div class="intento-estado">${aprobadoTexto}</div>
+                    <div class="intento-fecha">${intento.fecha}</div>
+                </div>
+            </div>
+        `;
+    });
+    
+    intentosLista.innerHTML = html;
+    
+    intentosInfo.innerHTML = `
+        <div class="intentos-resumen">
+            <p><strong>Intentos realizados:</strong> ${intentosData.total}/3</p>
+            <p><strong>Intentos restantes:</strong> ${intentosData.intentos_restantes}</p>
+        </div>
+    `;
+    
+    document.getElementById('intentosHistorial').style.display = 'block';
+}
+
+// Mostrar mensaje cuando se alcanza el límite de intentos
+function mostrarLimiteIntentosAlcanzado() {
+    const container = document.querySelector('.examen-container');
+    container.innerHTML = `
+        <div class="limite-alcanzado">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h2>Límite de Intentos Alcanzado</h2>
+            <p>Has completado los 3 intentos permitidos para este examen.</p>
+            
+            <div class="intentos-realizados">
+                <h3>Tus Calificaciones:</h3>
+                ${intentosData.realizados.map((intento, index) => `
+                    <div class="intento-resumen ${intento.aprobado ? 'aprobado' : 'reprobado'}">
+                        <span class="intento-num">Intento ${intento.numero}:</span>
+                        <span class="intento-nota">${intento.nota}/20</span>
+                        <span class="intento-porcentaje">(${intento.porcentaje}%)</span>
+                        <span class="intento-estado">${intento.aprobado ? '✓ Aprobado' : '✗ Reprobado'}</span>
+                    </div>
+                `).join('')}
+            </div>
+            
+            <button class="btn-volver-examenes" onclick="window.location.href='/examenes/disponibles/'">
+                <i class="fas fa-arrow-left"></i> Volver a Exámenes
+            </button>
+        </div>
+    `;
 }
 
 // Inicializar examen
@@ -312,6 +396,9 @@ async function finalizarExamen() {
     cerrarModalConfirmar();
     clearInterval(intervalTimer);
     
+    // Calcular tiempo empleado
+    const tiempoEmpleado = Math.floor((Date.now() - tiempoInicio) / 1000);
+    
     try {
         const response = await fetch(`/examenes/api/estudiante/examen/${examen.id}/calificar/`, {
             method: 'POST',
@@ -320,7 +407,8 @@ async function finalizarExamen() {
                 'X-CSRFToken': getCookie('csrftoken')
             },
             body: JSON.stringify({
-                respuestas: respuestas
+                respuestas: respuestas,
+                tiempo_empleado: tiempoEmpleado
             })
         });
         
@@ -352,6 +440,10 @@ function mostrarResultados(calificacion, resultados) {
                 <div class="nota-final">${calificacion.nota}/20</div>
                 <div class="porcentaje">${calificacion.porcentaje}%</div>
             </div>
+        </div>
+        <div class="intentos-info-resultado">
+            <p><strong>Intento:</strong> ${calificacion.numero_intento} de 3</p>
+            <p><strong>Intentos restantes:</strong> ${calificacion.intentos_restantes}</p>
         </div>
         <div class="estadisticas-resumen">
             <div class="stat-item">

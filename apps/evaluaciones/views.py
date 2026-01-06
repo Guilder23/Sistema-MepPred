@@ -5,7 +5,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 import json
-from .models import Examen, Pregunta, Enunciado, Opcion
+from .models import Examen, Pregunta, Enunciado, Opcion, IntentoExamen
 from apps.materias.models import Materia
 from apps.suscripciones.decorators import tiene_suscripcion_activa
 
@@ -103,6 +103,26 @@ def obtener_examen_estudiante(request, examen_id):
                     'premium_required': True
                 }, status=403)
         
+        # Obtener intentos previos del estudiante
+        intentos_previos = IntentoExamen.objects.filter(
+            estudiante=request.user,
+            examen=examen
+        ).order_by('numero_intento')
+        
+        intentos_data = []
+        for intento in intentos_previos:
+            intentos_data.append({
+                'numero': intento.numero_intento,
+                'nota': float(intento.nota),
+                'porcentaje': float(intento.porcentaje),
+                'aprobado': intento.aprobado,
+                'fecha': intento.fecha_intento.strftime('%d/%m/%Y %H:%M')
+            })
+        
+        # Verificar si ya alcanzó el límite de intentos
+        numero_intentos = intentos_previos.count()
+        puede_intentar = numero_intentos < 3
+        
         # Obtener preguntas con sus enunciados y opciones (sin mostrar respuestas correctas)
         preguntas_list = []
         for pregunta in examen.preguntas.all().order_by('orden'):
@@ -142,6 +162,12 @@ def obtener_examen_estudiante(request, examen_id):
                 'duracion_minutos': examen.duracion_minutos,
                 'total_preguntas': len(preguntas_list),
                 'preguntas': preguntas_list,
+            },
+            'intentos': {
+                'realizados': intentos_data,
+                'total': numero_intentos,
+                'puede_intentar': puede_intentar,
+                'intentos_restantes': 3 - numero_intentos
             }
         })
     except Examen.DoesNotExist:
@@ -501,6 +527,37 @@ def calificar_examen(request, examen_id):
         # Calcular porcentaje
         porcentaje = (preguntas_correctas / total_preguntas * 100) if total_preguntas > 0 else 0
         aprobado = porcentaje >= 60  # 60% para aprobar
+        nota = round(porcentaje / 5, 2)  # Nota sobre 20
+        
+        # Verificar intentos previos
+        intentos_previos = IntentoExamen.objects.filter(
+            estudiante=request.user,
+            examen=examen
+        ).count()
+        
+        # Verificar límite de intentos
+        if intentos_previos >= 3:
+            return JsonResponse({
+                'success': False,
+                'error': 'Ya has alcanzado el límite de 3 intentos para este examen.'
+            }, status=403)
+        
+        # Calcular tiempo empleado si se envió
+        tiempo_empleado = data.get('tiempo_empleado')
+        
+        # Guardar intento
+        intento = IntentoExamen.objects.create(
+            estudiante=request.user,
+            examen=examen,
+            numero_intento=intentos_previos + 1,
+            total_preguntas=total_preguntas,
+            preguntas_correctas=preguntas_correctas,
+            preguntas_incorrectas=total_preguntas - preguntas_correctas,
+            porcentaje=round(porcentaje, 2),
+            nota=nota,
+            aprobado=aprobado,
+            tiempo_empleado=tiempo_empleado
+        )
         
         return JsonResponse({
             'success': True,
@@ -510,7 +567,9 @@ def calificar_examen(request, examen_id):
                 'preguntas_incorrectas': total_preguntas - preguntas_correctas,
                 'porcentaje': round(porcentaje, 2),
                 'aprobado': aprobado,
-                'nota': round(porcentaje / 5, 2),  # Nota sobre 20
+                'nota': nota,
+                'numero_intento': intento.numero_intento,
+                'intentos_restantes': 3 - intento.numero_intento
             },
             'resultados': resultados_detallados
         })
