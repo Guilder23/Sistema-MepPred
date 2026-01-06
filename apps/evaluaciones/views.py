@@ -60,6 +60,24 @@ def obtener_examenes(request):
             # Si es premium y no tiene acceso, marcar como bloqueado
             bloqueado = examen.es_premium and not tiene_premium
             
+            # Obtener intentos del estudiante para este examen
+            intentos_realizados = 0
+            intentos_restantes = 3
+            mejor_nota = None
+            
+            if not request.user.is_staff:
+                intentos = IntentoExamen.objects.filter(
+                    estudiante=request.user,
+                    examen=examen
+                ).order_by('-nota')
+                
+                intentos_realizados = intentos.count()
+                intentos_restantes = max(0, 3 - intentos_realizados)
+                
+                # Obtener la mejor nota si hay intentos
+                if intentos.exists():
+                    mejor_nota = float(intentos.first().nota)
+            
             examenes_list.append({
                 'id': examen.id,
                 'titulo': examen.titulo,
@@ -71,6 +89,9 @@ def obtener_examenes(request):
                 'bloqueado': bloqueado,
                 'activo': examen.activo,
                 'total_preguntas': examen.preguntas.count(),
+                'intentos_realizados': intentos_realizados,
+                'intentos_restantes': intentos_restantes,
+                'mejor_nota': mejor_nota,
                 'created_at': examen.created_at.strftime('%d/%m/%Y %H:%M'),
                 'updated_at': examen.updated_at.strftime('%d/%m/%Y %H:%M')
             })

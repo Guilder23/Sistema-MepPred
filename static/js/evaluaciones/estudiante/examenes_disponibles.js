@@ -109,6 +109,42 @@ function crearTarjetaExamen(examen) {
         ? '<span class="badge badge-activo">Activo</span>' 
         : '<span class="badge badge-inactivo">Inactivo</span>';
     
+    // Información de intentos
+    let intentosInfo = '';
+    let botonTexto = '<i class="fas fa-play"></i> Resolver Examen';
+    let botonDeshabilitado = !examen.activo;
+    
+    if (examen.intentos_realizados > 0) {
+        if (examen.intentos_restantes === 0) {
+            intentosInfo = `
+                <div class="intentos-info sin-intentos">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>Sin intentos restantes</span>
+                    ${examen.mejor_nota !== null ? `<span class="mejor-nota">Mejor nota: ${examen.mejor_nota}/20</span>` : ''}
+                </div>
+            `;
+            botonDeshabilitado = true;
+            botonTexto = '<i class="fas fa-lock"></i> Sin Intentos';
+        } else {
+            intentosInfo = `
+                <div class="intentos-info con-intentos">
+                    <i class="fas fa-redo"></i>
+                    <span>Intentos: ${examen.intentos_realizados}/3</span>
+                    <span class="restantes">${examen.intentos_restantes} restantes</span>
+                    ${examen.mejor_nota !== null ? `<span class="mejor-nota">Mejor: ${examen.mejor_nota}/20</span>` : ''}
+                </div>
+            `;
+            botonTexto = `<i class="fas fa-redo"></i> Reintentar (${examen.intentos_restantes} restantes)`;
+        }
+    } else {
+        intentosInfo = `
+            <div class="intentos-info nuevos-intentos">
+                <i class="fas fa-star"></i>
+                <span>3 intentos disponibles</span>
+            </div>
+        `;
+    }
+    
     return `
         <div class="examen-card" data-examen-id="${examen.id}" data-titulo="${examen.titulo.toLowerCase()}">
             <div class="examen-titulo">${escapeHtml(examen.titulo)}</div>
@@ -125,13 +161,15 @@ function crearTarjetaExamen(examen) {
                 </div>
             </div>
             
+            ${intentosInfo}
+            
             <div class="examen-badges">
                 <span class="badge badge-premium">Premium</span>
                 ${estadoBadge}
             </div>
             
-            <button class="btn-resolver" onclick="resolverExamen(${examen.id})" ${!examen.activo ? 'disabled' : ''}>
-                <i class="fas fa-play"></i> Resolver Examen
+            <button class="btn-resolver" onclick="resolverExamen(${examen.id})" ${botonDeshabilitado ? 'disabled' : ''}>
+                ${botonTexto}
             </button>
         </div>
     `;

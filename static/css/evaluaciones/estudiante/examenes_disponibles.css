@@ -171,6 +171,69 @@
     color: #667eea;
 }
 
+/* Intentos Info */
+.intentos-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.intentos-info i {
+    font-size: 1rem;
+}
+
+.intentos-info.nuevos-intentos {
+    background: #dbeafe;
+    color: #1e40af;
+    border: 1px solid #93c5fd;
+}
+
+.intentos-info.nuevos-intentos i {
+    color: #2563eb;
+}
+
+.intentos-info.con-intentos {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+}
+
+.intentos-info.con-intentos i {
+    color: #d97706;
+}
+
+.intentos-info.sin-intentos {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.intentos-info.sin-intentos i {
+    color: #dc2626;
+}
+
+.intentos-info .restantes {
+    background: rgba(255, 255, 255, 0.5);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    margin-left: auto;
+}
+
+.intentos-info .mejor-nota {
+    background: rgba(255, 255, 255, 0.5);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: auto;
+}
+
 .examen-badges {
     display: flex;
     gap: 0.5rem;
