@@ -1,0 +1,183 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block titulo %}Ranking de Estudiantes - MedPred{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/ranking/ranking.css' %}">
+{% endblock %}
+
+{% block contenido %}
+<div class="ranking-container">
+    <div class="ranking-header">
+        <div class="header-content">
+            <h1 class="ranking-title">Ranking de Estudiantes</h1>
+            <p class="ranking-subtitle">Clasificación según rendimiento académico</p>
+        </div>
+        <div class="header-stats">
+            <div class="stat-item">
+                <span class="stat-value">{{ ranking|length }}</span>
+                <span class="stat-label">Estudiantes</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value">{{ periodo_texto }}</span>
+                <span class="stat-label">Período</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botón Mi Posición -->
+    {% if request.user.is_authenticated %}
+    <div class="ranking-filters">
+        <a href="{% url 'ranking:mi_posicion' %}" class="btn-mi-posicion">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 20px; height: 20px; margin-right: 8px;">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            Ver Mi Posición
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Filtros de período -->
+    <div class="ranking-filters">
+        <div class="filter-group">
+            <label class="filter-label">Filtrar por período:</label>
+            <div class="filter-buttons">
+                <a href="?periodo=dia" class="filter-btn {% if periodo == 'dia' %}active{% endif %}">
+                    Último Día
+                </a>
+                <a href="?periodo=semana" class="filter-btn {% if periodo == 'semana' %}active{% endif %}">
+                    Última Semana
+                </a>
+                <a href="?periodo=mes" class="filter-btn {% if periodo == 'mes' %}active{% endif %}">
+                    Último Mes
+                </a>
+                <a href="?periodo=todo" class="filter-btn {% if periodo == 'todo' %}active{% endif %}">
+                    Todos
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de ranking -->
+    <div class="ranking-table-wrapper">
+        {% if ranking %}
+        <div class="ranking-table-container">
+            <table class="ranking-table">
+                <thead>
+                    <tr>
+                        <th class="col-posicion">Posición</th>
+                        <th class="col-estudiante">Estudiante</th>
+                        <th class="col-promedio">Promedio</th>
+                        <th class="col-examenes">Exámenes</th>
+                        <th class="col-mejor">Mejor Nota</th>
+                        <th class="col-aprobacion">Aprobación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in ranking %}
+                    <tr class="ranking-row {% if item.posicion <= 3 %}top-{{ item.posicion }}{% endif %} {% if request.user.id == item.estudiante__id %}mi-posicion{% endif %}">
+                        <td class="col-posicion">
+                            <div class="position-badge {% if item.posicion <= 3 %}badge-top{% endif %}">
+                                <span class="position-number">{{ item.posicion }}</span>
+                            </div>
+                        </td>
+                        <td class="col-estudiante">
+                            <div class="estudiante-info">
+                                <div class="estudiante-avatar">
+                                    {{ item.estudiante__first_name|first|default:item.estudiante__username|first|upper }}
+                                </div>
+                                <div class="estudiante-details">
+                                    <div class="estudiante-nombre">
+                                        {% if item.estudiante__first_name %}
+                                            {{ item.estudiante__first_name }} {{ item.estudiante__last_name }}
+                                        {% else %}
+                                            {{ item.estudiante__username }}
+                                        {% endif %}
+                                    </div>
+                                    {% if request.user.id == item.estudiante__id %}
+                                        <span class="badge-current">Tú</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                        <td class="col-promedio">
+                            <div class="score-display">
+                                <span class="score-value">{{ item.promedio|floatformat:2 }}</span>
+                                <span class="score-max">/20</span>
+                            </div>
+                        </td>
+                        <td class="col-examenes">
+                            <div class="exams-info">
+                                <span class="exams-total">{{ item.total_examenes }}</span>
+                                <span class="exams-approved">{{ item.total_aprobados }} aprobados</span>
+                            </div>
+                        </td>
+                        <td class="col-mejor">
+                            <div class="best-score">
+                                <span class="best-value">{{ item.mejor_nota|floatformat:2 }}</span>
+                            </div>
+                        </td>
+                        <td class="col-aprobacion">
+                            <div class="approval-container">
+                                <div class="approval-bar">
+                                    <div class="approval-fill" style="--progress: {{ item.tasa_aprobacion|default:0 }}%"></div>
+                                </div>
+                                <span class="approval-text">{{ item.tasa_aprobacion|floatformat:0 }}%</span>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="ranking-empty">
+            <div class="empty-state">
+                <svg class="empty-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 11l3 3L22 4"/>
+                    <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+                </svg>
+                <h3 class="empty-title">No hay datos disponibles</h3>
+                <p class="empty-text">Aún no hay intentos de exámenes en este período.</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Información de usuario -->
+    {% if request.user.is_authenticated and ranking %}
+    <div class="user-stats">
+        {% for item in ranking %}
+            {% if request.user.id == item.estudiante__id %}
+            <div class="user-stats-card">
+                <h3 class="stats-title">Tu Rendimiento</h3>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <span class="stat-label">Posición</span>
+                        <span class="stat-number">#{{ item.posicion }}</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Promedio</span>
+                        <span class="stat-number">{{ item.promedio|floatformat:2 }}</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Exámenes</span>
+                        <span class="stat-number">{{ item.total_examenes }}</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Mejor Nota</span>
+                        <span class="stat-number">{{ item.mejor_nota|floatformat:2 }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/ranking/ranking.js' %}"></script>
+{% endblock %}
