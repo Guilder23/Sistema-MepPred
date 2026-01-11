@@ -29,7 +29,8 @@ class Examen(models.Model):
     )
     es_premium = models.BooleanField(
         default=True,
-        verbose_name="Requiere Suscripción Premium"
+        verbose_name="Requiere Suscripción Premium",
+        help_text="DEPRECATED: Este valor se determina automáticamente por materia.requiere_suscripcion"
     )
     activo = models.BooleanField(
         default=True,

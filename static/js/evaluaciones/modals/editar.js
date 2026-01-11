@@ -47,7 +47,6 @@ function actualizarExamen() {
     const materiaId = document.getElementById('editarMateria').value;
     const descripcion = document.getElementById('editarDescripcion').value.trim();
     const duracion = document.getElementById('editarDuracion').value;
-    const esPremium = document.getElementById('editarEsPremium').checked;
     const activo = document.getElementById('editarActivo').checked;
 
     // Validación
@@ -84,7 +83,6 @@ function actualizarExamen() {
             materia_id: parseInt(materiaId),
             descripcion: descripcion,
             duracion_minutos: parseInt(duracion),
-            es_premium: esPremium,
             activo: activo
         })
     })

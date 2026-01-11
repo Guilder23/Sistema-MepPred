@@ -164,10 +164,6 @@ function abrirModalEditar(id) {
             document.getElementById('editarTitulo').value = examen.titulo;
             document.getElementById('editarDescripcion').value = examen.descripcion || '';
             document.getElementById('editarDuracion').value = examen.duracion_minutos;
-            // Nota: es_premium ahora se determina por materia.requiere_suscripcion
-            if (document.getElementById('editarEsPremium')) {
-                document.getElementById('editarEsPremium').checked = examen.materia_requiere_suscripcion;
-            }
             document.getElementById('editarActivo').checked = examen.activo;
         }
     }

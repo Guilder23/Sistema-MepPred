@@ -46,7 +46,6 @@ function guardarExamen() {
     const materiaId = document.getElementById('crearMateria').value;
     const descripcion = document.getElementById('crearDescripcion').value.trim();
     const duracion = document.getElementById('crearDuracion').value;
-    const esPremium = document.getElementById('crearEsPremium').checked;
     const activo = document.getElementById('crearActivo').checked;
 
     // Validación
@@ -83,7 +82,6 @@ function guardarExamen() {
             materia_id: parseInt(materiaId),
             descripcion: descripcion,
             duracion_minutos: parseInt(duracion),
-            es_premium: esPremium,
             activo: activo,
             preguntas: []
         })
