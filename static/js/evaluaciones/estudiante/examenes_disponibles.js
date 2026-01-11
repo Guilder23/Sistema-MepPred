@@ -1,4 +1,4 @@
-// Exámenes disponibles para estudiantes premium
+// Exámenes disponibles para estudiantes
 let examenes = [];
 let examenesPorMateria = {};
 
@@ -26,8 +26,8 @@ async function cargarExamenes() {
         
         if (data.success) {
             examenes = data.data || [];
-            // Filtrar solo exámenes activos y premium
-            examenes = examenes.filter(ex => ex.activo && ex.es_premium);
+            // Filtrar solo exámenes activos (el backend filtra por suscripción)
+            examenes = examenes.filter(ex => ex.activo);
             
             if (examenes.length > 0) {
                 agruparPorMateria();

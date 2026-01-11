@@ -55,7 +55,7 @@ function mostrarExamenes(examenes) {
     }
 
     tableBody.innerHTML = examenes.map(examen => {
-        const premiumBadge = examen.es_premium 
+        const premiumBadge = examen.materia_requiere_suscripcion 
             ? '<span class="badge badge-warning">Premium</span>' 
             : '<span class="badge badge-info">Gratuito</span>';
         
@@ -139,7 +139,7 @@ function abrirModalVer(id) {
             document.getElementById('verDescripcion').textContent = examen.descripcion || 'Sin descripción';
             document.getElementById('verDuracion').textContent = `${examen.duracion_minutos} minutos`;
             document.getElementById('verTotalPreguntas').textContent = examen.total_preguntas;
-            document.getElementById('verPremium').textContent = examen.es_premium ? 'Sí' : 'No';
+            document.getElementById('verPremium').textContent = examen.materia_requiere_suscripcion ? 'Sí' : 'No';
             document.getElementById('verEstado').textContent = examen.activo ? 'Activo' : 'Inactivo';
             document.getElementById('verFechaCreacion').textContent = examen.created_at;
             document.getElementById('verFechaActualizacion').textContent = examen.updated_at;
@@ -164,7 +164,10 @@ function abrirModalEditar(id) {
             document.getElementById('editarTitulo').value = examen.titulo;
             document.getElementById('editarDescripcion').value = examen.descripcion || '';
             document.getElementById('editarDuracion').value = examen.duracion_minutos;
-            document.getElementById('editarEsPremium').checked = examen.es_premium;
+            // Nota: es_premium ahora se determina por materia.requiere_suscripcion
+            if (document.getElementById('editarEsPremium')) {
+                document.getElementById('editarEsPremium').checked = examen.materia_requiere_suscripcion;
+            }
             document.getElementById('editarActivo').checked = examen.activo;
         }
     }

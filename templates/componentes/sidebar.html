@@ -9,9 +9,20 @@
       <a class="sidebar__link" href="{% url 'flashcards:flashcards' %}"><i class="fas fa-layer-group"></i> Mis Flashcards</a>
     {% endif %}
     
+    {% comment %} Opción de Exámenes para todos los estudiantes {% endcomment %}
+    {% if not request.user.is_staff %}
+      <a class="sidebar__link" href="{% url 'evaluaciones:examenes_disponibles' %}">
+        <i class="fas fa-file-alt"></i> 
+        {% if tiene_suscripcion_premium %}
+          Exámenes Premium
+        {% else %}
+          Exámenes
+        {% endif %}
+      </a>
+    {% endif %}
+    
     {% comment %} Opciones Premium para estudiantes con suscripción activa {% endcomment %}
     {% if tiene_suscripcion_premium and not request.user.is_staff %}
-      <a class="sidebar__link" href="{% url 'evaluaciones:examenes_disponibles' %}"><i class="fas fa-file-alt"></i> Exámenes Premium</a>
       <a class="sidebar__link" href="{% url 'flashcards_premium:modo_estudio' %}"><i class="fas fa-crown"></i> Flashcards Premium</a>
     {% endif %}
     
