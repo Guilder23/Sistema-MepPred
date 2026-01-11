@@ -127,6 +127,7 @@ def obtener_contenido(request, contenido_id):
         'contenido_tema': contenido.contenido_tema,
         'materia': contenido.materia.nombre if contenido.materia else '',
         'nivel_curso': contenido.nivel_curso,
+        'tipo_contenido': contenido.tipo_contenido,
         'estado': contenido.estado,
         'publicacion': contenido.publicacion,
         'fecha_creacion': contenido.fecha_creacion.strftime('%d/%m/%Y %H:%M'),
@@ -152,6 +153,7 @@ def crear_contenido(request):
         nivel_curso = request.POST.get('nivel_curso', '').strip()
         estado = request.POST.get('estado', 'activo')
         publicacion = request.POST.get('publicacion', 'no_publicado')
+        tipo_contenido = request.POST.get('tipo_contenido', 'universitario')
         
         # Obtener videos (pueden venir múltiples)
         videos_enlaces = request.POST.getlist('videos[]')
@@ -175,6 +177,7 @@ def crear_contenido(request):
                 contenido_tema=contenido_tema,
                 materia=materia,
                 nivel_curso=nivel_curso,
+                tipo_contenido=tipo_contenido,
                 estado=estado,
                 publicacion=publicacion,
                 creado_por=request.user
@@ -211,6 +214,7 @@ def editar_contenido(request):
         nivel_curso = request.POST.get('nivel_curso', '').strip()
         estado = request.POST.get('estado', 'activo')
         publicacion = request.POST.get('publicacion', 'no_publicado')
+        tipo_contenido = request.POST.get('tipo_contenido', 'universitario')
         
         # Obtener videos
         videos_enlaces = request.POST.getlist('videos[]')
@@ -231,6 +235,7 @@ def editar_contenido(request):
             contenido.contenido_tema = contenido_tema
             contenido.materia = materia
             contenido.nivel_curso = nivel_curso
+            contenido.tipo_contenido = tipo_contenido
             contenido.estado = estado
             contenido.publicacion = publicacion
             contenido.editado_por = request.user

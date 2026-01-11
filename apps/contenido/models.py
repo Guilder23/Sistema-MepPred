@@ -16,11 +16,17 @@ class Contenido(models.Model):
         ('no_publicado', 'No Publicado'),
     ]
     
+    TIPO_CONTENIDO_CHOICES = [
+        ('universitario', 'Universitario'),
+        ('postulante', 'Postulante'),
+    ]
+    
     titulo = models.CharField(max_length=255, verbose_name='Título del contenido')
     descripcion = models.TextField(verbose_name='Descripción del contenido')
     contenido_tema = models.TextField(verbose_name='Contenido del tema')
     materia = models.ForeignKey('materias.Materia', on_delete=models.CASCADE, verbose_name='Materia')
     nivel_curso = models.CharField(max_length=100, verbose_name='Nivel/Curso')
+    tipo_contenido = models.CharField(max_length=20, choices=TIPO_CONTENIDO_CHOICES, default='universitario', verbose_name='Tipo de contenido')
     
     # Estado y publicación
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='activo', verbose_name='Estado')
