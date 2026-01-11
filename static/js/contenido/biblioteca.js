@@ -247,15 +247,65 @@ function mostrarDetalleContenido(contenido) {
         videosEl.innerHTML = '';
         
         contenido.videos.forEach((video, index) => {
+            console.log('Procesando video', index + 1, ':', video);
+            console.log('Enlace del video:', video.enlace);
             const videoItem = document.createElement('div');
             videoItem.className = 'video-item';
+            const embedHtml = getVideoEmbed(video.enlace);
+            console.log('HTML generado:', embedHtml);
             videoItem.innerHTML = `
-                <a href="${video.enlace}" target="_blank" rel="noopener noreferrer">
-                    <i class="fas fa-play-circle"></i>
-                    Video ${index + 1}
-                    <i class="fas fa-external-link-alt" style="margin-left: auto; font-size: 0.85rem;"></i>
-                </a>
+                <div class="video-title">Video ${index + 1}</div>
+                <div class="video-embed">
+                    <div class="video-loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Cargando video...</p>
+                    </div>
+                    ${embedHtml}
+                </div>
             `;
+            
+            // Agregar event listener para manejar errores de carga del iframe
+            const iframe = videoItem.querySelector('iframe');
+            const fallback = videoItem.querySelector('.video-fallback');
+            const loading = videoItem.querySelector('.video-loading');
+            
+            if (iframe && fallback && loading) {
+                let loadTimeout;
+                
+                // Timeout para detectar videos que no cargan
+                loadTimeout = setTimeout(() => {
+                    console.log('Timeout: video no cargó en 10 segundos, mostrando fallback');
+                    loading.style.display = 'none';
+                    iframe.style.display = 'none';
+                    fallback.classList.add('show');
+                    fallback.innerHTML = `
+                        <p><strong>Video no disponible</strong></p>
+                        <p>Este video puede tener restricciones de privacidad o no estar disponible para embed.</p>
+                        <p><a href="${video.enlace}" target="_blank" rel="noopener noreferrer">Ver en ${video.enlace.includes('youtube') ? 'YouTube' : 'Vimeo'}</a></p>
+                    `;
+                }, 10000);
+                
+                iframe.addEventListener('error', function() {
+                    console.log('Error cargando video, mostrando fallback');
+                    clearTimeout(loadTimeout);
+                    loading.style.display = 'none';
+                    iframe.style.display = 'none';
+                    fallback.classList.add('show');
+                    fallback.innerHTML = `
+                        <p><strong>Error al cargar el video</strong></p>
+                        <p>Puede haber restricciones de embed o problemas de conectividad.</p>
+                        <p><a href="${video.enlace}" target="_blank" rel="noopener noreferrer">Ver directamente</a></p>
+                    `;
+                });
+                
+                iframe.addEventListener('load', function() {
+                    console.log('Video cargado correctamente');
+                    clearTimeout(loadTimeout);
+                    loading.style.display = 'none';
+                    iframe.style.display = 'block';
+                });
+            }
+            
             videosEl.appendChild(videoItem);
         });
     } else {
@@ -331,4 +381,96 @@ function mostrarMensaje(mensaje, tipo) {
     setTimeout(() => {
         alertDiv.remove();
     }, 4000);
+}
+
+// Función para convertir enlaces de video a embeds
+function getVideoEmbed(url) {
+    console.log('Procesando URL:', url);
+    if (!url) {
+        console.log('URL vacía o null');
+        return '<p>Enlace no válido</p>';
+    }
+    
+    try {
+        // YouTube - múltiples formatos
+        let videoId = null;
+        
+        // Intentar extraer ID de diferentes formatos de YouTube
+        if (url.includes('youtube.com/watch?v=')) {
+            console.log('Detectado formato youtube.com/watch');
+            const urlObj = new URL(url);
+            videoId = urlObj.searchParams.get('v');
+            console.log('ID extraído:', videoId);
+        } else if (url.includes('youtu.be/')) {
+            console.log('Detectado formato youtu.be');
+            const match = url.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
+            if (match) {
+                videoId = match[1];
+                console.log('ID extraído:', videoId);
+            } else {
+                console.log('No se pudo extraer ID de youtu.be');
+            }
+        } else if (url.includes('youtube.com/embed/')) {
+            console.log('Detectado formato youtube.com/embed');
+            const match = url.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/);
+            if (match) {
+                videoId = match[1];
+                console.log('ID extraído:', videoId);
+            } else {
+                console.log('No se pudo extraer ID de embed');
+            }
+        } else {
+            console.log('Formato de URL no reconocido');
+        }
+        
+        if (videoId && videoId.length === 11) {
+            console.log('Generando embed para YouTube con ID:', videoId);
+            return `<div class="video-container">
+                        <iframe width="560" height="315" 
+                                src="https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&showinfo=0&iv_load_policy=3&fs=1&cc_load_policy=0&enablejsapi=1&controls=1&autoplay=0&mute=0&loop=0&playlist=${videoId}&disablekb=1&playsinline=1&origin=${window.location.origin}" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                allowfullscreen
+                                loading="lazy"
+                                referrerpolicy="strict-origin-when-cross-origin">
+                        </iframe>
+                        <div class="video-fallback">
+                            <p>Si el video no carga, <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank" rel="noopener noreferrer">haz clic aquí para verlo en YouTube</a></p>
+                        </div>
+                    </div>`;
+        }
+        
+        // Vimeo
+        if (url.includes('vimeo.com/')) {
+            console.log('Detectado Vimeo');
+            const match = url.match(/vimeo\.com\/(\d+)/);
+            if (match) {
+                const videoId = match[1];
+                console.log('ID de Vimeo extraído:', videoId);
+                return `<div class="video-container">
+                            <iframe width="560" height="315" 
+                                    src="https://player.vimeo.com/video/${videoId}?color=ff0179&title=0&byline=0&portrait=0" 
+                                    frameborder="0" 
+                                    allow="autoplay; fullscreen; picture-in-picture" 
+                                    allowfullscreen
+                                    loading="lazy">
+                            </iframe>
+                            <div class="video-fallback">
+                                <p>Si el video no carga, <a href="${url}" target="_blank" rel="noopener noreferrer">haz clic aquí para verlo en Vimeo</a></p>
+                            </div>
+                        </div>`;
+            }
+        }
+        
+        console.log('URL no soportada, mostrando como enlace');
+        // Si no es un enlace soportado, mostrar como enlace
+        return `<div class="video-fallback" style="display: block;">
+                    <p><a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a></p>
+                </div>`;
+    } catch (error) {
+        console.error('Error procesando URL:', error);
+        return `<div class="video-fallback" style="display: block;">
+                    <p><a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a></p>
+                </div>`;
+    }
 }
