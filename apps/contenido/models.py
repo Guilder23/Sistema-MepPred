@@ -55,8 +55,11 @@ class Contenido(models.Model):
         """
         Verifica si el contenido está disponible para el usuario.
         Reglas:
-        1. Dentro de una materia: solo se desbloquea si el contenido anterior está completado
-        2. Entre materias: solo se desbloquea si TODA la materia anterior está 100% completada
+        1. Si es administrador, siempre disponible
+        2. Debe estar publicado y activo
+        3. Si la materia requiere suscripción, el usuario debe tener suscripción aprobada y activa
+        4. Dentro de una materia: solo se desbloquea si el contenido anterior está completado
+        5. Entre materias: solo se desbloquea si TODA la materia anterior está 100% completada
         """
         # Si es admin, siempre disponible
         if usuario.is_superuser or getattr(usuario, 'role', '') == 'admin':
@@ -65,6 +68,19 @@ class Contenido(models.Model):
         # Debe estar publicado y activo
         if self.estado != 'activo' or self.publicacion != 'publicado':
             return False
+        
+        # Verificar si la materia requiere suscripción premium
+        if self.materia and self.materia.requiere_suscripcion:
+            from apps.suscripciones.models import Suscripcion
+            
+            suscripcion = Suscripcion.objects.filter(
+                estudiante=usuario,
+                estado='APROBADO'
+            ).first()
+            
+            # Si no tiene suscripción activa, no está disponible
+            if not suscripcion or not suscripcion.esta_activa():
+                return False
         
         # Obtener todos los contenidos publicados ordenados por materia y orden
         todos_contenidos = Contenido.objects.filter(

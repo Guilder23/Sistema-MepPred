@@ -287,16 +287,38 @@ def biblioteca_contenidos(request):
 @require_http_methods(["GET"])
 def listar_contenidos_publicados(request):
     """API para listar solo contenidos publicados y activos"""
+    from apps.suscripciones.models import Suscripcion
+    
+    # Verificar si es administrador
+    es_admin = request.user.is_superuser or getattr(request.user, 'role', '') == 'admin'
+    
+    # Verificar si el estudiante tiene suscripción premium activa
+    tiene_suscripcion_activa = False
+    if not es_admin:
+        suscripcion = Suscripcion.objects.filter(
+            estudiante=request.user,
+            estado='APROBADO'
+        ).first()
+        tiene_suscripcion_activa = suscripcion and suscripcion.esta_activa()
+    
     # Filtrar solo contenidos publicados y activos
     contenidos = Contenido.objects.filter(
         estado='activo',
         publicacion='publicado'
-    ).order_by('orden', '-fecha_creacion')
-    
-    es_admin = request.user.is_superuser or getattr(request.user, 'role', '') == 'admin'
+    ).select_related('materia').order_by('orden', '-fecha_creacion')
     
     contenidos_data = []
     for contenido in contenidos:
+        # Verificar acceso según tipo de materia
+        if contenido.materia:
+            # Si la materia es premium
+            if contenido.materia.requiere_suscripcion:
+                # Solo mostrar si:
+                # 1. Es administrador, O
+                # 2. El estudiante tiene suscripción aprobada y activa
+                if not es_admin and not tiene_suscripcion_activa:
+                    continue  # Saltar este contenido
+        
         # Verificar si está disponible para el estudiante
         esta_disponible = contenido.esta_disponible_para(request.user)
         
@@ -314,6 +336,7 @@ def listar_contenidos_publicados(request):
             'titulo': contenido.titulo,
             'descripcion': contenido.descripcion,
             'materia': contenido.materia.nombre if contenido.materia else '',
+            'materia_requiere_suscripcion': contenido.materia.requiere_suscripcion if contenido.materia else False,
             'nivel_curso': contenido.nivel_curso,
             'fecha_creacion': contenido.fecha_creacion.isoformat(),
             'orden': contenido.orden,
@@ -337,11 +360,25 @@ def vista_progreso(request):
 @require_http_methods(["GET"])
 def obtener_progreso_usuario(request):
     """API para obtener el progreso completo del usuario"""
-    # Obtener todos los contenidos publicados
+    from apps.suscripciones.models import Suscripcion
+    
+    # Verificar si es administrador
+    es_admin = request.user.is_superuser or getattr(request.user, 'role', '') == 'admin'
+    
+    # Verificar si el estudiante tiene suscripción premium activa
+    tiene_suscripcion_activa = False
+    if not es_admin:
+        suscripcion = Suscripcion.objects.filter(
+            estudiante=request.user,
+            estado='APROBADO'
+        ).first()
+        tiene_suscripcion_activa = suscripcion and suscripcion.esta_activa()
+    
+    # Obtener todos los contenidos publicados y activos
     contenidos = Contenido.objects.filter(
         estado='activo',
         publicacion='publicado'
-    ).order_by('materia', 'orden')
+    ).select_related('materia').order_by('materia', 'orden')
     
     # Obtener progresos del usuario
     progresos = ProgresoContenido.objects.filter(usuario=request.user)
@@ -350,6 +387,16 @@ def obtener_progreso_usuario(request):
     # Agrupar por materia
     materias_data = {}
     for contenido in contenidos:
+        # Verificar acceso según tipo de materia
+        if contenido.materia:
+            # Si la materia es premium
+            if contenido.materia.requiere_suscripcion:
+                # Solo mostrar si:
+                # 1. Es administrador, O
+                # 2. El estudiante tiene suscripción aprobada y activa
+                if not es_admin and not tiene_suscripcion_activa:
+                    continue  # Saltar este contenido
+        
         materia_nombre = contenido.materia.nombre if contenido.materia else 'Sin materia'
         
         if materia_nombre not in materias_data:
