@@ -210,6 +210,16 @@ h1 {
     color: #856404;
 }
 
+.badge-premium {
+    background-color: #e0c3fc;
+    color: #5b21b6;
+}
+
+.badge-gratis {
+    background-color: #dbeafe;
+    color: #0284c7;
+}
+
 /* Contenedor de filtros en fila */
 .filtros-container {
     display: flex;

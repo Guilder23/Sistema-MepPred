@@ -55,22 +55,22 @@ function mostrarExamenes(examenes) {
     }
 
     tableBody.innerHTML = examenes.map(examen => {
-        const premiumBadge = examen.materia_requiere_suscripcion 
-            ? '<span class="badge badge-warning">Premium</span>' 
-            : '<span class="badge badge-info">Gratuito</span>';
-        
         const estadoBadge = examen.activo 
             ? '<span class="badge badge-success">Activo</span>' 
             : '<span class="badge badge-danger">Inactivo</span>';
+        
+        const tipoBadge = examen.materia_requiere_suscripcion 
+            ? '<span class="badge badge-premium">Premium</span>' 
+            : '<span class="badge badge-gratis">Gratis</span>';
         
         return `
             <tr>
                 <td>${examen.id}</td>
                 <td>${escapeHtml(examen.titulo)}</td>
                 <td>${escapeHtml(examen.materia_nombre)}</td>
+                <td>${tipoBadge}</td>
                 <td>${examen.duracion_minutos} min</td>
                 <td>${examen.total_preguntas}</td>
-                <td>${premiumBadge}</td>
                 <td>${estadoBadge}</td>
                 <td>
                     <div class="acciones-cell">

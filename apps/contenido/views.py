@@ -81,6 +81,7 @@ def listar_contenidos(request):
             'titulo': contenido.titulo,
             'materia': contenido.materia.nombre if contenido.materia else '',
             'materia_id': contenido.materia.id if contenido.materia else None,
+            'materia_requiere_suscripcion': contenido.materia.requiere_suscripcion if contenido.materia else False,
             'nivel_curso': contenido.nivel_curso,
             'estado': contenido.estado,
             'publicacion': contenido.publicacion,

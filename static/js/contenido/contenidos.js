@@ -174,14 +174,20 @@ function renderizarContenidos(contenidos) {
     if (!tbody) return;
     
     if (contenidos.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="text-center">No se encontraron contenidos</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center">No se encontraron contenidos</td></tr>';
         return;
     }
     
-    tbody.innerHTML = contenidos.map(contenido => `
+    tbody.innerHTML = contenidos.map(contenido => {
+        const tipoBadge = contenido.materia_requiere_suscripcion 
+            ? '<span class="badge badge-premium">Premium</span>' 
+            : '<span class="badge badge-gratis">Gratis</span>';
+        
+        return `
         <tr>
             <td>${contenido.titulo}</td>
             <td>${contenido.materia}</td>
+            <td>${tipoBadge}</td>
             <td>
                 <span class="badge badge-${contenido.estado}">
                     ${contenido.estado === 'activo' ? 'Activo' : 'Inactivo'}
@@ -207,5 +213,5 @@ function renderizarContenidos(contenidos) {
                 </div>
             </td>
         </tr>
-    `).join('');
+    `}).join('');
 }

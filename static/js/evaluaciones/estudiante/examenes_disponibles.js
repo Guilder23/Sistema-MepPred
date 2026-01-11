@@ -164,7 +164,9 @@ function crearTarjetaExamen(examen) {
             ${intentosInfo}
             
             <div class="examen-badges">
-                <span class="badge badge-premium">Premium</span>
+                ${examen.materia_requiere_suscripcion 
+                    ? '<span class="badge badge-premium">Premium</span>' 
+                    : '<span class="badge badge-gratis">Gratis</span>'}
                 ${estadoBadge}
             </div>
             

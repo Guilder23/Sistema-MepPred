@@ -129,6 +129,16 @@ h1 {
     color: #92400e;
 }
 
+.badge-premium {
+    background: #e0c3fc;
+    color: #5b21b6;
+}
+
+.badge-gratis {
+    background: #dbeafe;
+    color: #0284c7;
+}
+
 /* Botones de acción */
 .acciones-cell {
     display: flex;
