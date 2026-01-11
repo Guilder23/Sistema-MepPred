@@ -15,6 +15,11 @@ class Materia(models.Model):
         null=True,
         verbose_name="Descripción"
     )
+    requiere_suscripcion = models.BooleanField(
+        default=False,
+        verbose_name="Requiere Suscripción Premium",
+        help_text="Indica si esta materia requiere suscripción premium para acceder"
+    )
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name="Fecha de Creación"
