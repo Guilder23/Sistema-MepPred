@@ -289,6 +289,7 @@ def biblioteca_contenidos(request):
 def listar_contenidos_publicados(request):
     """API para listar solo contenidos publicados y activos"""
     from apps.suscripciones.models import Suscripcion
+    from apps.evaluaciones.models import IntentoExamen, Examen
     
     # Verificar si es administrador
     es_admin = request.user.is_superuser or getattr(request.user, 'role', '') == 'admin'
@@ -302,24 +303,58 @@ def listar_contenidos_publicados(request):
         ).first()
         tiene_suscripcion_activa = suscripcion and suscripcion.esta_activa()
     
-    # Filtrar solo contenidos publicados y activos
+    # Obtener todas las materias ordenadas
+    from apps.materias.models import Materia
+    materias_ordenadas = list(Materia.objects.filter(
+        contenido__estado='activo',
+        contenido__publicacion='publicado'
+    ).distinct().order_by('id'))
+    
+    # Determinar qué materias puede ver el usuario
+    materias_accesibles = []
+    
+    if es_admin or tiene_suscripcion_activa:
+        # Premium: ve todas las materias según haya aprobado las anteriores
+        if materias_ordenadas:
+            materias_accesibles.append(materias_ordenadas[0])
+            
+            # Verificar cuántas materias ha aprobado
+            for i, materia in enumerate(materias_ordenadas[:-1]):
+                # Buscar el examen de esta materia
+                examen = Examen.objects.filter(materia=materia, activo=True).first()
+                if examen:
+                    # Verificar si aprobó (nota >= 16/20 = 80%)
+                    intento_aprobado = IntentoExamen.objects.filter(
+                        estudiante=request.user,
+                        examen=examen,
+                        nota__gte=16  # 80% de 20
+                    ).exists()
+                    
+                    if intento_aprobado:
+                        # Aprobó, puede ver la siguiente materia
+                        siguiente_materia = materias_ordenadas[i + 1]
+                        if siguiente_materia not in materias_accesibles:
+                            materias_accesibles.append(siguiente_materia)
+                    else:
+                        # No aprobó, no puede ver las siguientes
+                        break
+                else:
+                    # No hay examen, no puede avanzar
+                    break
+    else:
+        # No premium: SOLO ve la primera materia (gratis)
+        if materias_ordenadas:
+            materias_accesibles.append(materias_ordenadas[0])
+    
+    # Filtrar contenidos solo de materias accesibles
     contenidos = Contenido.objects.filter(
         estado='activo',
-        publicacion='publicado'
-    ).select_related('materia').order_by('orden', '-fecha_creacion')
+        publicacion='publicado',
+        materia__in=materias_accesibles
+    ).select_related('materia').order_by('materia__id', 'orden')
     
     contenidos_data = []
     for contenido in contenidos:
-        # Verificar acceso según tipo de materia
-        if contenido.materia:
-            # Si la materia es premium
-            if contenido.materia.requiere_suscripcion:
-                # Solo mostrar si:
-                # 1. Es administrador, O
-                # 2. El estudiante tiene suscripción aprobada y activa
-                if not es_admin and not tiene_suscripcion_activa:
-                    continue  # Saltar este contenido
-        
         # Verificar si está disponible para el estudiante
         esta_disponible = contenido.esta_disponible_para(request.user)
         

@@ -29,6 +29,7 @@ def examenes_disponibles(request):
 def resolver_examen(request, examen_id):
     """Vista para resolver un examen específico"""
     from apps.suscripciones.models import Suscripcion
+    from apps.contenido.models import Contenido, ProgresoContenido
     
     # Verificar que el examen existe y está activo
     examen = get_object_or_404(Examen, id=examen_id, activo=True)
@@ -37,12 +38,24 @@ def resolver_examen(request, examen_id):
     es_admin = request.user.is_staff or request.user.is_superuser
     tiene_premium = es_admin or tiene_suscripcion_activa(request.user)
     
-    # Un examen es premium si su materia requiere suscripción
-    es_examen_premium = examen.materia.requiere_suscripcion if examen.materia else False
-    
-    # Si la materia es premium y no tiene suscripción, denegar acceso
-    if es_examen_premium and not tiene_premium:
-        return render(request, '404.html', status=403)
+    # Si no es admin, verificar que completó todos los contenidos
+    if not es_admin:
+        contenidos_materia = Contenido.objects.filter(
+            materia=examen.materia,
+            estado='activo',
+            publicacion='publicado'
+        )
+        
+        for contenido in contenidos_materia:
+            try:
+                progreso = ProgresoContenido.objects.get(
+                    usuario=request.user,
+                    contenido=contenido
+                )
+                if not progreso.completado:
+                    return render(request, '404.html', status=403)
+            except ProgresoContenido.DoesNotExist:
+                return render(request, '404.html', status=403)
     
     return render(request, 'evaluaciones/estudiante/resolver_examen.html', {
         'examen_id': examen_id
@@ -52,30 +65,100 @@ def resolver_examen(request, examen_id):
 @require_http_methods(["GET"])
 @login_required
 def obtener_examenes(request):
-    """API: Obtener todos los exámenes (filtra por materia premium si no tiene suscripción)"""
+    """API: Obtener todos los exámenes según el nivel de suscripción"""
     try:
         from apps.suscripciones.models import Suscripcion
+        from apps.contenido.models import Contenido, ProgresoContenido
+        from apps.materias.models import Materia
         
-        examenes = Examen.objects.select_related('materia').filter(activo=True)
-        
-        # Si no es admin, verificar acceso premium
+        # Verificar si es administrador
         es_admin = request.user.is_staff or request.user.is_superuser
         tiene_premium = es_admin or tiene_suscripcion_activa(request.user)
         
-        # Si no es admin y no tiene premium, filtrar solo exámenes de materias no premium
-        if not es_admin and not tiene_premium:
-            examenes = examenes.filter(materia__requiere_suscripcion=False)
+        # Los administradores ven todos los exámenes
+        if es_admin:
+            examenes = Examen.objects.select_related('materia').filter(activo=True)
+        else:
+            # Para estudiantes: determinar qué materias puede ver
+            # Obtener todas las materias ordenadas
+            materias_ordenadas = list(Materia.objects.all().order_by('id'))
+            
+            # Determinar qué materias puede ver el usuario
+            materias_accesibles = []
+            
+            if tiene_premium:
+                # Premium: ve todas las materias según haya aprobado las anteriores
+                if materias_ordenadas:
+                    materias_accesibles.append(materias_ordenadas[0])
+                    
+                    # Verificar cuántas materias ha aprobado
+                    for i, materia in enumerate(materias_ordenadas[:-1]):
+                        # Buscar el examen de esta materia
+                        examen = Examen.objects.filter(materia=materia, activo=True).first()
+                        if examen:
+                            # Verificar si aprobó (nota >= 16/20 = 80%)
+                            intento_aprobado = IntentoExamen.objects.filter(
+                                estudiante=request.user,
+                                examen=examen,
+                                nota__gte=16  # 80% de 20
+                            ).exists()
+                            
+                            if intento_aprobado:
+                                # Aprobó, puede ver la siguiente materia
+                                siguiente_materia = materias_ordenadas[i + 1]
+                                if siguiente_materia not in materias_accesibles:
+                                    materias_accesibles.append(siguiente_materia)
+                            else:
+                                # No aprobó, no puede ver las siguientes
+                                break
+                        else:
+                            # No hay examen, no puede avanzar
+                            break
+            else:
+                # No premium: SOLO ve la primera materia (gratis)
+                if materias_ordenadas:
+                    materias_accesibles.append(materias_ordenadas[0])
+            
+            # Obtener exámenes solo de materias accesibles
+            examenes = Examen.objects.select_related('materia').filter(
+                activo=True,
+                materia__in=materias_accesibles
+            )
         
         examenes_list = []
         for examen in examenes:
-            # Un examen es premium si su materia requiere suscripción
-            es_examen_premium = examen.materia.requiere_suscripcion if examen.materia else False
-            bloqueado = es_examen_premium and not tiene_premium
+            # Verificar si completó todos los contenidos de la materia
+            contenidos_materia = Contenido.objects.filter(
+                materia=examen.materia,
+                estado='activo',
+                publicacion='publicado'
+            )
+            
+            total_contenidos = contenidos_materia.count()
+            contenidos_completados = 0
+            
+            if not es_admin:
+                for contenido in contenidos_materia:
+                    try:
+                        progreso = ProgresoContenido.objects.get(
+                            usuario=request.user,
+                            contenido=contenido,
+                            completado=True
+                        )
+                        contenidos_completados += 1
+                    except ProgresoContenido.DoesNotExist:
+                        pass
+            else:
+                contenidos_completados = total_contenidos
+            
+            # El examen está bloqueado si no completó todos los contenidos
+            contenido_completado = (contenidos_completados == total_contenidos and total_contenidos > 0) or es_admin
             
             # Obtener intentos del estudiante para este examen
             intentos_realizados = 0
             intentos_restantes = 3
             mejor_nota = None
+            puede_entrar_ranking = True
             
             if not es_admin:
                 intentos = IntentoExamen.objects.filter(
@@ -85,6 +168,9 @@ def obtener_examenes(request):
                 
                 intentos_realizados = intentos.count()
                 intentos_restantes = max(0, 3 - intentos_realizados)
+                
+                # Los primeros 3 intentos pueden entrar al ranking
+                puede_entrar_ranking = intentos_realizados < 3
                 
                 # Obtener la mejor nota si hay intentos
                 if intentos.exists():
@@ -96,13 +182,17 @@ def obtener_examenes(request):
                 'descripcion': examen.descripcion,
                 'materia_id': examen.materia.id,
                 'materia_nombre': examen.materia.nombre,
-                'materia_requiere_suscripcion': es_examen_premium,
+                'materia_requiere_suscripcion': examen.materia.requiere_suscripcion if examen.materia else False,
                 'duracion_minutos': examen.duracion_minutos,
-                'bloqueado': bloqueado,
+                'bloqueado': False,  # Ya está filtrado por materias accesibles
+                'contenido_completado': contenido_completado,
                 'activo': examen.activo,
                 'total_preguntas': examen.preguntas.count(),
+                'total_contenidos': total_contenidos,
+                'contenidos_completados': contenidos_completados,
                 'intentos_realizados': intentos_realizados,
                 'intentos_restantes': intentos_restantes,
+                'puede_entrar_ranking': puede_entrar_ranking,
                 'mejor_nota': mejor_nota,
                 'created_at': examen.created_at.strftime('%d/%m/%Y %H:%M'),
                 'updated_at': examen.updated_at.strftime('%d/%m/%Y %H:%M')
@@ -160,9 +250,11 @@ def obtener_examen_estudiante(request, examen_id):
                 'fecha': intento.fecha_intento.strftime('%d/%m/%Y %H:%M')
             })
         
-        # Verificar si ya alcanzó el límite de intentos
+        # Los primeros 3 intentos cuentan para el ranking
+        # Después puede seguir intentando pero ya no suma al ranking
         numero_intentos = intentos_previos.count()
-        puede_intentar = numero_intentos < 3
+        puede_intentar = True  # Siempre puede intentar
+        puede_ranking = numero_intentos < 3  # Solo los primeros 3 van al ranking
         
         # Obtener preguntas con sus enunciados y opciones (sin mostrar respuestas correctas)
         preguntas_list = []
@@ -208,7 +300,8 @@ def obtener_examen_estudiante(request, examen_id):
                 'realizados': intentos_data,
                 'total': numero_intentos,
                 'puede_intentar': puede_intentar,
-                'intentos_restantes': 3 - numero_intentos
+                'puede_ranking': puede_ranking,
+                'intentos_restantes': max(0, 3 - numero_intentos)
             }
         })
     except Examen.DoesNotExist:
@@ -588,12 +681,9 @@ def calificar_examen(request, examen_id):
             examen=examen
         ).count()
         
-        # Verificar límite de intentos
-        if intentos_previos >= 3:
-            return JsonResponse({
-                'success': False,
-                'error': 'Ya has alcanzado el límite de 3 intentos para este examen.'
-            }, status=403)
+        # Los primeros 3 intentos cuentan para el ranking
+        # Después puede seguir pero ya no entra al ranking
+        puede_ranking = intentos_previos < 3
         
         # Calcular tiempo empleado si se envió
         tiempo_empleado = data.get('tiempo_empleado')
@@ -608,6 +698,7 @@ def calificar_examen(request, examen_id):
             preguntas_incorrectas=total_preguntas - preguntas_correctas,
             porcentaje=round(porcentaje, 2),
             nota=nota,
+            cuenta_para_ranking=puede_ranking,
             aprobado=aprobado,
             tiempo_empleado=tiempo_empleado
         )
@@ -622,7 +713,8 @@ def calificar_examen(request, examen_id):
                 'aprobado': aprobado,
                 'nota': nota,
                 'numero_intento': intento.numero_intento,
-                'intentos_restantes': 3 - intento.numero_intento
+                'puede_ranking': puede_ranking,
+                'intentos_restantes': max(0, 3 - intento.numero_intento)
             },
             'resultados': resultados_detallados
         })

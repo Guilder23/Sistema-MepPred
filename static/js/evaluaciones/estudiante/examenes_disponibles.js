@@ -113,34 +113,54 @@ function crearTarjetaExamen(examen) {
     let intentosInfo = '';
     let botonTexto = '<i class="fas fa-play"></i> Resolver Examen';
     let botonDeshabilitado = !examen.activo;
+    let mensajeBloqueo = '';
     
-    if (examen.intentos_realizados > 0) {
-        if (examen.intentos_restantes === 0) {
-            intentosInfo = `
-                <div class="intentos-info sin-intentos">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <span>Sin intentos restantes</span>
-                    ${examen.mejor_nota !== null ? `<span class="mejor-nota">Mejor nota: ${examen.mejor_nota}/20</span>` : ''}
-                </div>
-            `;
-            botonDeshabilitado = true;
-            botonTexto = '<i class="fas fa-lock"></i> Sin Intentos';
+    // Verificar si está bloqueado por contenido incompleto
+    if (!examen.contenido_completado) {
+        botonDeshabilitado = true;
+        mensajeBloqueo = `
+            <div class="bloqueo-info contenido-incompleto">
+                <i class="fas fa-lock"></i>
+                <span>Completa todos los contenidos de la materia (${examen.contenidos_completados}/${examen.total_contenidos})</span>
+            </div>
+        `;
+        botonTexto = '<i class="fas fa-lock"></i> Contenido Incompleto';
+    } else if (examen.bloqueado) {
+        botonDeshabilitado = true;
+        mensajeBloqueo = `
+            <div class="bloqueo-info premium-requerido">
+                <i class="fas fa-crown"></i>
+                <span>Requiere suscripción premium</span>
+            </div>
+        `;
+        botonTexto = '<i class="fas fa-lock"></i> Premium Requerido';
+    } else if (examen.intentos_realizados > 0) {
+        // Mostrar información sobre el ranking
+        const puedeRanking = examen.puede_entrar_ranking;
+        const intentosRestantes = examen.intentos_restantes;
+        
+        intentosInfo = `
+            <div class="intentos-info ${puedeRanking ? 'con-intentos' : 'sin-ranking'}">
+                <i class="fas ${puedeRanking ? 'fa-trophy' : 'fa-info-circle'}"></i>
+                <span>Intentos: ${examen.intentos_realizados}/3</span>
+                ${puedeRanking 
+                    ? `<span class="restantes ranking-disponible">${intentosRestantes} intentos para ranking</span>`
+                    : `<span class="sin-ranking-text">Ya no puedes entrar al ranking</span>`
+                }
+                ${examen.mejor_nota !== null ? `<span class="mejor-nota">Mejor: ${examen.mejor_nota}/20</span>` : ''}
+            </div>
+        `;
+        
+        if (puedeRanking) {
+            botonTexto = `<i class="fas fa-redo"></i> Reintentar (${intentosRestantes} para ranking)`;
         } else {
-            intentosInfo = `
-                <div class="intentos-info con-intentos">
-                    <i class="fas fa-redo"></i>
-                    <span>Intentos: ${examen.intentos_realizados}/3</span>
-                    <span class="restantes">${examen.intentos_restantes} restantes</span>
-                    ${examen.mejor_nota !== null ? `<span class="mejor-nota">Mejor: ${examen.mejor_nota}/20</span>` : ''}
-                </div>
-            `;
-            botonTexto = `<i class="fas fa-redo"></i> Reintentar (${examen.intentos_restantes} restantes)`;
+            botonTexto = `<i class="fas fa-redo"></i> Continuar practicando`;
         }
     } else {
         intentosInfo = `
             <div class="intentos-info nuevos-intentos">
                 <i class="fas fa-star"></i>
-                <span>3 intentos disponibles</span>
+                <span>3 intentos para entrar al ranking</span>
             </div>
         `;
     }
@@ -161,7 +181,7 @@ function crearTarjetaExamen(examen) {
                 </div>
             </div>
             
-            ${intentosInfo}
+            ${mensajeBloqueo || intentosInfo}
             
             <div class="examen-badges">
                 ${examen.materia_requiere_suscripcion 
