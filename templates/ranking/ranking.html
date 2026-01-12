@@ -38,24 +38,44 @@
     </div>
     {% endif %}
 
-    <!-- Filtros de período -->
+    <!-- Mensaje si aprobó fuera del ranking -->
+    {% if fuera_de_ranking %}
+    <div class="alert-info" style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 16px; margin: 20px 0; color: #856404;">
+        <strong>ℹ️ Información:</strong> Has aprobado exámenes después del tercer intento. Solo tú puedes ver este mensaje. 
+        Para aparecer en el ranking público, debes aprobar en uno de los primeros 3 intentos.
+    </div>
+    {% endif %}
+
+    <!-- Filtros de período y materia -->
     <div class="ranking-filters">
         <div class="filter-group">
             <label class="filter-label">Filtrar por período:</label>
             <div class="filter-buttons">
-                <a href="?periodo=dia" class="filter-btn {% if periodo == 'dia' %}active{% endif %}">
+                <a href="?periodo=dia{% if materia_id %}&materia={{ materia_id }}{% endif %}" class="filter-btn {% if periodo == 'dia' %}active{% endif %}">
                     Último Día
                 </a>
-                <a href="?periodo=semana" class="filter-btn {% if periodo == 'semana' %}active{% endif %}">
+                <a href="?periodo=semana{% if materia_id %}&materia={{ materia_id }}{% endif %}" class="filter-btn {% if periodo == 'semana' %}active{% endif %}">
                     Última Semana
                 </a>
-                <a href="?periodo=mes" class="filter-btn {% if periodo == 'mes' %}active{% endif %}">
+                <a href="?periodo=mes{% if materia_id %}&materia={{ materia_id }}{% endif %}" class="filter-btn {% if periodo == 'mes' %}active{% endif %}">
                     Último Mes
                 </a>
-                <a href="?periodo=todo" class="filter-btn {% if periodo == 'todo' %}active{% endif %}">
+                <a href="?periodo=todo{% if materia_id %}&materia={{ materia_id }}{% endif %}" class="filter-btn {% if periodo == 'todo' %}active{% endif %}">
                     Todos
                 </a>
             </div>
+        </div>
+        
+        <div class="filter-group">
+            <label class="filter-label">Filtrar por materia:</label>
+            <select id="filtroMateria" class="filter-select" onchange="window.location.href='?periodo={{ periodo }}&materia=' + this.value">
+                <option value="">Todas las materias</option>
+                {% for materia in materias %}
+                <option value="{{ materia.id }}" {% if materia_id == materia.id|stringformat:"s" %}selected{% endif %}>
+                    {{ materia.nombre }}
+                </option>
+                {% endfor %}
+            </select>
         </div>
     </div>
 

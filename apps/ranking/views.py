@@ -10,9 +10,14 @@ from datetime import timedelta
 def ranking_estudiantes(request):
     """Vista pública del ranking de estudiantes"""
     periodo = request.GET.get('periodo', 'todo')  # dia, semana, mes, todo
+    materia_id = request.GET.get('materia', None)  # Filtro por materia
     
-    # Obtener el ranking según el período
-    ranking_data = EstadisticaEstudiante.obtener_ranking(periodo=periodo, limite=100)
+    # Obtener el ranking según el período y materia
+    ranking_data = EstadisticaEstudiante.obtener_ranking(
+        periodo=periodo, 
+        materia_id=materia_id,
+        limite=100
+    )
     
     # Convertir a lista para agregar posiciones
     ranking_list = list(ranking_data)
@@ -24,6 +29,28 @@ def ranking_estudiantes(request):
         else:
             item['tasa_aprobacion'] = 0
     
+    # Verificar si el usuario actual tiene intentos aprobados que NO cuentan para ranking
+    fuera_de_ranking = False
+    if request.user.is_authenticated:
+        # Filtrar por la materia seleccionada (si hay)
+        filtro_materia = {}
+        if materia_id:
+            filtro_materia['examen__materia_id'] = materia_id
+        
+        # Verificar si tiene intentos aprobados que no cuentan para ranking en esta materia
+        intentos_aprobados_fuera = IntentoExamen.objects.filter(
+            estudiante=request.user,
+            aprobado=True,
+            cuenta_para_ranking=False,
+            **filtro_materia
+        ).exists()
+        
+        # Verificar si está en el ranking actual
+        esta_en_ranking = any(item['estudiante__id'] == request.user.id for item in ranking_list)
+        
+        # Solo mostrar mensaje si aprobó fuera del ranking y no está en el ranking
+        fuera_de_ranking = intentos_aprobados_fuera and not esta_en_ranking
+    
     # Obtener información del período para el título
     periodo_texto = {
         'dia': 'Último Día',
@@ -32,10 +59,17 @@ def ranking_estudiantes(request):
         'todo': 'Histórico'
     }.get(periodo, 'Histórico')
     
+    # Obtener lista de materias para el filtro
+    from apps.materias.models import Materia
+    materias = Materia.objects.all().order_by('nombre')
+    
     context = {
         'ranking': ranking_list,
         'periodo': periodo,
         'periodo_texto': periodo_texto,
+        'materias': materias,
+        'materia_id': materia_id,
+        'fuera_de_ranking': fuera_de_ranking,
     }
     
     return render(request, 'ranking/ranking.html', context)

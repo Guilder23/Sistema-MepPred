@@ -69,8 +69,8 @@ class EstadisticaEstudiante(models.Model):
         return None
     
     @classmethod
-    def obtener_ranking(cls, periodo='todo', limite=100):
-        """Obtiene el ranking de estudiantes según el período"""
+    def obtener_ranking(cls, periodo='todo', materia_id=None, limite=100):
+        """Obtiene el ranking de estudiantes según el período y materia"""
         from apps.evaluaciones.models import IntentoExamen
         
         # Determinar el filtro de fecha
@@ -85,9 +85,18 @@ class EstadisticaEstudiante(models.Model):
             fecha_desde = None
         
         # Obtener intentos según el período
-        intentos = IntentoExamen.objects.select_related('estudiante')
+        # SOLO intentos que cuentan para el ranking (primeros 3 intentos) Y están aprobados
+        intentos = IntentoExamen.objects.select_related('estudiante', 'examen__materia').filter(
+            cuenta_para_ranking=True,
+            aprobado=True  # SOLO intentos aprobados
+        )
+        
         if fecha_desde:
             intentos = intentos.filter(fecha_intento__gte=fecha_desde)
+        
+        # Filtrar por materia si se especifica
+        if materia_id:
+            intentos = intentos.filter(examen__materia_id=materia_id)
         
         # Agrupar por estudiante y calcular promedios
         ranking = intentos.values(
