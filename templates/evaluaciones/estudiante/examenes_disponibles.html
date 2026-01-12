@@ -1,7 +1,7 @@
 {% extends 'base/base.html' %}
 {% load static %}
 
-{% block titulo %}Exámenes Premium{% endblock %}
+{% block titulo %}{% if es_premium %}Exámenes Premium{% else %}Exámenes{% endif %}{% endblock %}
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/evaluaciones/estudiante/examenes_disponibles.css' %}">
@@ -10,7 +10,7 @@
 {% block contenido %}
 <div class="examenes-container">
     <header class="examenes-header">
-        <h1>Exámenes Premium</h1>
+        <h1>{% if es_premium %}Exámenes Premium{% else %}Exámenes{% endif %}</h1>
         <a href="/panel/" class="btn-volver">← Volver</a>
     </header>
 

@@ -19,7 +19,10 @@ def lista_examenes(request):
 @login_required
 def examenes_disponibles(request):
     """Vista de exámenes disponibles para estudiantes"""
-    return render(request, 'evaluaciones/estudiante/examenes_disponibles.html')
+    es_premium = request.user.is_staff or request.user.is_superuser or tiene_suscripcion_activa(request.user)
+    return render(request, 'evaluaciones/estudiante/examenes_disponibles.html', {
+        'es_premium': es_premium
+    })
 
 
 @login_required
