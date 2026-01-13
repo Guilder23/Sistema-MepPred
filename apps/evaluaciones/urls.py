@@ -22,4 +22,7 @@ urlpatterns = [
     # API endpoints (Estudiantes)
     path('api/estudiante/examen/<int:examen_id>/', views.obtener_examen_estudiante, name='obtener_examen_estudiante'),
     path('api/estudiante/examen/<int:examen_id>/calificar/', views.calificar_examen, name='calificar_examen'),
+    
+    # Certificados
+    path('api/certificado/<int:examen_id>/', views.descargar_certificado, name='descargar_certificado'),
 ]

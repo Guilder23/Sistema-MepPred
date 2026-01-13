@@ -115,6 +115,9 @@ function crearTarjetaExamen(examen) {
     let botonDeshabilitado = !examen.activo;
     let mensajeBloqueo = '';
     
+    // Verificar si está aprobado para mostrar certificado
+    const estaAprobado = examen.mejor_nota !== null && examen.mejor_nota >= 16;
+    
     // Verificar si está bloqueado por contenido incompleto
     if (!examen.contenido_completado) {
         botonDeshabilitado = true;
@@ -165,6 +168,17 @@ function crearTarjetaExamen(examen) {
         `;
     }
     
+    // Botón de certificado (solo si está aprobado)
+    const botonCertificado = estaAprobado ? `
+        <a href="/examenes/api/certificado/${examen.id}/" 
+           class="btn-certificado" 
+           download
+           title="Descargar certificado">
+            <i class="fas fa-certificate"></i>
+            Certificado
+        </a>
+    ` : '';
+    
     return `
         <div class="examen-card" data-examen-id="${examen.id}" data-titulo="${examen.titulo.toLowerCase()}">
             <div class="examen-titulo">${escapeHtml(examen.titulo)}</div>
@@ -190,9 +204,12 @@ function crearTarjetaExamen(examen) {
                 ${estadoBadge}
             </div>
             
-            <button class="btn-resolver" onclick="resolverExamen(${examen.id})" ${botonDeshabilitado ? 'disabled' : ''}>
-                ${botonTexto}
-            </button>
+            <div class="examen-acciones">
+                <button class="btn-resolver" onclick="resolverExamen(${examen.id})" ${botonDeshabilitado ? 'disabled' : ''}>
+                    ${botonTexto}
+                </button>
+                ${botonCertificado}
+            </div>
         </div>
     `;
 }

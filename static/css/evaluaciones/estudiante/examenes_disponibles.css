@@ -208,6 +208,27 @@
     color: #d97706;
 }
 
+.intentos-info.sin-ranking {
+    background: #f3f4f6;
+    color: #4b5563;
+    border: 1px solid #d1d5db;
+}
+
+.intentos-info.sin-ranking i {
+    color: #6b7280;
+}
+
+.sin-ranking-text {
+    color: #6b7280;
+    font-size: 0.75rem;
+    font-style: italic;
+}
+
+.ranking-disponible {
+    color: #059669;
+    font-weight: 600;
+}
+
 .intentos-info.sin-intentos {
     background: #fee2e2;
     color: #991b1b;
@@ -304,8 +325,15 @@
     color: #dc2626;
 }
 
+/* Acciones del examen */
+.examen-acciones {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
 .btn-resolver {
-    width: 100%;
+    flex: 1;
     padding: 0.875rem;
     background: #667eea;
     color: white;
@@ -314,7 +342,6 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s;
-    margin-top: 1rem;
 }
 
 .btn-resolver:hover {
@@ -326,6 +353,34 @@
     background: #9ca3af;
     cursor: not-allowed;
     transform: none;
+}
+
+/* Botón de certificado */
+.btn-certificado {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.25rem;
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 2px 4px rgba(251, 191, 36, 0.3);
+}
+
+.btn-certificado:hover {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(251, 191, 36, 0.4);
+}
+
+.btn-certificado i {
+    font-size: 1.1rem;
 }
 
 /* Mensaje sin exámenes */
