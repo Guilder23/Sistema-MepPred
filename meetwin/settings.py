@@ -152,13 +152,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'
-
-# Don't use STATIC_ROOT to avoid copying files
-# WhiteNoise will serve directly from STATICFILES_DIRS
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
-# Use simple WhiteNoise storage that works reliably in production
-STATICFILES_STORAGE = 'whitenoise.storage.WhiteNoiseStaticFilesStorage'
+# WhiteNoise configuration for production
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Allow WhiteNoise to be more lenient in production
+WHITENOISE_AUTOREFRESH = False
+WHITENOISE_USE_FINDERS = True
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
