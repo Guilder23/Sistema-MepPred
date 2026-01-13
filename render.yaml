@@ -1,0 +1,44 @@
+services:
+  - type: web
+    name: meetwin
+    runtime: python
+    pythonVersion: 3.11
+    buildCommand: ./build.sh
+    startCommand: gunicorn meetwin.wsgi --bind 0.0.0.0:$PORT
+    envVars:
+      - key: SECRET_KEY
+        scope: run
+        value: xxxxxxxxxxxxxxxxxxxxxxxxxx
+      - key: DEBUG
+        scope: run
+        value: "False"
+      - key: ALLOWED_HOSTS
+        scope: run
+        value: meetwin.onrender.com
+      - key: DB_HOST
+        fromDatabase:
+          name: meetwin-db
+          property: host
+      - key: DB_NAME
+        fromDatabase:
+          name: meetwin-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: meetwin-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: meetwin-db
+          property: password
+      - key: DB_PORT
+        fromDatabase:
+          name: meetwin-db
+          property: port
+
+databases:
+  - name: meetwin-db
+    databaseName: meetwin_db
+    user: postgres
+    plan: standard
+    postgresMajorVersion: 15
