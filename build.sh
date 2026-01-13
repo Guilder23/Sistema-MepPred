@@ -2,8 +2,14 @@
 
 set -o errexit
 
+echo "Installing dependencies..."
 pip install -r requirements.txt
 
-python manage.py migrate || echo "Migration failed, continuing..."
+echo "Running migrations..."
+python manage.py migrate --noinput || true
 
-python manage.py collectstatic --noinput --clear || echo "Collectstatic failed, continuing..."
+echo "Collecting static files..."
+mkdir -p staticfiles
+python manage.py collectstatic --noinput --clear --ignore=node_modules || true
+
+echo "Build complete!"
