@@ -151,17 +151,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_URL = '/static/'
 
-STATIC_URL = 'static/'
-
+# Don't use STATIC_ROOT to avoid copying files
+# WhiteNoise will serve directly from STATICFILES_DIRS
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
-# Use simple static files storage for better compatibility
-if DEBUG:
-    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-else:
-    STATICFILES_STORAGE = 'whitenoise.storage.WhiteNoiseStaticFilesStorage'
+# Use simple WhiteNoise storage that works reliably in production
+STATICFILES_STORAGE = 'whitenoise.storage.WhiteNoiseStaticFilesStorage'
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'

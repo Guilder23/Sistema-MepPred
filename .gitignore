@@ -4,6 +4,3 @@ __pycache__/
 .env
 .DS_Store
 *.log
-# staticfiles/ es ignorado EXCEPTO el archivo .keep para que la carpeta exista
-staticfiles/*
-!staticfiles/.keep
