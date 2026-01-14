@@ -34,6 +34,7 @@ window.verMazoModal = async function(mazoId) {
             
             if (mazo) {
                 document.getElementById('verNombreMazo').textContent = mazo.nombre;
+                document.getElementById('verMateriaMazo').textContent = mazo.materia_nombre || 'Sin materia';
                 document.getElementById('verDescripcionMazo').textContent = mazo.descripcion || '-';
                 document.getElementById('verTotalFlashcards').textContent = mazo.tarjetas_count || 0;
                 document.getElementById('verCreadoMazo').textContent = mazo.created_at;

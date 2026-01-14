@@ -26,6 +26,39 @@ document.addEventListener('click', function(e) {
     }
 });
 
+// Cargar materias en el select
+async function cargarMateriasCrear() {
+    try {
+        console.log('Cargando materias...');
+        const response = await fetch('/materias/api/materias/');
+        const data = await response.json();
+        console.log('Respuesta de materias:', data);
+        
+        const selectMateria = document.getElementById('materiaMazo');
+        console.log('Select encontrado:', selectMateria);
+        
+        if (selectMateria && data.success && data.data) {
+            selectMateria.innerHTML = '<option value="">Seleccione una materia</option>';
+            console.log('Cantidad de materias:', data.data.length);
+            data.data.forEach(materia => {
+                const option = document.createElement('option');
+                option.value = materia.id;
+                option.textContent = materia.nombre;
+                selectMateria.appendChild(option);
+                console.log('Materia agregada:', materia.nombre);
+            });
+        } else {
+            console.log('No se cumplió la condición:', {
+                selectMateria: !!selectMateria,
+                success: data.success,
+                hasData: !!data.data
+            });
+        }
+    } catch (error) {
+        console.error('Error al cargar materias:', error);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const btnGuardar = document.getElementById('btnGuardarMazo');
     
@@ -34,6 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const formData = new FormData();
             formData.append('nombre', document.getElementById('nombreMazo').value);
             formData.append('descripcion', document.getElementById('descripcionMazo').value);
+            formData.append('materia_id', document.getElementById('materiaMazo').value);
             
             try {
                 const response = await fetch('/flashcards-premium/api/mazos/crear/', {

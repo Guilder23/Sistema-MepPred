@@ -18,6 +18,7 @@ urlpatterns = [
     
     # URLs API para Estudiantes
     path('api/estudiante/mazos/', views.api_mazos_estudiante, name='api_mazos_estudiante'),
+    path('api/estudiante/materias/', views.api_materias_flashcards, name='api_materias_flashcards'),
     
     # URLs API para Flashcards
     path('api/flashcards/crear/', views.api_crear_flashcard, name='api_crear_flashcard'),

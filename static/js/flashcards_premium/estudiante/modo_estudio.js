@@ -3,9 +3,21 @@ let flashcards = [];
 let flashcardActual = null;
 let indiceFlashcardActual = 0;
 let volteada = false;
+let materiaSeleccionada = null;
 
 document.addEventListener('DOMContentLoaded', function() {
-    cargarFlashcards();
+    // Cargar materias disponibles
+    cargarMaterias();
+    
+    // Event listener para cambiar el filtro de materia
+    const filtroMateria = document.getElementById('filtroMateria');
+    if (filtroMateria) {
+        filtroMateria.addEventListener('change', function() {
+            materiaSeleccionada = this.value || null;
+            indiceFlashcardActual = 0;
+            cargarFlashcards();
+        });
+    }
     
     // Event listener para voltear la tarjeta
     const card = document.getElementById('flashcardCard');
@@ -24,10 +36,38 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Cargar todas las flashcards de todos los mazos
+// Cargar materias disponibles
+async function cargarMaterias() {
+    try {
+        const response = await fetch('/flashcards-premium/api/estudiante/materias/');
+        const data = await response.json();
+        
+        if (data.success && data.materias.length > 0) {
+            const filtroMateria = document.getElementById('filtroMateria');
+            data.materias.forEach(materia => {
+                const option = document.createElement('option');
+                option.value = materia.id;
+                option.textContent = materia.nombre;
+                filtroMateria.appendChild(option);
+            });
+        }
+    } catch (error) {
+        console.error('Error al cargar materias:', error);
+    }
+    
+    // Cargar flashcards después de cargar las materias
+    cargarFlashcards();
+}
+
+// Cargar todas las flashcards de todos los mazos (filtrado por materia si es necesario)
 async function cargarFlashcards() {
     try {
-        const response = await fetch('/flashcards-premium/api/estudiante/mazos/');
+        let url = '/flashcards-premium/api/estudiante/mazos/';
+        if (materiaSeleccionada) {
+            url += `?materia_id=${materiaSeleccionada}`;
+        }
+        
+        const response = await fetch(url);
         const data = await response.json();
         
         if (data.success) {
@@ -38,7 +78,8 @@ async function cargarFlashcards() {
                     mazo.tarjetas.forEach(tarjeta => {
                         flashcards.push({
                             ...tarjeta,
-                            mazo_nombre: mazo.nombre
+                            mazo_nombre: mazo.nombre,
+                            materia_nombre: mazo.materia_nombre
                         });
                     });
                 }

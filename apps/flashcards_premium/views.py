@@ -53,6 +53,8 @@ def api_listar_mazos(request):
                 'id': mazo.id,
                 'nombre': mazo.nombre,
                 'descripcion': mazo.descripcion,
+                'materia_id': mazo.materia_id,
+                'materia_nombre': mazo.materia.nombre if mazo.materia else 'Sin materia',
                 'tarjetas_count': mazo.contar_tarjetas(),
                 'tarjetas': tarjetas,
                 'created_at': mazo.created_at.strftime('%d/%m/%Y %H:%M'),
@@ -65,12 +67,23 @@ def api_listar_mazos(request):
 @login_required
 @require_http_methods(["GET"])
 def api_mazos_estudiante(request):
-    """API para estudiantes premium que devuelve todos los mazos con sus flashcards."""
+    """API para estudiantes premium que devuelve todos los mazos con sus flashcards filtrados por materia."""
     # Verificar que el usuario tenga suscripción activa
     if not tiene_suscripcion_activa(request.user):
         return JsonResponse({'error': 'Necesitas una suscripción activa'}, status=403)
     
-    mazos = MazoPremium.objects.all()
+    # Obtener el filtro de materia desde los parámetros GET
+    materia_id = request.GET.get('materia_id', None)
+    
+    # Obtener mazos
+    if materia_id:
+        try:
+            mazos = MazoPremium.objects.filter(materia_id=int(materia_id))
+        except (ValueError, TypeError):
+            mazos = MazoPremium.objects.all()
+    else:
+        mazos = MazoPremium.objects.all()
+    
     mazos_data = []
     for mazo in mazos:
         tarjetas = list(
@@ -81,12 +94,37 @@ def api_mazos_estudiante(request):
                 'id': mazo.id,
                 'nombre': mazo.nombre,
                 'descripcion': mazo.descripcion,
+                'materia_id': mazo.materia_id,
+                'materia_nombre': mazo.materia.nombre if mazo.materia else 'Sin materia',
                 'tarjetas_count': mazo.contar_tarjetas(),
                 'tarjetas': tarjetas,
             }
         )
 
     return JsonResponse({'success': True, 'mazos': mazos_data})
+
+
+@login_required
+@require_http_methods(["GET"])
+def api_materias_flashcards(request):
+    """API para obtener las materias que tienen flashcards premium."""
+    # Verificar que el usuario tenga suscripción activa
+    if not tiene_suscripcion_activa(request.user):
+        return JsonResponse({'error': 'Necesitas una suscripción activa'}, status=403)
+    
+    # Obtener materias que tengan al menos un mazo premium
+    from apps.materias.models import Materia
+    materias = Materia.objects.filter(mazos_premium__isnull=False).distinct()
+    
+    materias_data = [
+        {
+            'id': materia.id,
+            'nombre': materia.nombre
+        }
+        for materia in materias
+    ]
+    
+    return JsonResponse({'success': True, 'materias': materias_data})
 
 
 @login_required
@@ -97,14 +135,24 @@ def api_crear_mazo(request):
 
     nombre = request.POST.get('nombre', '').strip()
     descripcion = request.POST.get('descripcion', '').strip()
+    materia_id = request.POST.get('materia_id', '').strip()
 
     if not nombre:
         return JsonResponse({'success': False, 'error': 'El nombre es requerido'})
+
+    materia = None
+    if materia_id:
+        from apps.materias.models import Materia
+        try:
+            materia = Materia.objects.get(id=int(materia_id))
+        except (Materia.DoesNotExist, ValueError):
+            pass
 
     mazo = MazoPremium.objects.create(
         creado_por=request.user,
         nombre=nombre,
         descripcion=descripcion,
+        materia=materia,
     )
 
     return JsonResponse(
@@ -114,6 +162,8 @@ def api_crear_mazo(request):
                 'id': mazo.id,
                 'nombre': mazo.nombre,
                 'descripcion': mazo.descripcion,
+                'materia_id': mazo.materia_id,
+                'materia_nombre': mazo.materia.nombre if mazo.materia else None,
             },
         }
     )
@@ -127,6 +177,7 @@ def api_editar_mazo(request, mazo_id):
 
     nombre = request.POST.get('nombre', '').strip()
     descripcion = request.POST.get('descripcion', '').strip()
+    materia_id = request.POST.get('materia_id', '').strip()
 
     if not nombre:
         return JsonResponse({'success': False, 'error': 'El nombre es requerido'})
@@ -134,6 +185,16 @@ def api_editar_mazo(request, mazo_id):
     mazo = get_object_or_404(MazoPremium, id=mazo_id)
     mazo.nombre = nombre
     mazo.descripcion = descripcion
+    
+    if materia_id:
+        from apps.materias.models import Materia
+        try:
+            mazo.materia = Materia.objects.get(id=int(materia_id))
+        except (Materia.DoesNotExist, ValueError):
+            mazo.materia = None
+    else:
+        mazo.materia = None
+    
     mazo.save()
 
     return JsonResponse(

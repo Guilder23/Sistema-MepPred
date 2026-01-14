@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from datetime import timedelta
+from apps.materias.models import Materia
 
 User = get_user_model()
 
@@ -9,6 +10,7 @@ User = get_user_model()
 class Mazo(models.Model):
     """Colección de flashcards organizadas por tema"""
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='mazos_flashcards')
+    materia = models.ForeignKey(Materia, on_delete=models.CASCADE, related_name='mazos_flashcards', null=True, blank=True, verbose_name="Materia")
     nombre = models.CharField(max_length=255)
     descripcion = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)

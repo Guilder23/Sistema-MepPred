@@ -4,9 +4,9 @@ from .models import Mazo, Flashcard, HistorialRepaso
 
 @admin.register(Mazo)
 class MazoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'usuario', 'created_at', 'contar_tarjetas', 'contar_vencidas')
-    list_filter = ('created_at', 'usuario')
-    search_fields = ('nombre', 'usuario__username')
+    list_display = ('nombre', 'usuario', 'materia', 'created_at', 'contar_tarjetas', 'contar_vencidas')
+    list_filter = ('created_at', 'usuario', 'materia')
+    search_fields = ('nombre', 'usuario__username', 'materia__nombre')
     readonly_fields = ('created_at', 'updated_at')
 
 

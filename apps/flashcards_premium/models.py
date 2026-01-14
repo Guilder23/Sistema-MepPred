@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timezone
+from apps.materias.models import Materia
 
 User = get_user_model()
 
@@ -13,6 +14,7 @@ class MazoPremium(models.Model):
         blank=True,
         related_name='mazos_premium_creados'
     )
+    materia = models.ForeignKey(Materia, on_delete=models.CASCADE, related_name='mazos_premium', null=True, blank=True, verbose_name="Materia")
     nombre = models.CharField(max_length=255)
     descripcion = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
