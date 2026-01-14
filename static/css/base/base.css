@@ -4,6 +4,29 @@
    Modo claro activo - Variables oscuro preparadas
    ============================================ */
 
+/* ===== RESET ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--fuente-familia);
+  font-size: var(--fuente-tamano-base);
+  line-height: var(--fuente-line-height);
+  color: var(--texto-principal);
+  background: var(--fondo-principal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 :root {
   /* ===== COLORES PRIMARIOS ===== */
   --color-primario: #2563eb;
