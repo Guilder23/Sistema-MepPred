@@ -244,7 +244,7 @@ a {
   min-height: 100%;
   width: 100%;
   padding: var(--espacio-xl);
-  padding-left: calc(260px + var(--espacio-xl));
+  padding-left: calc(240px + var(--espacio-xl));
 }
 
 .layout__content--centrado {

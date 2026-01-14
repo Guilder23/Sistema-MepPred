@@ -83,6 +83,16 @@
       <i class="fas fa-crown"></i>
       <span>Flashcards Premium</span>
     </a>
+    <a class="sidebar__link" href="/admin/asignar/" data-page="asignar-admin">
+      <i class="fas fa-user-shield"></i>
+      <span>Asignar Admin</span>
+    </a>
+  </div>
+  {% endif %}
+  
+  {% if request.user.is_superuser or request.user.role == 'admin' %}
+  <div class="sidebar__section">
+    <div class="sidebar__title"><i class="fas fa-credit-card"></i> Pagos</div>
     <a class="sidebar__link" href="{% url 'suscripciones:panel_verificacion' %}" data-page="verificar-pagos">
       <i class="fas fa-check-circle"></i>
       <span>Verificar Pagos</span>
@@ -90,10 +100,6 @@
     <a class="sidebar__link" href="{% url 'suscripciones:configuracion_pago' %}" data-page="configurar-pago">
       <i class="fas fa-qrcode"></i>
       <span>Configurar Pago</span>
-    </a>
-    <a class="sidebar__link" href="/admin/asignar/" data-page="asignar-admin">
-      <i class="fas fa-user-shield"></i>
-      <span>Asignar Admin</span>
     </a>
   </div>
   {% endif %}
