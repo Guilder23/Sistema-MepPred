@@ -115,9 +115,6 @@ function crearTarjetaExamen(examen) {
     let botonDeshabilitado = !examen.activo;
     let mensajeBloqueo = '';
     
-    // Verificar si está aprobado para mostrar certificado
-    const estaAprobado = examen.mejor_nota !== null && examen.mejor_nota >= 16;
-    
     // Verificar si está bloqueado por contenido incompleto
     if (!examen.contenido_completado) {
         botonDeshabilitado = true;
@@ -145,9 +142,9 @@ function crearTarjetaExamen(examen) {
         intentosInfo = `
             <div class="intentos-info ${puedeRanking ? 'con-intentos' : 'sin-ranking'}">
                 <i class="fas ${puedeRanking ? 'fa-trophy' : 'fa-info-circle'}"></i>
-                <span>Intentos: ${examen.intentos_realizados}/3</span>
+                <span>Intentos: ${examen.intentos_realizados}/1</span>
                 ${puedeRanking 
-                    ? `<span class="restantes ranking-disponible">${intentosRestantes} intentos para ranking</span>`
+                    ? `<span class="restantes ranking-disponible">${intentosRestantes} intento para ranking</span>`
                     : `<span class="sin-ranking-text">Ya no puedes entrar al ranking</span>`
                 }
                 ${examen.mejor_nota !== null ? `<span class="mejor-nota">Mejor: ${examen.mejor_nota}/20</span>` : ''}
@@ -163,21 +160,13 @@ function crearTarjetaExamen(examen) {
         intentosInfo = `
             <div class="intentos-info nuevos-intentos">
                 <i class="fas fa-star"></i>
-                <span>3 intentos para entrar al ranking</span>
+                <span>1 intento para entrar al ranking</span>
             </div>
         `;
     }
     
-    // Botón de certificado (solo si está aprobado)
-    const botonCertificado = estaAprobado ? `
-        <a href="/examenes/api/certificado/${examen.id}/" 
-           class="btn-certificado" 
-           download
-           title="Descargar certificado">
-            <i class="fas fa-certificate"></i>
-            Certificado
-        </a>
-    ` : '';
+    // Botón de certificado (removido - no se usa)
+    const botonCertificado = '';
     
     return `
         <div class="examen-card" data-examen-id="${examen.id}" data-titulo="${examen.titulo.toLowerCase()}">

@@ -8,10 +8,6 @@ import json
 from .models import Examen, Pregunta, Enunciado, Opcion, IntentoExamen
 from apps.materias.models import Materia
 from apps.suscripciones.decorators import tiene_suscripcion_activa
-from reportlab.lib.pagesizes import A4, landscape
-from reportlab.lib import colors
-from reportlab.lib.units import cm
-from reportlab.pdfgen import canvas
 from datetime import datetime
 
 
@@ -161,7 +157,7 @@ def obtener_examenes(request):
             
             # Obtener intentos del estudiante para este examen
             intentos_realizados = 0
-            intentos_restantes = 3
+            intentos_restantes = 1
             mejor_nota = None
             puede_entrar_ranking = True
             
@@ -172,10 +168,10 @@ def obtener_examenes(request):
                 ).order_by('-nota')
                 
                 intentos_realizados = intentos.count()
-                intentos_restantes = max(0, 3 - intentos_realizados)
+                intentos_restantes = max(0, 1 - intentos_realizados)
                 
-                # Los primeros 3 intentos pueden entrar al ranking
-                puede_entrar_ranking = intentos_realizados < 3
+                # El primer intento puede entrar al ranking
+                puede_entrar_ranking = intentos_realizados < 1
                 
                 # Obtener la mejor nota si hay intentos
                 if intentos.exists():
@@ -255,11 +251,11 @@ def obtener_examen_estudiante(request, examen_id):
                 'fecha': intento.fecha_intento.strftime('%d/%m/%Y %H:%M')
             })
         
-        # Los primeros 3 intentos cuentan para el ranking
+        # Solo el primer intento cuenta para el ranking
         # Después puede seguir intentando pero ya no suma al ranking
         numero_intentos = intentos_previos.count()
         puede_intentar = True  # Siempre puede intentar
-        puede_ranking = numero_intentos < 3  # Solo los primeros 3 van al ranking
+        puede_ranking = numero_intentos < 1  # Solo el primer intento va al ranking
         
         # Obtener preguntas con sus enunciados y opciones (sin mostrar respuestas correctas)
         preguntas_list = []
@@ -306,7 +302,7 @@ def obtener_examen_estudiante(request, examen_id):
                 'total': numero_intentos,
                 'puede_intentar': puede_intentar,
                 'puede_ranking': puede_ranking,
-                'intentos_restantes': max(0, 3 - numero_intentos)
+                'intentos_restantes': max(0, 1 - numero_intentos)
             }
         })
     except Examen.DoesNotExist:
@@ -686,9 +682,9 @@ def calificar_examen(request, examen_id):
             examen=examen
         ).count()
         
-        # Los primeros 3 intentos cuentan para el ranking
+        # Solo el primer intento cuenta para el ranking
         # Después puede seguir pero ya no entra al ranking
-        puede_ranking = intentos_previos < 3
+        puede_ranking = intentos_previos < 1
         
         # Calcular tiempo empleado si se envió
         tiempo_empleado = data.get('tiempo_empleado')
@@ -719,7 +715,7 @@ def calificar_examen(request, examen_id):
                 'nota': nota,
                 'numero_intento': intento.numero_intento,
                 'puede_ranking': puede_ranking,
-                'intentos_restantes': max(0, 3 - intento.numero_intento)
+                'intentos_restantes': max(0, 1 - intento.numero_intento)
             },
             'resultados': resultados_detallados
         })
@@ -729,220 +725,4 @@ def calificar_examen(request, examen_id):
             'error': str(e)
         }, status=400)
 
-@login_required
-def descargar_certificado(request, examen_id):
-    """Generar y descargar certificado PDF con diseño premium"""
-    try:
-        examen = get_object_or_404(Examen, id=examen_id)
-        
-        mejor_intento = IntentoExamen.objects.filter(
-            estudiante=request.user,
-            examen=examen,
-            aprobado=True
-        ).order_by('-nota').first()
-        
-        if not mejor_intento:
-            return HttpResponse("No has aprobado este examen aún.", status=403)
-        
-        response = HttpResponse(content_type='application/pdf')
-        
-        import re
-        nombre_archivo = re.sub(r'[^a-zA-Z0-9_-]', '_', f"certificado_{examen.materia.nombre}_{request.user.username}")
-        response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}.pdf"'
-        
-        p = canvas.Canvas(response, pagesize=landscape(A4))
-        width, height = landscape(A4)
-        
-        # Paleta de colores profesional
-        color_primario = colors.HexColor('#003d82')      # Azul marino
-        color_secundario = colors.HexColor('#0066cc')    # Azul más claro
-        color_dorado = colors.HexColor('#d4af37')        # Oro auténtico
-        color_gris_claro = colors.HexColor('#f8f9fa')    # Fondo claro
-        color_texto = colors.HexColor('#1a1a1a')         # Texto oscuro
-        color_linea = colors.HexColor('#003d82')         # Líneas
-        
-        # Fondo degradado simulado (capas)
-        p.setFillColor(colors.white)
-        p.rect(0, 0, width, height, fill=True, stroke=False)
-        
-        # Fondo superior decorativo
-        p.setFillColor(color_primario)
-        p.rect(0, height-1.5*cm, width, 1.5*cm, fill=True, stroke=False)
-        
-        # Fondo inferior decorativo
-        p.setFillColor(color_primario)
-        p.rect(0, 0, width, 1.2*cm, fill=True, stroke=False)
-        
-        # Marco principal elegante (triple línea)
-        margen = 1.8*cm
-        marco_width = width - 2*margen
-        marco_height = height - 2*margen - 1.2*cm
-        
-        # Línea exterior dorada gruesa
-        p.setStrokeColor(color_dorado)
-        p.setLineWidth(2.5)
-        p.rect(margen, margen, marco_width, marco_height, fill=False, stroke=True)
-        
-        # Línea interior principal
-        p.setStrokeColor(color_primario)
-        p.setLineWidth(1.5)
-        p.rect(margen+0.2*cm, margen+0.2*cm, marco_width-0.4*cm, marco_height-0.4*cm, fill=False, stroke=True)
-        
-        # Línea interior fina dorada
-        p.setStrokeColor(color_dorado)
-        p.setLineWidth(0.5)
-        p.rect(margen+0.35*cm, margen+0.35*cm, marco_width-0.7*cm, marco_height-0.7*cm, fill=False, stroke=True)
-        
-        # Título principal - CERTIFICADO
-        p.setFillColor(color_primario)
-        p.setFont("Helvetica-Bold", 48)
-        p.drawCentredString(width/2, height-3.5*cm, "CERTIFICADO")
-        
-        # Subtítulo
-        p.setFillColor(color_dorado)
-        p.setFont("Helvetica-Bold", 14)
-        p.drawCentredString(width/2, height-4.6*cm, "DE LOGRO Y EXCELENCIA ACADÉMICA")
-        
-        # Línea decorativa dorada bajo título
-        p.setStrokeColor(color_dorado)
-        p.setLineWidth(1.5)
-        p.line(width/2-6*cm, height-5*cm, width/2+6*cm, height-5*cm)
-        
-        # Textos de presentación
-        p.setFillColor(color_texto)
-        p.setFont("Helvetica", 13)
-        p.drawCentredString(width/2, height-6*cm, "Se certifica que")
-        
-        # Nombre del estudiante - DESTACADO
-        nombre_completo = f"{request.user.first_name} {request.user.last_name}" if request.user.first_name else request.user.username
-        
-        # Rectángulo de fondo para el nombre
-        nombre_y = height - 7.5*cm
-        p.setFillColor(color_gris_claro)
-        p.rect(width/2-7*cm, nombre_y-0.8*cm, 14*cm, 1.2*cm, fill=True, stroke=False)
-        
-        p.setFillColor(color_primario)
-        p.setFont("Helvetica-Bold", 32)
-        p.drawCentredString(width/2, nombre_y, nombre_completo.upper())
-        
-        # Tipo de estudiante
-        tipo_estudiante = ""
-        if hasattr(request.user, 'student_status') and request.user.student_status:
-            if request.user.student_status == 'university':
-                tipo_estudiante = "Estudiante Universitario"
-            elif request.user.student_status == 'aspirant':
-                tipo_estudiante = "Postulante"
-            else:
-                tipo_estudiante = "Estudiante"
-        else:
-            tipo_estudiante = "Estudiante"
-        
-        p.setFillColor(color_dorado)
-        p.setFont("Helvetica-Oblique", 12)
-        p.drawCentredString(width/2, height-9*cm, tipo_estudiante)
-        
-        # Línea decorativa
-        p.setStrokeColor(color_dorado)
-        p.setLineWidth(1)
-        p.line(width/2-4.5*cm, height-9.4*cm, width/2+4.5*cm, height-9.4*cm)
-        
-        # Texto principal - Ha aprobado
-        p.setFillColor(color_texto)
-        p.setFont("Helvetica", 13)
-        p.drawCentredString(width/2, height-10.2*cm, "Por haber completado satisfactoriamente el examen de")
-        
-        # Materia - En grande
-        p.setFillColor(color_secundario)
-        p.setFont("Helvetica-Bold", 22)
-        p.drawCentredString(width/2, height-11.3*cm, examen.materia.nombre.upper())
-        
-        # Título del examen
-        p.setFillColor(color_texto)
-        p.setFont("Helvetica-Oblique", 12)
-        titulo_truncado = (examen.titulo[:50] + "...") if len(examen.titulo) > 50 else examen.titulo
-        p.drawCentredString(width/2, height-12.2*cm, f'"{titulo_truncado}"')
-        
-        # Sección de resultados - Caja destacada
-        resultado_y_inicio = height - 13.5*cm
-        p.setFillColor(colors.HexColor('#f0f4f8'))
-        p.rect(width/2-5.5*cm, resultado_y_inicio-1.8*cm, 11*cm, 1.8*cm, fill=True, stroke=False)
-        
-        # Borde de la caja
-        p.setStrokeColor(color_dorado)
-        p.setLineWidth(1.5)
-        p.rect(width/2-5.5*cm, resultado_y_inicio-1.8*cm, 11*cm, 1.8*cm, fill=False, stroke=True)
-        
-        # Nota
-        p.setFillColor(color_primario)
-        p.setFont("Helvetica-Bold", 13)
-        p.drawString(width/2-5*cm, resultado_y_inicio-0.5*cm, "NOTA OBTENIDA:")
-        
-        p.setFillColor(color_dorado)
-        p.setFont("Helvetica-Bold", 20)
-        p.drawString(width/2+2*cm, resultado_y_inicio-0.5*cm, f"{float(mejor_intento.nota):.2f}/20")
-        
-        # Porcentaje
-        p.setFillColor(color_texto)
-        p.setFont("Helvetica", 11)
-        p.drawString(width/2-5.2*cm, resultado_y_inicio-1.2*cm, f"Precision: {float(mejor_intento.porcentaje):.1f}%")
-        
-        # Estrella de logro (usando caracteres especiales)
-        p.setFillColor(color_dorado)
-        p.setFont("Helvetica-Bold", 16)
-        p.drawString(width/2+3*cm, resultado_y_inicio-1.2*cm, "★★★")
-        
-        # Línea divisoria
-        p.setStrokeColor(color_primario)
-        p.setLineWidth(0.5)
-        p.line(margen+0.5*cm, height-15.5*cm, width-margen-0.5*cm, height-15.5*cm)
-        
-        # Mensaje de reconocimiento
-        p.setFillColor(color_texto)
-        p.setFont("Helvetica", 11)
-        linea1 = "Se reconoce el esfuerzo, dedicacion y competencia demostrada"
-        linea2 = "en el dominio de los conocimientos evaluados en esta materia."
-        p.drawCentredString(width/2, height-16.2*cm, linea1)
-        p.drawCentredString(width/2, height-16.8*cm, linea2)
-        
-        # Fecha de aprobación
-        meses = {
-            1: 'enero', 2: 'febrero', 3: 'marzo', 4: 'abril',
-            5: 'mayo', 6: 'junio', 7: 'julio', 8: 'agosto',
-            9: 'septiembre', 10: 'octubre', 11: 'noviembre', 12: 'diciembre'
-        }
-        dia_aprobacion = mejor_intento.fecha_intento.day
-        mes_aprobacion = meses[mejor_intento.fecha_intento.month]
-        anio_aprobacion = mejor_intento.fecha_intento.year
-        fecha_aprobacion = f"Aprobado: {dia_aprobacion} de {mes_aprobacion} de {anio_aprobacion}"
-        
-        p.setFillColor(color_primario)
-        p.setFont("Helvetica-Bold", 10)
-        p.drawCentredString(width/2, height-17.8*cm, fecha_aprobacion)
-        
-        # Pie de página - sobre fondo oscuro
-        p.setFillColor(color_primario)
-        p.setFont("Helvetica-Bold", 14)
-        p.drawCentredString(width/2, 3*cm, "MedPred")
-        
-        p.setFillColor(color_dorado)
-        p.setFont("Helvetica", 10)
-        p.drawCentredString(width/2, 2.4*cm, "Sistema de Evaluacion Medica")
-        
-        # Información de generación
-        dia_impresion = datetime.now().day
-        mes_impresion = meses[datetime.now().month]
-        anio_impresion = datetime.now().year
-        fecha_impresion = f"{dia_impresion} de {mes_impresion} de {anio_impresion}"
-        
-        p.setFillColor(colors.white)
-        p.setFont("Helvetica", 8)
-        p.drawCentredString(width/2, 1.7*cm, f"Certificado generado: {fecha_impresion}")
-        
-        # Finalizar
-        p.showPage()
-        p.save()
-        
-        return response
-        
-    except Exception as e:
-        return HttpResponse(f"Error al generar certificado: {str(e)}", status=500)
+

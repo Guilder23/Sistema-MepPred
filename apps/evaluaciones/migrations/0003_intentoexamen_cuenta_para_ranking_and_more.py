@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='intentoexamen',
             name='cuenta_para_ranking',
-            field=models.BooleanField(default=True, help_text='Solo los primeros 3 intentos cuentan para el ranking', verbose_name='Cuenta para Ranking'),
+            field=models.BooleanField(default=True, help_text='Solo el primer intento cuenta para el ranking', verbose_name='Cuenta para Ranking'),
         ),
         migrations.AlterField(
             model_name='examen',

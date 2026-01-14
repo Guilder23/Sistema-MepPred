@@ -85,7 +85,7 @@ class EstadisticaEstudiante(models.Model):
             fecha_desde = None
         
         # Obtener intentos según el período
-        # SOLO intentos que cuentan para el ranking (primeros 3 intentos) Y están aprobados
+        # SOLO intentos que cuentan para el ranking (primer intento) Y están aprobados
         intentos = IntentoExamen.objects.select_related('estudiante', 'examen__materia').filter(
             cuenta_para_ranking=True,
             aprobado=True  # SOLO intentos aprobados

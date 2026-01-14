@@ -187,7 +187,7 @@ class IntentoExamen(models.Model):
     cuenta_para_ranking = models.BooleanField(
         default=True,
         verbose_name="Cuenta para Ranking",
-        help_text="Solo los primeros 3 intentos cuentan para el ranking"
+        help_text="Solo el primer intento cuenta para el ranking"
     )
     tiempo_empleado = models.IntegerField(
         null=True,

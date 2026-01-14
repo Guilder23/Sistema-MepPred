@@ -109,7 +109,7 @@ function mostrarLimiteIntentosAlcanzado() {
         <div class="limite-alcanzado">
             <i class="fas fa-exclamation-triangle"></i>
             <h2>Límite de Intentos Alcanzado</h2>
-            <p>Has completado los 3 intentos permitidos para este examen.</p>
+            <p>Has completado el intento permitido para este examen.</p>
             
             <div class="intentos-realizados">
                 <h3>Tus Calificaciones:</h3>
