@@ -64,12 +64,13 @@ h1 {
     display: flex;
     gap: 1rem;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 .filtros-container .form-control,
 .filtros-container .form-select {
     flex: 1;
-    min-width: 200px;
+    min-width: 180px;
 }
 
 .form-control,
@@ -542,9 +543,15 @@ h1 {
         padding: 1rem;
     }
 
+    .filtros-container .form-control,
+    .filtros-container .form-select {
+        width: 100%;
+        min-width: 100%;
+    }
+
     .form-control,
     .form-select {
-        min-width: 100%;
+        width: 100%;
     }
 
     .contenidos-grid {

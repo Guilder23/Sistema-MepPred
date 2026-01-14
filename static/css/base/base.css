@@ -294,6 +294,7 @@ a {
   
   .layout__content {
     padding: 0;
+    padding-top: 4rem;
   }
 }
 
