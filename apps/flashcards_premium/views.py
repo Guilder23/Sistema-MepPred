@@ -262,14 +262,18 @@ def api_editar_flashcard(request, flashcard_id):
     if not _es_admin(request.user):
         return JsonResponse({'error': 'No tienes permisos'}, status=403)
 
+    mazo_id = request.POST.get('mazo_id', '').strip()
     pregunta = request.POST.get('pregunta', '').strip()
     respuesta = request.POST.get('respuesta', '').strip()
     categoria = request.POST.get('categoria', '').strip()
 
-    if not all([pregunta, respuesta]):
-        return JsonResponse({'success': False, 'error': 'Pregunta y respuesta son requeridos'})
+    if not all([mazo_id, pregunta, respuesta]):
+        return JsonResponse({'success': False, 'error': 'Mazo, pregunta y respuesta son requeridos'})
 
     flashcard = get_object_or_404(FlashcardPremium, id=flashcard_id)
+    mazo = get_object_or_404(MazoPremium, id=mazo_id)
+    
+    flashcard.mazo = mazo
     flashcard.pregunta = pregunta
     flashcard.respuesta = respuesta
     flashcard.categoria = categoria
@@ -280,6 +284,7 @@ def api_editar_flashcard(request, flashcard_id):
             'success': True,
             'flashcard': {
                 'id': flashcard.id,
+                'mazo_id': flashcard.mazo.id,
                 'pregunta': flashcard.pregunta,
                 'respuesta': flashcard.respuesta,
                 'categoria': flashcard.categoria,

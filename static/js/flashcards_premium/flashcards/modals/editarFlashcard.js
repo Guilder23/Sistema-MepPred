@@ -112,7 +112,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await response.json();
                 
                 if (data.success) {
-                    alert('Flashcard actualizada exitosamente');
                     cerrarModal('editarFlashcardModal');
                     if (typeof cargarFlashcards === 'function') {
                         cargarFlashcards();
