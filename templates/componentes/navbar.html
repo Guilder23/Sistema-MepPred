@@ -8,9 +8,18 @@
     <a class="navbar__brand" href="/">MedPred</a>
     <div class="navbar__links">
       {% if request.user.is_authenticated %}
-        <a class="navbar__link" href="/ranking/">Ranking</a>
-        <a class="navbar__link" href="/ranking/mi-posicion/">Mi Posición</a>
-        <a class="navbar__link" href="/logout/">Salir</a>
+        <a class="navbar__link" href="/ranking/">
+          <i class="fas fa-trophy"></i>
+          Ranking
+        </a>
+        <a class="navbar__link" href="/ranking/mi-posicion/">
+          <i class="fas fa-user"></i>
+          Mi Posición
+        </a>
+        <a class="navbar__link navbar__link--logout" href="/logout/">
+          <i class="fas fa-sign-out-alt"></i>
+          Salir
+        </a>
       {% else %}
         <a class="navbar__link" href="/ranking/">Ranking</a>
         <a class="navbar__link nav-login-btn" href="/login/">Ingresar</a>

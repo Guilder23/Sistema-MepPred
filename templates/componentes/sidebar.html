@@ -1,4 +1,13 @@
 <aside class="sidebar" id="sidebar">
+  <div class="sidebar__user">
+    <div class="sidebar__user-avatar">
+      <i class="fas fa-user-circle"></i>
+    </div>
+    <div class="sidebar__user-info">
+      <div class="sidebar__user-name">{{ request.user.get_full_name|default:request.user.username }}</div>
+      <div class="sidebar__user-role">{{ request.user.role|title }}</div>
+    </div>
+  </div>
   <div class="sidebar__section">
     <div class="sidebar__title"><i class="fas fa-compass"></i> Navegación</div>
     <a class="sidebar__link" href="/panel/" data-page="panel">

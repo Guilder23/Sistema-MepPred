@@ -75,6 +75,13 @@
   font-size: var(--fuente-tamano-sm);
   font-weight: var(--fuente-peso-medium);
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-xs);
+}
+
+.navbar__link i {
+  font-size: 0.9rem;
 }
 
 .navbar__link:hover {
@@ -86,6 +93,23 @@
   color: var(--color-primario);
   background: var(--color-primario-fondo);
   font-weight: var(--fuente-peso-semibold);
+}
+
+.navbar__link--logout {
+  background: var(--color-error);
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-xs);
+}
+
+.navbar__link--logout:hover {
+  background: var(--color-error-hover);
+  color: white;
+}
+
+.navbar__link--logout i {
+  font-size: 0.9rem;
 }
 
 /* Responsive */

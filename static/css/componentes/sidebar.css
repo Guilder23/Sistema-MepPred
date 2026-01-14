@@ -15,6 +15,39 @@
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
 }
 
+/* Usuario en sidebar */
+.sidebar__user {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-md);
+  padding: var(--espacio-md);
+  border-bottom: 1px solid var(--borde-sutil);
+  margin-bottom: var(--espacio-md);
+}
+
+.sidebar__user-avatar {
+  font-size: 2rem;
+  color: var(--texto-terciario);
+}
+
+.sidebar__user-info {
+  flex: 1;
+}
+
+.sidebar__user-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--texto-principal);
+  margin-bottom: 0.25rem;
+}
+
+.sidebar__user-role {
+  font-size: 0.75rem;
+  color: var(--texto-terciario);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
 /* Scrollbar personalizado */
 .sidebar::-webkit-scrollbar {
   width: 6px;
