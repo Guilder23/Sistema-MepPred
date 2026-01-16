@@ -30,7 +30,7 @@
     {% if request.user.is_authenticated %}
     <div class="ranking-filters">
         <a href="{% url 'ranking:mi_posicion' %}" class="btn-mi-posicion">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 20px; height: 20px; margin-right: 8px;">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 18px; height: 18px; margin-right: 6px;">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
             Ver Mi Posición
@@ -49,27 +49,19 @@
     <!-- Filtros de período y materia -->
     <div class="ranking-filters">
         <div class="filter-group">
-            <label class="filter-label">Filtrar por período:</label>
+            <label class="filter-label">PERÍODO:</label>
             <div class="filter-buttons">
-                <a href="?periodo=dia{% if materia_id %}&materia={{ materia_id }}{% endif %}" class="filter-btn {% if periodo == 'dia' %}active{% endif %}">
-                    Último Día
-                </a>
-                <a href="?periodo=semana{% if materia_id %}&materia={{ materia_id }}{% endif %}" class="filter-btn {% if periodo == 'semana' %}active{% endif %}">
-                    Última Semana
-                </a>
-                <a href="?periodo=mes{% if materia_id %}&materia={{ materia_id }}{% endif %}" class="filter-btn {% if periodo == 'mes' %}active{% endif %}">
-                    Último Mes
-                </a>
-                <a href="?periodo=todo{% if materia_id %}&materia={{ materia_id }}{% endif %}" class="filter-btn {% if periodo == 'todo' %}active{% endif %}">
-                    Todos
-                </a>
+                <a href="?periodo=dia{% if materia_id %}&materia={{ materia_id }}{% endif %}" class="filter-btn {% if periodo == 'dia' %}active{% endif %}">Día</a>
+                <a href="?periodo=semana{% if materia_id %}&materia={{ materia_id }}{% endif %}" class="filter-btn {% if periodo == 'semana' %}active{% endif %}">Semana</a>
+                <a href="?periodo=mes{% if materia_id %}&materia={{ materia_id }}{% endif %}" class="filter-btn {% if periodo == 'mes' %}active{% endif %}">Mes</a>
+                <a href="?periodo=todo{% if materia_id %}&materia={{ materia_id }}{% endif %}" class="filter-btn {% if periodo == 'todo' %}active{% endif %}">Todo</a>
             </div>
         </div>
         
         <div class="filter-group">
-            <label class="filter-label">Filtrar por materia:</label>
+            <label class="filter-label">MATERIA:</label>
             <select id="filtroMateria" class="filter-select" onchange="window.location.href='?periodo={{ periodo }}&materia=' + this.value">
-                <option value="">Todas las materias</option>
+                <option value="">Todas</option>
                 {% for materia in materias %}
                 <option value="{{ materia.id }}" {% if materia_id == materia.id|stringformat:"s" %}selected{% endif %}>
                     {{ materia.nombre }}
