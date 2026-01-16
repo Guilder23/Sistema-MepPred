@@ -1,4 +1,5 @@
 from datetime import timedelta
+from typing import TYPE_CHECKING, Tuple
 
 from django.conf import settings
 from django.contrib import messages
@@ -19,8 +20,11 @@ from django.http import JsonResponse
 
 from .models import CambioRol
 
+if TYPE_CHECKING:
+    from django.contrib.auth.models import AbstractBaseUser as User
+else:
+    User = get_user_model()
 
-User = get_user_model()
 signer = TimestampSigner()
 
 
@@ -44,7 +48,7 @@ def home(request):
     return render(request, 'home.html')
 
 
-def _puede_reenviar_verificacion(user: User) -> tuple[bool, str]:
+def _puede_reenviar_verificacion(user: User) -> Tuple[bool, str]:
     max_reenvios = getattr(settings, 'EMAIL_VERIFICACION_REENVIOS_MAX', 3)
     ventana_seconds = getattr(settings, 'EMAIL_VERIFICACION_REENVIOS_VENTANA_SECONDS', 1800)
 
@@ -201,7 +205,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return redirect('cuentas:login')
+    return redirect('cuentas:home')
 
 
 def _normalizar_superuser(user: User) -> None:
