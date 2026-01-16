@@ -46,6 +46,7 @@
   align-items: center;
   width: 100vw;
   margin-left: calc(-50vw + 50%);
+  padding-top: 80px;
 }
 
 .hero::before {
@@ -63,7 +64,7 @@
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 var(--espacio-xl);
+  padding: 0 var(--espacio-3xl);
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--espacio-3xl);
@@ -149,7 +150,7 @@
 
 /* ===== FEATURES SECTION ===== */
 .features {
-  padding: var(--espacio-3xl) var(--espacio-xl);
+  padding: var(--espacio-3xl) var(--espacio-3xl);
   background: var(--fondo-secundario);
 }
 
@@ -232,7 +233,7 @@
 
 /* ===== BENEFITS SECTION ===== */
 .benefits {
-  padding: var(--espacio-3xl) var(--espacio-xl);
+  padding: var(--espacio-3xl) var(--espacio-3xl);
   background: white;
 }
 
@@ -284,7 +285,7 @@
 
 /* ===== TESTIMONIALS SECTION ===== */
 .testimonials {
-  padding: var(--espacio-3xl) var(--espacio-xl);
+  padding: var(--espacio-3xl) var(--espacio-3xl);
   background: var(--fondo-secundario);
 }
 
@@ -365,7 +366,7 @@
 
 /* ===== CTA SECTION ===== */
 .cta {
-  padding: var(--espacio-3xl) var(--espacio-xl);
+  padding: var(--espacio-3xl) var(--espacio-3xl);
   background: linear-gradient(135deg, var(--color-primario) 0%, var(--color-secundario) 100%);
   color: white;
   text-align: center;
@@ -393,7 +394,7 @@
 
 .cta__buttons {
   display: flex;
-  gap: var(--espacio-lg);
+  gap: var(--espacio-md);
   justify-content: center;
   flex-wrap: wrap;
 }
@@ -471,9 +472,10 @@
 }
 
 .btn--large {
-  padding: var(--espacio-md) var(--espacio-xl);
-  font-size: var(--fuente-tamano-base);
-  min-width: 160px;
+  padding: var(--espacio-sm) var(--espacio-lg);
+  font-size: var(--fuente-tamano-sm);
+  min-width: 140px;
+  max-width: 280px;
 }
 
 .btn i {
@@ -484,7 +486,7 @@
 .home-footer {
   background: var(--fondo-principal);
   border-top: 1px solid var(--borde-sutil);
-  padding: var(--espacio-3xl) var(--espacio-xl) var(--espacio-xl) var(--espacio-xl);
+  padding: var(--espacio-3xl) var(--espacio-3xl) var(--espacio-xl) var(--espacio-3xl);
   margin-top: var(--espacio-3xl);
 }
 
@@ -492,7 +494,7 @@
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0;
+  padding: 0 var(--espacio-lg);
 }
 
 .home-footer__grid {
