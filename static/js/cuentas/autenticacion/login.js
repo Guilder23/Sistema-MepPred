@@ -1,127 +1,243 @@
-(function(){
-  // login
+// ===== VALIDACIÓN Y FUNCIONALIDAD DE LOGIN =====
 
-  // ===== MODAL DE LOGIN =====
+document.addEventListener('DOMContentLoaded', function() {
+  // Si estamos en página de login (no en modal)
+  const form = document.getElementById('login-form');
+  
+  if (form) {
+    setupLoginFormValidation(document.getElementById('email'), document.getElementById('password'), document.getElementById('toggle-password'));
+  }
 
-  document.addEventListener('DOMContentLoaded', function() {
-    const modal = document.getElementById('login-modal');
-    // Selectores para botones de apertura (Hero + Navbar)
+  // ===== MODAL DE LOGIN Y REGISTRO DESDE HOME =====
+  const loginModal = document.getElementById('login-modal');
+  if (loginModal) {
+    const loginModalForm = document.getElementById('login-modal-form');
+    if (loginModalForm) {
+      setupModalLoginValidation(loginModalForm);
+    }
+  }
+
+  // ===== MODAL DE LOGIN GENÉRICO =====
+  const modal = document.getElementById('login-modal');
+  if (modal) {
     const openBtns = document.querySelectorAll('#open-login-modal, .nav-login-btn');
     const closeBtn = document.getElementById('close-login-modal');
     const switchToRegistroBtn = document.querySelector('.js-switch-to-registro');
-    const form = modal ? modal.querySelector('form') : null;
 
-    // Función para abrir modal
     function openModal() {
-        if(modal) {
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden'; // Prevenir scroll
-        }
+      if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
     }
 
-    // Función para cerrar modal
     function closeModal() {
-        if(modal) {
-            modal.classList.remove('active');
-            document.body.style.overflow = '';
-        }
+      if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+      }
     }
 
-    // Asignar eventos a botones de apertura
     openBtns.forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault(); // Prevenir navegación si es un enlace
-            openModal();
-        });
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        openModal();
+      });
     });
 
-    // Cerrar modal con botón X
     if (closeBtn) {
       closeBtn.addEventListener('click', closeModal);
     }
 
-    // Cerrar al hacer click fuera del modal
     window.addEventListener('click', function(event) {
       if (event.target === modal) {
         closeModal();
       }
     });
 
-    // Cerrar con tecla Escape
     window.addEventListener('keydown', function(event) {
       if (event.key === 'Escape' && modal && modal.classList.contains('active')) {
         closeModal();
       }
     });
 
-    // Cambiar a modal de registro
     if (switchToRegistroBtn) {
-        switchToRegistroBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            closeModal();
-            const openRegistroBtn = document.getElementById('open-registro-modal');
-            if (openRegistroBtn) openRegistroBtn.click();
-        });
+      switchToRegistroBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        closeModal();
+        const openRegistroBtn = document.getElementById('open-registro-modal');
+        if (openRegistroBtn) openRegistroBtn.click();
+      });
+    }
+  }
+
+  // Funciones compartidas
+  function setupLoginFormValidation(emailInput, passwordInput, togglePasswordBtn) {
+    // Toggle contraseña
+    if (togglePasswordBtn) {
+      togglePasswordBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const type = passwordInput.type === 'password' ? 'text' : 'password';
+        passwordInput.type = type;
+        
+        const icon = this.querySelector('i');
+        if (icon) {
+          icon.classList.toggle('fa-eye');
+          icon.classList.toggle('fa-eye-slash');
+        }
+      });
     }
 
-    // Manejo de formulario vía AJAX
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(form);
-            const submitBtn = form.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerText;
-            
-            submitBtn.disabled = true;
-            submitBtn.innerText = 'Cargando...';
-            
-            // Limpiar errores previos
-            const existingErrors = form.querySelectorAll('.error-message');
-            existingErrors.forEach(el => el.remove());
+    // Navegación con Enter
+    emailInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        if (validateEmail(this.value)) {
+          passwordInput.focus();
+        }
+      }
+    });
 
-            fetch(form.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.href = data.redirect_url;
-                } else {
-                    submitBtn.disabled = false;
-                    submitBtn.innerText = originalText;
-                    
-                    // Mostrar error
-                    const errorDiv = document.createElement('div');
-                    errorDiv.className = 'error-message';
-                    errorDiv.style.color = '#ef4444';
-                    errorDiv.style.marginBottom = '1rem';
-                    errorDiv.style.textAlign = 'center';
-                    errorDiv.style.fontSize = '0.875rem';
-                    errorDiv.innerText = data.message || 'Ocurrió un error inesperado';
-                    
-                    form.insertBefore(errorDiv, form.firstChild);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                submitBtn.disabled = false;
-                submitBtn.innerText = originalText;
-                
-                const errorDiv = document.createElement('div');
-                errorDiv.className = 'error-message';
-                errorDiv.style.color = '#ef4444';
-                errorDiv.style.marginBottom = '1rem';
-                errorDiv.style.textAlign = 'center';
-                errorDiv.innerText = 'Error de conexión. Inténtalo de nuevo.';
-                
-                form.insertBefore(errorDiv, form.firstChild);
-            });
-        });
+    passwordInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const form = emailInput.closest('form');
+        if (form && validatePassword(this.value)) {
+          form.submit();
+        }
+      }
+    });
+
+    // Validación en tiempo real
+    setupFieldValidation(emailInput, validateEmailField, 'email-error');
+    setupFieldValidation(passwordInput, validatePasswordField, 'password-error');
+  }
+
+  function setupModalLoginValidation(form) {
+    const emailInput = form.querySelector('#login-email');
+    const passwordInput = form.querySelector('#login-password');
+    const togglePasswordBtn = form.querySelector('#toggle-login-password');
+
+    if (!emailInput || !passwordInput) return;
+
+    // Toggle contraseña
+    if (togglePasswordBtn) {
+      togglePasswordBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const type = passwordInput.type === 'password' ? 'text' : 'password';
+        passwordInput.type = type;
+        
+        const icon = this.querySelector('i');
+        if (icon) {
+          icon.classList.toggle('fa-eye');
+          icon.classList.toggle('fa-eye-slash');
+        }
+      });
     }
-  });
 
-})();
+    // Navegación con Enter
+    emailInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        if (validateEmail(this.value)) {
+          passwordInput.focus();
+        }
+      }
+    });
+
+    passwordInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        if (validatePassword(this.value)) {
+          form.submit();
+        }
+      }
+    });
+
+    // Validación en tiempo real
+    setupFieldValidation(emailInput, validateEmailField, 'login-email-error');
+    setupFieldValidation(passwordInput, validatePasswordField, 'login-password-error');
+
+    // Submit
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const isEmailValid = validateEmailField(emailInput, 'login-email-error');
+      const isPasswordValid = validatePasswordField(passwordInput, 'login-password-error');
+      
+      if (isEmailValid && isPasswordValid) {
+        form.submit();
+      }
+    });
+  }
+
+  function validateEmail(email) {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  }
+
+  function validatePassword(password) {
+    return password.length >= 1;
+  }
+
+  function validateEmailField(field, errorId = 'email-error') {
+    const errorElement = document.getElementById(errorId);
+    const value = field.value.trim();
+
+    if (!value) {
+      showError(field, errorElement, 'El correo es requerido');
+      return false;
+    }
+
+    if (!validateEmail(value)) {
+      showError(field, errorElement, 'Ingresa un correo válido');
+      return false;
+    }
+
+    hideError(field, errorElement);
+    return true;
+  }
+
+  function validatePasswordField(field, errorId = 'password-error') {
+    const errorElement = document.getElementById(errorId);
+    const value = field.value;
+
+    if (!value) {
+      showError(field, errorElement, 'La contraseña es requerida');
+      return false;
+    }
+
+    hideError(field, errorElement);
+    return true;
+  }
+
+  function setupFieldValidation(field, validationFn, errorId) {
+    field.addEventListener('blur', function() {
+      validationFn(this, errorId);
+    });
+
+    field.addEventListener('input', function() {
+      validationFn(this, errorId);
+    });
+  }
+
+  function showError(field, errorElement, message) {
+    field.classList.add('is-invalid');
+    field.classList.remove('is-valid');
+    if (errorElement) {
+      errorElement.textContent = message;
+      errorElement.classList.add('show');
+    }
+  }
+
+  function hideError(field, errorElement) {
+    field.classList.remove('is-invalid');
+    field.classList.add('is-valid');
+    if (errorElement) {
+      errorElement.textContent = '';
+      errorElement.classList.remove('show');
+    }
+  }
+});
+
+
