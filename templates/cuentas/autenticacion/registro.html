@@ -1,88 +1,77 @@
-{% extends 'base/base.html' %}
+<!-- Modal de Registro -->
+<div id="registro-modal" class="modal">
+  <div class="modal__content">
+    <span class="modal__close" id="close-registro-modal">&times;</span>
+    <h2>Registro de Estudiante</h2>
+    <form method="post" action="/registro/" novalidate id="registro-modal-form">
+      {% csrf_token %}
 
-{% block titulo %}Registro{% endblock %}
-
-{% block css %}
-<link rel="stylesheet" href="/static/css/cuentas/autenticacion/registro.css" />
-{% endblock %}
-
-{% block contenido %}
-<section class="card">
-  <h1>Registro de estudiante</h1>
-  <form method="post" novalidate id="registro-form">
-    {% csrf_token %}
-
-    <div class="form-group">
-      <label for="email">Correo electrónico</label>
-      <input 
-        type="email" 
-        id="email"
-        name="email" 
-        placeholder="correo@ejemplo.com"
-        required 
-        data-next="username"
-      />
-      <span class="error-message" id="email-error"></span>
-    </div>
-
-    <div class="form-group">
-      <label for="username">Usuario</label>
-      <input 
-        type="text" 
-        id="username"
-        name="username" 
-        placeholder="Tu nombre de usuario"
-        data-next="password1"
-      />
-      <span class="error-message" id="username-error"></span>
-    </div>
-
-    <div class="form-group password-group">
-      <label for="password1">Contraseña</label>
-      <div class="password-wrapper">
+      <div class="form-group">
+        <label for="registro-email">Correo electrónico</label>
         <input 
-          type="password" 
-          id="password1"
-          name="password1" 
-          placeholder="Mínimo 8 caracteres"
+          type="email" 
+          id="registro-email" 
+          name="email" 
+          placeholder="correo@ejemplo.com"
           required 
-          data-next="password2"
+          data-next="registro-username"
         />
-        <button type="button" class="toggle-password" id="toggle-password1" aria-label="Mostrar/ocultar contraseña">
-          <i class="fas fa-eye"></i>
-        </button>
+        <span class="error-message" id="registro-email-error"></span>
       </div>
-      <span class="error-message" id="password1-error"></span>
-    </div>
 
-    <div class="form-group password-group">
-      <label for="password2">Confirmar contraseña</label>
-      <div class="password-wrapper">
+      <div class="form-group">
+        <label for="registro-username">Usuario</label>
         <input 
-          type="password" 
-          id="password2"
-          name="password2" 
-          placeholder="Repite tu contraseña"
-          required 
-          data-next="submit"
+          type="text" 
+          id="registro-username" 
+          name="username" 
+          placeholder="Tu nombre de usuario"
+          data-next="registro-password1"
         />
-        <button type="button" class="toggle-password" id="toggle-password2" aria-label="Mostrar/ocultar contraseña">
-          <i class="fas fa-eye"></i>
-        </button>
+        <span class="error-message" id="registro-username-error"></span>
       </div>
-      <span class="error-message" id="password2-error"></span>
+
+      <div class="form-group password-group">
+        <label for="registro-password1">Contraseña</label>
+        <div class="password-wrapper">
+          <input 
+            type="password" 
+            id="registro-password1" 
+            name="password1" 
+            placeholder="Mínimo 8 caracteres"
+            required 
+            data-next="registro-password2"
+          />
+          <button type="button" class="toggle-password" id="toggle-registro-password1" aria-label="Mostrar/ocultar contraseña">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+        <span class="error-message" id="registro-password1-error"></span>
+      </div>
+
+      <div class="form-group password-group">
+        <label for="registro-password2">Confirmar contraseña</label>
+        <div class="password-wrapper">
+          <input 
+            type="password" 
+            id="registro-password2" 
+            name="password2" 
+            placeholder="Repite tu contraseña"
+            required 
+            data-next="registro-submit"
+          />
+          <button type="button" class="toggle-password" id="toggle-registro-password2" aria-label="Mostrar/ocultar contraseña">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+        <span class="error-message" id="registro-password2-error"></span>
+      </div>
+
+      <button type="submit" id="registro-submit" class="btn btn--primary">Crear cuenta</button>
+    </form>
+    <div class="modal__links">
+      <a href="#" class="js-switch-to-login">Ya tengo cuenta</a>
     </div>
-
-    <button type="submit" id="submit">Crear cuenta</button>
-  </form>
-
-  <div class="links">
-    <a href="/login/">Ya tengo cuenta</a>
   </div>
-</section>
-{% endblock %}
-
-{% block js %}
-<script src="/static/js/cuentas/autenticacion/registro.js"></script>
-{% endblock %}
+</div>
 

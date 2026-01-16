@@ -37,10 +37,19 @@
 
   {% include 'componentes/footer.html' %}
 
+  <!-- Modales de Autenticación -->
+  {% include 'cuentas/autenticacion/login.html' %}
+  {% include 'cuentas/autenticacion/registro.html' %}
+
+  <link rel="stylesheet" href="/static/css/cuentas/autenticacion/login.css" />
+  <link rel="stylesheet" href="/static/css/cuentas/autenticacion/registro.css" />
+
   <script src="/static/js/base/base.js"></script>
   <script src="/static/js/componentes/navbar.js"></script>
   <script src="/static/js/componentes/sidebar.js"></script>
   <script src="/static/js/componentes/footer.js"></script>
+  <script src="/static/js/cuentas/autenticacion/login.js"></script>
+  <script src="/static/js/cuentas/autenticacion/registro.js"></script>
   {% block js %}{% endblock %}
 </body>
 </html>
