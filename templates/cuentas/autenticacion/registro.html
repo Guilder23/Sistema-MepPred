@@ -14,6 +14,7 @@
           name="email" 
           placeholder="correo@ejemplo.com"
           required 
+          maxlength="254"
           data-next="registro-username"
         />
         <span class="error-message" id="registro-email-error"></span>
@@ -26,6 +27,7 @@
           id="registro-username" 
           name="username" 
           placeholder="Tu nombre de usuario"
+          maxlength="50"
           data-next="registro-password1"
         />
         <span class="error-message" id="registro-username-error"></span>
@@ -40,6 +42,7 @@
             name="password1" 
             placeholder="Mínimo 8 caracteres"
             required 
+            maxlength="64"
             data-next="registro-password2"
           />
           <button type="button" class="toggle-password" id="toggle-registro-password1" aria-label="Mostrar/ocultar contraseña">
@@ -58,6 +61,7 @@
             name="password2" 
             placeholder="Repite tu contraseña"
             required 
+            maxlength="64"
             data-next="registro-submit"
           />
           <button type="button" class="toggle-password" id="toggle-registro-password2" aria-label="Mostrar/ocultar contraseña">

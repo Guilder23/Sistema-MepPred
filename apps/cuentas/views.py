@@ -81,28 +81,24 @@ def registro_estudiante(request):
         if not email or not password1 or not password2:
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({'success': False, 'message': 'Debes completar todos los campos requeridos.'})
-            messages.error(request, 'Debes completar todos los campos requeridos.')
-            return render(request, 'cuentas/autenticacion/registro.html')
+            return redirect('cuentas:home')
 
         if password1 != password2:
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({'success': False, 'message': 'Las contraseñas no coinciden.'})
-            messages.error(request, 'Las contraseñas no coinciden.')
-            return render(request, 'cuentas/autenticacion/registro.html')
+            return redirect('cuentas:home')
 
         if User.objects.filter(email=email).exists():
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({'success': False, 'message': 'Este correo ya está registrado.'})
-            messages.error(request, 'Este correo ya está registrado.')
-            return render(request, 'cuentas/autenticacion/registro.html')
+            return redirect('cuentas:home')
 
         try:
             validate_password(password1)
         except ValidationError as exc:
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({'success': False, 'message': ' '.join(exc.messages)})
-            messages.error(request, ' '.join(exc.messages))
-            return render(request, 'cuentas/autenticacion/registro.html')
+            return redirect('cuentas:home')
 
         base_username = slugify(username) if username else slugify(email.split('@')[0])
         if not base_username:
@@ -130,7 +126,7 @@ def registro_estudiante(request):
             return JsonResponse({'success': True, 'redirect_url': reverse('cuentas:verificacion_enviada')})
         return redirect('cuentas:verificacion_enviada')
 
-    return render(request, 'cuentas/autenticacion/registro.html')
+    return redirect('cuentas:home')
 
 
 def verificacion_enviada(request):
@@ -186,8 +182,7 @@ def login_view(request):
         if user is None:
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({'success': False, 'message': 'Credenciales incorrectas.'})
-            messages.error(request, 'Credenciales incorrectas.')
-            return render(request, 'cuentas/autenticacion/login.html')
+            return redirect(f'{reverse("cuentas:home")}?login_error=credenciales_incorrectas')
 
         if not getattr(user, 'email_verificado', False):
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -200,7 +195,7 @@ def login_view(request):
             return JsonResponse({'success': True, 'redirect_url': reverse('cuentas:panel')})
         return redirect('cuentas:panel')
 
-    return render(request, 'cuentas/autenticacion/login.html')
+    return redirect('cuentas:home')
 
 
 def logout_view(request):

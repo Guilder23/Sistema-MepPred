@@ -466,15 +466,24 @@ document.addEventListener('DOMContentLoaded', function() {
               submitBtn.disabled = false;
               submitBtn.innerText = originalText;
               
-              const errorDiv = document.createElement('div');
-              errorDiv.className = 'error-message';
-              errorDiv.style.color = '#ef4444';
-              errorDiv.style.marginBottom = '1rem';
-              errorDiv.style.textAlign = 'center';
-              errorDiv.style.fontSize = '0.875rem';
-              errorDiv.innerText = data.message || 'Ocurrió un error inesperado';
-              
-              modalForm.insertBefore(errorDiv, modalForm.firstChild);
+              // Mostrar error en el campo de correo si es un correo duplicado
+              if (data.message && data.message.includes('correo')) {
+                showErrorModal(emailInput, document.getElementById('registro-email-error'), data.message);
+              } else {
+                // Mostrar error genérico en la parte superior del formulario
+                const existingError = modalForm.querySelector('.error-message-top');
+                if (existingError) existingError.remove();
+                
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error-message-top';
+                errorDiv.style.color = '#ef4444';
+                errorDiv.style.marginBottom = '1rem';
+                errorDiv.style.textAlign = 'center';
+                errorDiv.style.fontSize = '0.875rem';
+                errorDiv.innerText = data.message || 'Ocurrió un error inesperado';
+                
+                modalForm.insertBefore(errorDiv, modalForm.firstChild);
+              }
             }
           })
           .catch(error => {
@@ -482,8 +491,11 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.disabled = false;
             submitBtn.innerText = originalText;
             
+            const existingError = modalForm.querySelector('.error-message-top');
+            if (existingError) existingError.remove();
+            
             const errorDiv = document.createElement('div');
-            errorDiv.className = 'error-message';
+            errorDiv.className = 'error-message-top';
             errorDiv.style.color = '#ef4444';
             errorDiv.style.marginBottom = '1rem';
             errorDiv.style.textAlign = 'center';

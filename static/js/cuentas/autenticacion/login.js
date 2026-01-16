@@ -166,7 +166,29 @@ document.addEventListener('DOMContentLoaded', function() {
       const isPasswordValid = validatePasswordField(passwordInput, 'login-password-error');
       
       if (isEmailValid && isPasswordValid) {
-        form.submit();
+        // Enviar con AJAX para manejar errores sin redirigir
+        const formData = new FormData(form);
+        
+        fetch(form.action, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            window.location.href = data.redirect_url || '/panel/';
+          } else {
+            // Mostrar error en el campo de contraseña
+            showError(passwordInput, document.getElementById('login-password-error'), data.message);
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          showError(passwordInput, document.getElementById('login-password-error'), 'Error al iniciar sesión');
+        });
       }
     });
   }
