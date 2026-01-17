@@ -6,9 +6,15 @@
     padding: 2rem;
 }
 
+@media (max-width: 768px) {
+    .verificacion-contenedor {
+        padding: 1rem;
+    }
+}
+
 .verificacion-header {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
 }
 
 .verificacion-header h1 {
@@ -17,9 +23,32 @@
     margin-bottom: 0.5rem;
 }
 
+@media (max-width: 768px) {
+    .verificacion-header {
+        margin-bottom: 1rem;
+    }
+    
+    .verificacion-header h1 {
+        font-size: 1.8rem;
+        margin-bottom: 0.3rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .verificacion-header h1 {
+        font-size: 1.5rem;
+    }
+}
+
 .verificacion-subtitulo {
     font-size: 1.1rem;
     color: #666;
+}
+
+@media (max-width: 768px) {
+    .verificacion-subtitulo {
+        font-size: 0.95rem;
+    }
 }
 
 /* Filtros */
@@ -29,6 +58,13 @@
     margin-bottom: 2rem;
     flex-wrap: wrap;
     justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .verificacion-filtros {
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
 }
 
 .filtro-btn {
@@ -41,6 +77,23 @@
     cursor: pointer;
     transition: all 0.3s ease;
     position: relative;
+}
+
+@media (max-width: 768px) {
+    .filtro-btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+        flex: 1 1 auto;
+        min-width: fit-content;
+    }
+}
+
+@media (max-width: 480px) {
+    .filtro-btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.75rem;
+        flex: 1 1 calc(50% - 0.25rem);
+    }
 }
 
 .filtro-btn:hover {
@@ -71,8 +124,14 @@
 /* Lista de suscripciones */
 .suscripciones-lista {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+@media (max-width: 1200px) {
+    .suscripciones-lista {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 @media (max-width: 768px) {
@@ -99,40 +158,40 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.5rem;
+    padding: 1rem;
     border-bottom: 1px solid #f3f4f6;
 }
 
 .card-estudiante {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.7rem;
 }
 
 .estudiante-avatar {
-    width: 3rem;
-    height: 3rem;
+    width: 2.5rem;
+    height: 2.5rem;
     border-radius: 50%;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     font-weight: 700;
     flex-shrink: 0;
 }
 
 .estudiante-info h3 {
-    font-size: 1.1rem;
+    font-size: 0.95rem;
     color: #1a1a2e;
     margin: 0;
 }
 
 .estudiante-info p {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: #6b7280;
-    margin: 0.25rem 0 0 0;
+    margin: 0.2rem 0 0 0;
 }
 
 .card-estado {
@@ -165,17 +224,17 @@
 
 /* Cuerpo de la tarjeta */
 .card-body {
-    padding: 1.5rem;
+    padding: 1rem;
 }
 
 .card-info {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 .info-item {
     display: flex;
     justify-content: space-between;
-    padding: 0.75rem 0;
+    padding: 0.5rem 0;
     border-bottom: 1px solid #f3f4f6;
 }
 
@@ -186,7 +245,7 @@
 .info-label {
     font-weight: 600;
     color: #6b7280;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
 }
 
 .info-value {
@@ -236,6 +295,21 @@
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .comprobante-preview {
+        max-width: 150px;
+        max-height: 200px;
+    }
+}
+
+@media (max-width: 480px) {
+    .comprobante-preview {
+        max-width: 120px;
+        max-height: 160px;
+    }
 }
 
 .comprobante-preview:hover {
@@ -246,18 +320,34 @@
 /* Acciones */
 .card-acciones {
     display: flex;
-    gap: 1rem;
+    gap: 0.75rem;
+}
+
+@media (max-width: 480px) {
+    .card-acciones {
+        gap: 0.5rem;
+        flex-direction: column;
+    }
 }
 
 .card-acciones button {
     flex: 1;
-    padding: 0.75rem 1.5rem;
+    padding: 0.6rem 1rem;
     border: none;
     border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     position: relative;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 480px) {
+    .card-acciones button {
+        padding: 0.7rem 1rem;
+        font-size: 0.85rem;
+        width: 100%;
+    }
 }
 
 .btn-aprobar {
@@ -307,6 +397,12 @@
     padding: 2rem;
 }
 
+@media (max-width: 768px) {
+    .verificacion-modal {
+        padding: 1rem;
+    }
+}
+
 .verificacion-modal-contenido {
     background: white;
     border-radius: 12px;
@@ -314,6 +410,12 @@
     width: 100%;
     max-height: 90vh;
     overflow: auto;
+}
+
+@media (max-width: 480px) {
+    .verificacion-modal-contenido {
+        border-radius: 8px;
+    }
 }
 
 .verificacion-modal-header {
@@ -324,9 +426,22 @@
     border-bottom: 1px solid #e5e7eb;
 }
 
+@media (max-width: 768px) {
+    .verificacion-modal-header {
+        padding: 1rem;
+    }
+}
+
 .verificacion-modal-header h2 {
     margin: 0;
     color: #1a1a2e;
+    font-size: 1.3rem;
+}
+
+@media (max-width: 480px) {
+    .verificacion-modal-header h2 {
+        font-size: 1.1rem;
+    }
 }
 
 .verificacion-modal-cerrar {
