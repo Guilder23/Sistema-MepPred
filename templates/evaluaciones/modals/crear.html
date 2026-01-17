@@ -13,7 +13,14 @@
                 <!-- Título -->
                 <div class="modal-crear-form-group modal-crear-required">
                     <label for="crearTitulo">Título del Examen</label>
-                    <input type="text" class="modal-crear-form-control" id="crearTitulo" required>
+                    <input 
+                        type="text" 
+                        class="modal-crear-form-control" 
+                        id="crearTitulo" 
+                        placeholder="Ej: Examen de Matemáticas"
+                        minlength="3"
+                        maxlength="150"
+                        required>
                 </div>
 
                 <!-- Materia -->
@@ -27,13 +34,25 @@
                 <!-- Descripción -->
                 <div class="modal-crear-form-group">
                     <label for="crearDescripcion">Descripción</label>
-                    <textarea class="modal-crear-form-control" id="crearDescripcion" rows="3"></textarea>
+                    <textarea 
+                        class="modal-crear-form-control" 
+                        id="crearDescripcion" 
+                        placeholder="Descripción opcional..."
+                        maxlength="500"
+                        rows="3"></textarea>
                 </div>
 
                 <!-- Duración -->
                 <div class="modal-crear-form-group modal-crear-required">
                     <label for="crearDuracion">Duración (minutos)</label>
-                    <input type="number" class="modal-crear-form-control" id="crearDuracion" value="60" min="1" required>
+                    <input 
+                        type="number" 
+                        class="modal-crear-form-control" 
+                        id="crearDuracion" 
+                        value="60" 
+                        min="1"
+                        max="1440"
+                        required>
                 </div>
 
                 <!-- Activo -->

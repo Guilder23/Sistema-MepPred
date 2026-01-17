@@ -15,7 +15,14 @@
                 <!-- Título -->
                 <div class="modal-editar-form-group modal-editar-required">
                     <label for="editarTitulo">Título del Examen</label>
-                    <input type="text" class="modal-editar-form-control" id="editarTitulo" required>
+                    <input 
+                        type="text" 
+                        class="modal-editar-form-control" 
+                        id="editarTitulo" 
+                        placeholder="Ej: Examen de Matemáticas"
+                        minlength="3"
+                        maxlength="150"
+                        required>
                 </div>
 
                 <!-- Materia -->
@@ -29,13 +36,24 @@
                 <!-- Descripción -->
                 <div class="modal-editar-form-group">
                     <label for="editarDescripcion">Descripción</label>
-                    <textarea class="modal-editar-form-control" id="editarDescripcion" rows="3"></textarea>
+                    <textarea 
+                        class="modal-editar-form-control" 
+                        id="editarDescripcion" 
+                        placeholder="Descripción opcional..."
+                        maxlength="500"
+                        rows="3"></textarea>
                 </div>
 
                 <!-- Duración -->
                 <div class="modal-editar-form-group modal-editar-required">
                     <label for="editarDuracion">Duración (minutos)</label>
-                    <input type="number" class="modal-editar-form-control" id="editarDuracion" min="1" required>
+                    <input 
+                        type="number" 
+                        class="modal-editar-form-control" 
+                        id="editarDuracion" 
+                        min="1"
+                        max="1440"
+                        required>
                 </div>
 
                 <!-- Activo -->
