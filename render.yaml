@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: meetwin-app
+    env: python
+    plan: free
+    buildCommand: bash build.sh
+    startCommand: gunicorn meetwin.wsgi
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: PYTHON_VERSION
+        value: "3.11.0"
