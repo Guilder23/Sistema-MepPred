@@ -10,6 +10,20 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             guardarMateria();
         });
+        
+        // Validaciones en tiempo real
+        const inputNombre = formCrear.querySelector('#crearNombre');
+        const inputDescripcion = formCrear.querySelector('#crearDescripcion');
+        
+        if (inputNombre) {
+            inputNombre.addEventListener('blur', validarNombreMateria);
+            inputNombre.addEventListener('input', validarNombreMateria);
+        }
+        
+        if (inputDescripcion) {
+            inputDescripcion.addEventListener('blur', validarDescripcionMateria);
+            inputDescripcion.addEventListener('input', validarDescripcionMateria);
+        }
     }
 
     if (btnGuardar) {
@@ -41,6 +55,52 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+function validarNombreMateria(e) {
+    const valor = e.target.value.trim();
+    
+    if (valor && valor.length < 3) {
+        e.target.classList.add('modal-crear-form-control-error');
+        mostrarErrorMensaje(e.target, 'Mínimo 3 caracteres');
+    } else if (valor && valor.length > 150) {
+        e.target.classList.add('modal-crear-form-control-error');
+        mostrarErrorMensaje(e.target, 'Máximo 150 caracteres');
+    } else {
+        e.target.classList.remove('modal-crear-form-control-error');
+        limpiarErrorMensaje(e.target);
+    }
+}
+
+function validarDescripcionMateria(e) {
+    const valor = e.target.value.trim();
+    
+    if (valor && valor.length > 500) {
+        e.target.classList.add('modal-crear-form-control-error');
+        mostrarErrorMensaje(e.target, 'Máximo 500 caracteres');
+    } else {
+        e.target.classList.remove('modal-crear-form-control-error');
+        limpiarErrorMensaje(e.target);
+    }
+}
+
+function mostrarErrorMensaje(elemento, mensaje) {
+    limpiarErrorMensaje(elemento);
+    const divError = document.createElement('small');
+    divError.className = 'modal-crear-form-error';
+    divError.textContent = mensaje;
+    divError.style.display = 'block';
+    divError.style.marginTop = '0.25rem';
+    divError.style.color = '#ef4444';
+    divError.style.fontSize = '0.875rem';
+    elemento.parentNode.appendChild(divError);
+}
+
+function limpiarErrorMensaje(elemento) {
+    const error = elemento.parentNode.querySelector('.modal-crear-form-error');
+    if (error) {
+        error.remove();
+    }
+}
+
 function guardarMateria() {
     const nombre = document.getElementById('crearNombre').value.trim();
     const descripcion = document.getElementById('crearDescripcion').value.trim();
@@ -54,6 +114,16 @@ function guardarMateria() {
 
     if (nombre.length < 3) {
         mostrarError('crearNombre', 'El nombre debe tener al menos 3 caracteres');
+        return;
+    }
+
+    if (nombre.length > 150) {
+        mostrarError('crearNombre', 'El nombre no puede exceder 150 caracteres');
+        return;
+    }
+
+    if (descripcion && descripcion.length > 500) {
+        mostrarError('crearDescripcion', 'La descripción no puede exceder 500 caracteres');
         return;
     }
 

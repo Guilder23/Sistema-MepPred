@@ -10,11 +10,25 @@
             <div class="modal-editar-body">
                 <div class="modal-editar-form-group modal-editar-required">
                     <label for="editarNombre">Nombre de la Materia</label>
-                    <input type="text" class="modal-editar-form-control" id="editarNombre" name="nombre" placeholder="Ej: Matemáticas" required>
+                    <input 
+                        type="text" 
+                        class="modal-editar-form-control" 
+                        id="editarNombre" 
+                        name="nombre" 
+                        placeholder="Ej: Matemáticas"
+                        required
+                        minlength="3"
+                        maxlength="150">
                 </div>
                 <div class="modal-editar-form-group">
                     <label for="editarDescripcion">Descripción</label>
-                    <textarea class="modal-editar-form-control" id="editarDescripcion" name="descripcion" placeholder="Descripción opcional..." rows="4"></textarea>
+                    <textarea 
+                        class="modal-editar-form-control" 
+                        id="editarDescripcion" 
+                        name="descripcion" 
+                        placeholder="Descripción opcional..."
+                        maxlength="500"
+                        rows="4"></textarea>
                 </div>
                 <div class="modal-editar-form-group">
                     <label class="modal-editar-checkbox-label">

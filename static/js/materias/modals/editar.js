@@ -10,6 +10,20 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             actualizarMateria();
         });
+        
+        // Validaciones en tiempo real
+        const inputNombre = formEditar.querySelector('#editarNombre');
+        const inputDescripcion = formEditar.querySelector('#editarDescripcion');
+        
+        if (inputNombre) {
+            inputNombre.addEventListener('blur', validarNombreMateriaEditar);
+            inputNombre.addEventListener('input', validarNombreMateriaEditar);
+        }
+        
+        if (inputDescripcion) {
+            inputDescripcion.addEventListener('blur', validarDescripcionMateriaEditar);
+            inputDescripcion.addEventListener('input', validarDescripcionMateriaEditar);
+        }
     }
 
     if (btnActualizar) {
@@ -41,6 +55,52 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+function validarNombreMateriaEditar(e) {
+    const valor = e.target.value.trim();
+    
+    if (valor && valor.length < 3) {
+        e.target.classList.add('modal-editar-form-control-error');
+        mostrarErrorMensajeEditar(e.target, 'Mínimo 3 caracteres');
+    } else if (valor && valor.length > 150) {
+        e.target.classList.add('modal-editar-form-control-error');
+        mostrarErrorMensajeEditar(e.target, 'Máximo 150 caracteres');
+    } else {
+        e.target.classList.remove('modal-editar-form-control-error');
+        limpiarErrorMensajeEditar(e.target);
+    }
+}
+
+function validarDescripcionMateriaEditar(e) {
+    const valor = e.target.value.trim();
+    
+    if (valor && valor.length > 500) {
+        e.target.classList.add('modal-editar-form-control-error');
+        mostrarErrorMensajeEditar(e.target, 'Máximo 500 caracteres');
+    } else {
+        e.target.classList.remove('modal-editar-form-control-error');
+        limpiarErrorMensajeEditar(e.target);
+    }
+}
+
+function mostrarErrorMensajeEditar(elemento, mensaje) {
+    limpiarErrorMensajeEditar(elemento);
+    const divError = document.createElement('small');
+    divError.className = 'modal-editar-form-error';
+    divError.textContent = mensaje;
+    divError.style.display = 'block';
+    divError.style.marginTop = '0.25rem';
+    divError.style.color = '#ef4444';
+    divError.style.fontSize = '0.875rem';
+    elemento.parentNode.appendChild(divError);
+}
+
+function limpiarErrorMensajeEditar(elemento) {
+    const error = elemento.parentNode.querySelector('.modal-editar-form-error');
+    if (error) {
+        error.remove();
+    }
+}
+
 function actualizarMateria() {
     const id = document.getElementById('editarId').value;
     const nombre = document.getElementById('editarNombre').value.trim();
@@ -55,6 +115,16 @@ function actualizarMateria() {
 
     if (nombre.length < 3) {
         mostrarError('editarNombre', 'El nombre debe tener al menos 3 caracteres');
+        return;
+    }
+
+    if (nombre.length > 150) {
+        mostrarError('editarNombre', 'El nombre no puede exceder 150 caracteres');
+        return;
+    }
+
+    if (descripcion && descripcion.length > 500) {
+        mostrarError('editarDescripcion', 'La descripción no puede exceder 500 caracteres');
         return;
     }
 
