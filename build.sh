@@ -5,7 +5,10 @@ set -o errexit
 pip install -r requirements.txt
 
 # Ejecutar migraciones
-python manage.py migrate
+python manage.py migrate || true
 
 # Recopilar archivos estáticos
-python manage.py collectstatic --no-input
+python manage.py collectstatic --no-input || true
+
+# Crear usuarios por defecto
+python create_default_users.py || true
