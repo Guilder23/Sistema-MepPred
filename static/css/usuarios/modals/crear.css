@@ -48,6 +48,110 @@
     background-color: #218838;
 }
 
+/* Estilos para el input group con toggle de contraseña */
+#modalCrear .input-group {
+    display: flex;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 2px solid #e5e7eb;
+    transition: all 0.3s ease;
+}
+
+#modalCrear .input-group:focus-within {
+    border-color: #28a745;
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+}
+
+#modalCrear .input-group.is-invalid {
+    border-color: #ef4444;
+}
+
+#modalCrear .input-group.is-invalid:focus-within {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+#modalCrear .input-group .form-control {
+    border: none;
+    box-shadow: none;
+    flex: 1;
+}
+
+#modalCrear .input-group .form-control:focus {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+#modalCrear .toggle-password {
+    border: none;
+    background: white;
+    color: #6b7280;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-left: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+#modalCrear .toggle-password:hover {
+    background: #f9fafb;
+    color: #28a745;
+}
+
+#modalCrear .toggle-password.active {
+    color: #28a745;
+    background: #f0fdf4;
+}
+
+#modalCrear .toggle-password:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* Mensaje de error debajo */
+#modalCrear .form-text.text-danger {
+    color: #ef4444;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: block;
+    animation: slideInError 0.3s ease-out;
+}
+
+/* Estilos para validaciones */
+#modalCrear .form-control.is-invalid,
+#modalCrear .form-select.is-invalid {
+    border-color: #ef4444;
+}
+
+#modalCrear .form-control.is-invalid:focus,
+#modalCrear .form-select.is-invalid:focus {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 0.2rem rgba(239, 68, 68, 0.25);
+}
+
+#modalCrear .form-text.text-danger {
+    color: #ef4444;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: block;
+    animation: slideInError 0.3s ease-out;
+}
+
+@keyframes slideInError {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     #modalCrear .modal-body {

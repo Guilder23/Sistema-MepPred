@@ -4,8 +4,67 @@ document.addEventListener('DOMContentLoaded', function() {
     const formEditar = document.getElementById('formEditar');
     if (formEditar) {
         formEditar.addEventListener('submit', editarUsuario);
+        
+        // Agregar validaciones en tiempo real
+        const inputNombre = formEditar.querySelector('input[name="nombre"]');
+        const inputEmail = formEditar.querySelector('input[name="email"]');
+        
+        if (inputNombre) {
+            inputNombre.addEventListener('blur', validarNombreEditar);
+            inputNombre.addEventListener('input', validarNombreEditar);
+        }
+        if (inputEmail) {
+            inputEmail.addEventListener('blur', validarEmailEditar);
+            inputEmail.addEventListener('input', validarEmailEditar);
+        }
     }
 });
+
+function validarNombreEditar(e) {
+    const valor = e.target.value.trim();
+    const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{3,150}$/;
+    
+    if (valor && !regex.test(valor)) {
+        e.target.classList.add('is-invalid');
+        mostrarMensajeError(e.target, 'Solo letras, mínimo 3 caracteres');
+    } else if (valor.length < 3 && valor.length > 0) {
+        e.target.classList.add('is-invalid');
+        mostrarMensajeError(e.target, 'Mínimo 3 caracteres');
+    } else {
+        e.target.classList.remove('is-invalid');
+        limpiarMensajeError(e.target);
+    }
+}
+
+function validarEmailEditar(e) {
+    const valor = e.target.value.trim();
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    if (valor && !regex.test(valor)) {
+        e.target.classList.add('is-invalid');
+        mostrarMensajeError(e.target, 'Email inválido');
+    } else {
+        e.target.classList.remove('is-invalid');
+        limpiarMensajeError(e.target);
+    }
+}
+
+function mostrarMensajeError(elemento, mensaje) {
+    limpiarMensajeError(elemento);
+    const divError = document.createElement('small');
+    divError.className = 'form-text text-danger';
+    divError.textContent = mensaje;
+    divError.style.display = 'block';
+    divError.style.marginTop = '0.25rem';
+    elemento.parentNode.appendChild(divError);
+}
+
+function limpiarMensajeError(elemento) {
+    const error = elemento.parentNode.querySelector('.form-text.text-danger');
+    if (error) {
+        error.remove();
+    }
+}
 
 function abrirModalEditar(usuarioId) {
     console.log('Abriendo modal editar para usuario:', usuarioId);
@@ -36,6 +95,25 @@ function editarUsuario(e) {
     e.preventDefault();
     
     const formData = new FormData(this);
+    const formEditar = document.getElementById('formEditar');
+    
+    // Validar campos
+    const nombre = formEditar.querySelector('input[name="nombre"]').value.trim();
+    const email = formEditar.querySelector('input[name="email"]').value.trim();
+    
+    // Validar nombre
+    const regexNombre = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{3,150}$/;
+    if (!regexNombre.test(nombre)) {
+        mostrarAlerta('El nombre debe contener solo letras (3-150 caracteres)', 'danger');
+        return;
+    }
+    
+    // Validar email
+    const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!regexEmail.test(email)) {
+        mostrarAlerta('Por favor ingresa un email válido', 'danger');
+        return;
+    }
     
     // El input hidden ya maneja el valor de is_active, pero nos aseguramos
     // de enviar el ID que a veces puede faltar en el formData si es un campo deshabilitado
