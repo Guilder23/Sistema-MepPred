@@ -182,9 +182,7 @@ if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
     DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-    EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD', '')
 else:
-    DEFAULT_FROM_EMAIL = 'no-reply@meetwin.local'
     DEFAULT_FROM_EMAIL = 'no-reply@meetwin.local'
 
 EMAIL_VERIFICACION_MAX_AGE_SECONDS = 60 * 60 * 24
