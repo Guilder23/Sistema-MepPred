@@ -24,6 +24,7 @@ urlpatterns = [
     path('api/flashcards/crear/', views.api_crear_flashcard, name='api_crear_flashcard'),
     path('api/flashcards/<int:flashcard_id>/editar/', views.api_editar_flashcard, name='api_editar_flashcard'),
     path('api/flashcards/<int:flashcard_id>/eliminar/', views.api_eliminar_flashcard, name='api_eliminar_flashcard'),
+    path('api/flashcards/marcar-respuesta/', views.api_marcar_respuesta, name='api_marcar_respuesta'),
     
     # URLs para vistas de template (admin)
     path('mazos/', views.lista_mazos_premium, name='lista_mazos_premium'),

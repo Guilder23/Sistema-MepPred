@@ -30,8 +30,9 @@ document.addEventListener('DOMContentLoaded', function() {
     botonesDificultad.forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
+            const minutos = parseInt(this.dataset.minutos) || null;
             const dias = parseInt(this.dataset.dificultad);
-            marcarRespuesta(dias);
+            marcarRespuesta(dias, minutos);
         });
     });
 });
@@ -145,13 +146,48 @@ function voltearTarjeta() {
 }
 
 // Marcar respuesta y avanzar
-function marcarRespuesta(dias) {
-    // Aquí podrías enviar al backend para actualizar el próximo repaso
-    // Por ahora solo avanzamos a la siguiente
+function marcarRespuesta(dias, minutos = null) {
+    // Si hay minutos, convertir a horas (para el cálculo del próximo repaso)
+    let tiempoRepaso = dias;
+    
+    if (minutos !== null) {
+        // Convertir minutos a fracción de día (ej: 1 minuto = 1/1440 días, 10 minutos = 10/1440 días)
+        tiempoRepaso = minutos / 1440;
+    }
+    
+    // Enviar al backend para actualizar el próximo repaso
+    enviarRespuestaAlBackend(flashcardActual.id, dias, minutos);
     
     indiceFlashcardActual++;
     actualizarEstadisticas();
     mostrarFlashcard();
+}
+
+// Enviar respuesta al backend
+async function enviarRespuestaAlBackend(flashcardId, dias, minutos = null) {
+    try {
+        const formData = new FormData();
+        formData.append('flashcard_id', flashcardId);
+        formData.append('dias', dias);
+        if (minutos !== null) {
+            formData.append('minutos', minutos);
+        }
+        
+        const response = await fetch('/flashcards-premium/api/flashcards/marcar-respuesta/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
+            }
+        });
+        
+        const data = await response.json();
+        if (!data.success) {
+            console.error('Error al registrar respuesta:', data.error);
+        }
+    } catch (error) {
+        console.error('Error al enviar respuesta al backend:', error);
+    }
 }
 
 // Mostrar mensaje cuando no hay flashcards
