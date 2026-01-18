@@ -87,6 +87,7 @@ def obtener_usuario(request, usuario_id):
         'study_year': getattr(usuario, 'study_year', 'pre_uni'),
         'is_active': usuario.is_active,
         'email_verificado': getattr(usuario, 'email_verificado', False),
+        'identity_number': getattr(usuario, 'identity_number', ''),
         'date_joined': usuario.date_joined.isoformat(),
     })
 
