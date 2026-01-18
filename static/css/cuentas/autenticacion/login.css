@@ -231,6 +231,16 @@
   box-shadow: var(--sombra-card);
   position: relative;
   animation: slideIn 0.3s ease;
+  max-height: 90vh;
+  overflow-y: scroll;
+  /* Ocultar scrollbar pero permitir scroll */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Ocultar scrollbar en Chrome, Safari y Opera */
+#login-modal .modal__content::-webkit-scrollbar {
+  display: none;
 }
 
 #login-modal .modal__close {
