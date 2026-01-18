@@ -242,6 +242,28 @@
     text-align: center;
 }
 
+.archivo-seleccionado {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: #d1fae5;
+    border: 1px solid #a7f3d0;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    color: #065f46;
+}
+
+.archivo-icono {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #10b981;
+}
+
+.archivo-nombre {
+    word-break: break-all;
+}
+
 /* Botón submit */
 .btn-submit {
     padding: 0.875rem 1.5rem;

@@ -8,6 +8,7 @@ urlpatterns = [
     path('', views.suscripcion_estudiante, name='suscripcion_estudiante'),
     path('api/estado/', views.obtener_estado_suscripcion, name='obtener_estado'),
     path('api/qr/', views.obtener_qr_pago, name='obtener_qr'),
+    path('api/validar-perfil/', views.validar_perfil, name='validar_perfil'),
     path('api/crear/', views.crear_suscripcion, name='crear_suscripcion'),
     
     # Administrador - Verificación
