@@ -336,6 +336,38 @@ def perfil_view(request):
         first_name = (request.POST.get('first_name') or '').strip()
         last_name = (request.POST.get('last_name') or '').strip()
         
+        # Validar campos obligatorios para estudiantes
+        if getattr(user, 'role', '') == 'student':
+            birth_date = (request.POST.get('birth_date') or '').strip()
+            gender = (request.POST.get('gender') or '').strip()
+            identity_number = (request.POST.get('identity_number') or '').strip()
+            nationality = (request.POST.get('nationality') or '').strip()
+            phone_number = (request.POST.get('phone_number') or '').strip()
+            student_status = (request.POST.get('student_status') or '').strip()
+            
+            # Validar que todos los campos requeridos estén completos
+            campos_vacios = []
+            if not first_name:
+                campos_vacios.append('Nombre')
+            if not last_name:
+                campos_vacios.append('Apellido')
+            if not birth_date:
+                campos_vacios.append('Fecha de Nacimiento')
+            if not gender:
+                campos_vacios.append('Género')
+            if not identity_number:
+                campos_vacios.append('Carnet de Identidad')
+            if not nationality:
+                campos_vacios.append('Nacionalidad')
+            if not phone_number:
+                campos_vacios.append('Teléfono')
+            if not student_status:
+                campos_vacios.append('Estado Académico')
+            
+            if campos_vacios:
+                messages.error(request, f'Debes completar todos los campos requeridos: {", ".join(campos_vacios)}')
+                return redirect('cuentas:perfil')
+        
         user.first_name = first_name
         user.last_name = last_name
         

@@ -8,6 +8,7 @@
 {% endblock %}
 
 {% block contenido %}
+{% csrf_token %}
 <div class="estudio-container">
     <header class="estudio-header">
         <h1>Flashcards Premium</h1>
@@ -68,11 +69,11 @@
 
     <!-- Botones de Dificultad -->
     <section class="botones-dificultad">
-        <button class="btn-dificultad btn-otra-vez" data-dificultad="0">
-            <i class="fas fa-redo"></i> Otra vez (0-1 días)
+        <button class="btn-dificultad btn-otra-vez" data-dificultad="1" data-minutos="1">
+            <i class="fas fa-redo"></i> Otra vez (1 minuto)
         </button>
-        <button class="btn-dificultad btn-dificil" data-dificultad="1">
-            <i class="fas fa-thumbs-down"></i> Difícil (1-3 días)
+        <button class="btn-dificultad btn-dificil" data-dificultad="10" data-minutos="10">
+            <i class="fas fa-thumbs-down"></i> Difícil (10 minutos)
         </button>
         <button class="btn-dificultad btn-bien" data-dificultad="3">
             <i class="fas fa-thumbs-up"></i> Bien (3-7 días)

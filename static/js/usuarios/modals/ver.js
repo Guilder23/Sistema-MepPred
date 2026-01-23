@@ -21,6 +21,10 @@ function verUsuario(usuarioId) {
                     <span>${usuario.email}</span>
                 </div>
                 <div class="info-row">
+                    <label>Carnet de Identidad:</label>
+                    <span>${usuario.identity_number || 'No registrado'}</span>
+                </div>
+                <div class="info-row">
                     <label>Rol:</label>
                     <span class="badge">${usuario.role === 'admin' ? 'Administrador' : 'Estudiante'}</span>
                 </div>

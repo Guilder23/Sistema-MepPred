@@ -32,6 +32,35 @@ def tiene_suscripcion_activa(user):
     return False
 
 
+def validar_datos_perfil_completos(user):
+    """
+    Validar si el usuario tiene todos los datos requeridos en su perfil
+    Retorna: (es_valido: bool, campos_faltantes: list)
+    """
+    campos_faltantes = []
+    
+    # Campos requeridos en el perfil del estudiante
+    if not user.first_name or not user.first_name.strip():
+        campos_faltantes.append('Nombre')
+    
+    if not user.last_name or not user.last_name.strip():
+        campos_faltantes.append('Apellido')
+    
+    if not user.identity_number or not user.identity_number.strip():
+        campos_faltantes.append('Carnet de Identidad (CI)')
+    
+    if not user.phone_number or not user.phone_number.strip():
+        campos_faltantes.append('Teléfono')
+    
+    if not user.birth_date:
+        campos_faltantes.append('Fecha de Nacimiento')
+    
+    if not user.nationality or not user.nationality.strip():
+        campos_faltantes.append('Nacionalidad')
+    
+    return len(campos_faltantes) == 0, campos_faltantes
+
+
 # ===== VISTAS ESTUDIANTE =====
 
 @login_required
@@ -107,10 +136,38 @@ def obtener_qr_pago(request):
 
 
 @login_required
+@require_http_methods(["GET"])
+def validar_perfil(request):
+    """API: Validar si el perfil del estudiante tiene todos los datos requeridos"""
+    try:
+        es_valido, campos_faltantes = validar_datos_perfil_completos(request.user)
+        
+        return JsonResponse({
+            'perfil_valido': es_valido,
+            'campos_faltantes': campos_faltantes
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'error': str(e)
+        }, status=500)
+
+
+@login_required
 @require_http_methods(["POST"])
 def crear_suscripcion(request):
     """API: Crear nueva solicitud de suscripción con comprobante"""
     try:
+        # Primero validar que el perfil está completo
+        es_valido, campos_faltantes = validar_datos_perfil_completos(request.user)
+        
+        if not es_valido:
+            return JsonResponse({
+                'error': 'Primero debe llenar todos los datos en su perfil',
+                'campos_faltantes': campos_faltantes,
+                'tipo_error': 'perfil_incompleto'
+            }, status=400)
+        
         # Verificar si ya tiene suscripción pendiente o activa
         suscripcion_existente = Suscripcion.objects.filter(
             estudiante=request.user,

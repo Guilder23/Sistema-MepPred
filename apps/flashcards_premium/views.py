@@ -85,9 +85,11 @@ def api_mazos_estudiante(request):
         mazos = MazoPremium.objects.all()
     
     mazos_data = []
+    ahora = timezone.now()
     for mazo in mazos:
+        # Filtrar solo tarjetas que están habilitadas para estudiar (proximo_repaso <= ahora)
         tarjetas = list(
-            mazo.tarjetas.all().values('id', 'pregunta', 'respuesta', 'categoria')
+            mazo.tarjetas.filter(proximo_repaso__lte=ahora).values('id', 'pregunta', 'respuesta', 'categoria')
         )
         mazos_data.append(
             {
@@ -384,3 +386,43 @@ def editar_flashcard_premium(request, pk):
 def eliminar_flashcard_premium(request, pk):
     """Redirige a API - esta vista ya no se usa con formularios"""
     return redirect('flashcards_premium:dashboard')
+
+
+@login_required
+@require_http_methods(["POST"])
+def api_marcar_respuesta(request):
+    """API para marcar una respuesta y actualizar el próximo repaso."""
+    # Verificar que el usuario tenga suscripción activa
+    if not tiene_suscripcion_activa(request.user):
+        return JsonResponse({'error': 'Necesitas una suscripción activa'}, status=403)
+    
+    try:
+        flashcard_id = request.POST.get('flashcard_id')
+        dias = int(request.POST.get('dias', 1))
+        minutos = request.POST.get('minutos')
+        
+        if not flashcard_id:
+            return JsonResponse({'success': False, 'error': 'flashcard_id es requerido'})
+        
+        flashcard = get_object_or_404(FlashcardPremium, id=flashcard_id)
+        
+        # Calcular próximo repaso
+        if minutos:
+            # Si hay minutos, calcular desde ahora
+            minutos = int(minutos)
+            proximo_repaso = timezone.now() + timezone.timedelta(minutes=minutos)
+        else:
+            # Si es en días
+            proximo_repaso = timezone.now() + timezone.timedelta(days=dias)
+        
+        # Actualizar la tarjeta
+        flashcard.proximo_repaso = proximo_repaso
+        flashcard.repeticiones += 1
+        flashcard.ultimo_repaso = timezone.now()
+        flashcard.save()
+        
+        return JsonResponse({'success': True, 'message': 'Respuesta registrada'})
+    
+    except (ValueError, TypeError) as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+

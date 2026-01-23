@@ -275,6 +275,8 @@ a {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: var(--espacio-xl);
+  padding-left: var(--espacio-xl);
 }
 
 @media (max-width: 768px) {
