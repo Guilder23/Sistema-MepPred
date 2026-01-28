@@ -1,0 +1,64 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block titulo %}Gestión de Mazos Premium{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/flashcards_premium/mazos/mazos.css' %}">
+<link rel="stylesheet" href="{% static 'css/flashcards_premium/mazos/modals/crearMazo.css' %}">
+<link rel="stylesheet" href="{% static 'css/flashcards_premium/mazos/modals/editarMazo.css' %}">
+<link rel="stylesheet" href="{% static 'css/flashcards_premium/mazos/modals/verMazo.css' %}">
+<link rel="stylesheet" href="{% static 'css/flashcards_premium/mazos/modals/eliminarMazo.css' %}">
+{% endblock %}
+
+{% block contenido %}
+<div class="mazos-container">
+    <header class="mazos-header">
+        <div class="header-content">
+            <h1>Gestión de Mazos Premium</h1>
+            <button id="btnCrearMazo" class="btn-crear-mazo">
+                <span class="btn-icon">+</span>
+                Nuevo Mazo
+            </button>
+        </div>
+        <a href="{% url 'flashcards_premium:dashboard' %}" class="btn-volver">← Volver al Dashboard</a>
+    </header>
+
+    <section class="busqueda-section">
+        <input type="text" id="buscarMazo" placeholder="Buscar mazo por nombre..." class="input-buscar">
+    </section>
+
+    <section class="tabla-section">
+        <table class="tabla-mazos">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Materia</th>
+                    <th>Descripción</th>
+                    <th>Flashcards</th>
+                    <th>Fecha de Creación</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tablaMazos">
+                <!-- Se llena dinámicamente con JavaScript -->
+            </tbody>
+        </table>
+    </section>
+</div>
+
+<!-- Modales -->
+{% include 'flashcards_premium/mazos/modals/crearMazo.html' %}
+{% include 'flashcards_premium/mazos/modals/editarMazo.html' %}
+{% include 'flashcards_premium/mazos/modals/verMazo.html' %}
+{% include 'flashcards_premium/mazos/modals/eliminarMazo.html' %}
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/flashcards_premium/mazos/mazos.js' %}"></script>
+<script src="{% static 'js/flashcards_premium/mazos/modals/crearMazo.js' %}"></script>
+<script src="{% static 'js/flashcards_premium/mazos/modals/editarMazo.js' %}"></script>
+<script src="{% static 'js/flashcards_premium/mazos/modals/verMazo.js' %}"></script>
+<script src="{% static 'js/flashcards_premium/mazos/modals/eliminarMazo.js' %}"></script>
+{% endblock %}

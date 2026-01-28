@@ -1,0 +1,23 @@
+{% extends 'base/base.html' %}
+
+{% block titulo %}Asignar Administrador{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="/static/css/cuentas/admin/asignar_admin.css" />
+{% endblock %}
+
+{% block contenido %}
+<section class="card">
+  <h1>Asignar rol Administrador</h1>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    <label>Correo del usuario</label>
+    <input type="email" name="email" required />
+    <button type="submit">Asignar</button>
+  </form>
+</section>
+{% endblock %}
+
+{% block js %}
+<script src="/static/js/cuentas/admin/asignar_admin.js"></script>
+{% endblock %}

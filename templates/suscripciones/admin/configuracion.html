@@ -1,0 +1,88 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block titulo %}Configuración de Pago - MeetWin{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/suscripciones/admin/configuracion.css' %}">
+{% endblock %}
+
+{% block contenido %}
+<div class="config-container">
+    <div class="config-card">
+        <div class="card-header">
+            <div>
+                <h1>Configuración de Pago</h1>
+                <p>Gestiona el código QR para pagos de suscripciones</p>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <!-- QR Actual y Formulario en dos columnas -->
+            <div class="config-grid">
+                <!-- QR Actual -->
+                <div class="qr-section" id="qrActual" style="display: none;">
+                    <div class="section-title">
+                        <h3>QR Actual</h3>
+                    </div>
+                    <div class="qr-display">
+                        <img id="qrActualImagen" src="" alt="QR Actual">
+                        <p id="qrActualDescripcion" class="qr-info"></p>
+                        <small class="update-date">Actualizado: <span id="qrActualFecha"></span></small>
+                    </div>
+                </div>
+
+                <!-- Formulario -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <h3 id="tituloForm">Subir QR</h3>
+                    </div>
+                    
+                    <form id="formConfiguracion">
+                        <div class="form-field">
+                            <label>Imagen QR</label>
+                            <div class="file-upload">
+                                <input type="file" id="qrPago" accept="image/*" required hidden>
+                                <label for="qrPago" class="upload-btn">
+                                    <span id="nombreArchivo">Seleccionar imagen...</span>
+                                </label>
+                                <span class="hint">JPG, PNG (máx. 5MB)</span>
+                            </div>
+                        </div>
+
+                        <div class="preview-box" id="previewContainer" style="display: none;">
+                            <img id="previewImagen" src="" alt="Preview">
+                        </div>
+
+                        <div class="form-field">
+                            <label>Instrucciones</label>
+                            <textarea 
+                                id="descripcion" 
+                                rows="3" 
+                                placeholder="Ej: Realiza el pago a la cuenta 123-456-789. Monto: Bs. 50"
+                            ></textarea>
+                            <span class="hint">Opcional - Se mostrará a los estudiantes</span>
+                        </div>
+
+                        <button type="submit" class="btn-save" id="btnGuardar">
+                            <span class="btn-texto">Guardar Configuración</span>
+                            <span class="btn-spinner" style="display: none;">
+                                <span class="spinner"></span>Guardando...
+                            </span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="loader" id="mensajeCarga" style="display: none;">
+        <div class="spinner-grande"></div>
+        <p>Cargando...</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/suscripciones/admin/configuracion.js' %}"></script>
+{% endblock %}

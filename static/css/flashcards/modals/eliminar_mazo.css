@@ -1,0 +1,61 @@
+/* CSS para el modal de eliminar mazo */
+
+/* Estilos específicos para el modal de eliminar */
+.warning-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    background-color: #fff3cd;
+    border-radius: 8px;
+    border-left: 4px solid #ffc107;
+}
+
+.warning-message i {
+    font-size: 2.5rem;
+    color: #ff6b6b;
+}
+
+.warning-message p {
+    margin: 0;
+    color: #333;
+    text-align: center;
+}
+
+.warning-message strong {
+    color: #d32f2f;
+    font-weight: 600;
+}
+
+.warning-text {
+    font-size: 0.9rem;
+    color: #666;
+    font-style: italic;
+}
+
+/* Botón de peligro */
+.btn-danger {
+    background-color: #d32f2f;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-color 0.2s, box-shadow 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-danger:hover {
+    background-color: #c62828;
+    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3);
+}
+
+.btn-danger:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    box-shadow: none;
+}

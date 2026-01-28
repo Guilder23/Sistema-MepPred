@@ -1,0 +1,146 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block titulo %}Mi Progreso - MeetWin{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/contenido/progreso.css' %}">
+{% endblock %}
+
+{% block contenido %}
+<div class="container-fluid">
+    <!-- Encabezado -->
+    <div class="page-header">
+        <h1><i class="fas fa-chart-line"></i> Mi Progreso de Aprendizaje</h1>
+        <p class="subtitle">Visualiza tu avance en cada materia y contenido</p>
+    </div>
+
+    <!-- Estadísticas Generales -->
+    <div class="estadisticas-container">
+        <div class="stat-card">
+            <div class="stat-icon primary">
+                <i class="fas fa-book"></i>
+            </div>
+            <div class="stat-content">
+                <h3 id="totalContenidos">0</h3>
+                <p>Total de Contenidos</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon success">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-content">
+                <h3 id="completados">0</h3>
+                <p>Completados</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon warning">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-content">
+                <h3 id="pendientes">0</h3>
+                <p>Pendientes</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon info">
+                <i class="fas fa-percentage"></i>
+            </div>
+            <div class="stat-content">
+                <h3 id="porcentajeGeneral">0%</h3>
+                <p>Progreso General</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barra de Progreso General -->
+    <div class="progreso-general-container">
+        <div class="progreso-header">
+            <h3>Progreso General</h3>
+            <span class="progreso-texto" id="progresoTexto">0%</span>
+        </div>
+        <div class="progreso-bar">
+            <div class="progreso-fill" id="progresoFill" style="width: 0%"></div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filtros-container">
+        <input type="text" class="form-control" id="buscarMateria" placeholder="Buscar materia...">
+        <select class="form-select" id="filtroEstado">
+            <option value="">Todos los estados</option>
+            <option value="completado">Completados</option>
+            <option value="pendiente">Pendientes</option>
+            <option value="bloqueado">Bloqueados</option>
+        </select>
+    </div>
+
+    <!-- Materias y Contenidos -->
+    <div id="materiasContainer">
+        <!-- Se llenará dinámicamente -->
+    </div>
+
+    <!-- Mensaje de carga -->
+    <div id="loadingMessage" class="text-center" style="padding: 3rem;">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="text-muted mt-3">Cargando progreso...</p>
+    </div>
+
+    <!-- Sin resultados -->
+    <div id="noResultsMessage" class="text-center" style="display: none; padding: 3rem;">
+        <i class="fas fa-inbox" style="font-size: 4rem; color: #ccc;"></i>
+        <p class="text-muted mt-3">No se encontraron contenidos</p>
+    </div>
+</div>
+
+<!-- Modal de Detalle de Contenido -->
+<div class="modal-overlay" id="modalDetalleContenido">
+    <div class="modal-content modal-content-large">
+        <div class="modal-header">
+            <h3 class="modal-header-title" id="modalTitulo">Detalle del Contenido</h3>
+            <button class="modal-close-btn" onclick="cerrarModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="contenido-detalle">
+                <h2 class="contenido-titulo" id="detalleNombre"></h2>
+                
+                <div class="contenido-meta" id="detalleMeta"></div>
+                
+                <div class="contenido-descripcion">
+                    <h4>Descripción</h4>
+                    <p id="detalleDescripcion"></p>
+                </div>
+                
+                <div class="contenido-tema">
+                    <h4>Contenido del Tema</h4>
+                    <div id="detalleContenido"></div>
+                </div>
+                
+                <div class="contenido-videos" id="seccionVideos" style="display: none;">
+                    <h4>Videos del Tema</h4>
+                    <div class="videos-list" id="detalleVideos"></div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="cerrarModal()">
+                <i class="fas fa-times"></i> Cerrar
+            </button>
+            <button class="btn btn-primary" id="btnMarcarCompletado" onclick="toggleCompletado()">
+                <i class="fas fa-check"></i> <span id="textoBotonCompletar">Marcar como Completado</span>
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/contenido/progreso.js' %}"></script>
+{% endblock %}

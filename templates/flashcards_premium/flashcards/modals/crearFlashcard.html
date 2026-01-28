@@ -1,0 +1,35 @@
+<!-- Modal Crear Flashcard -->
+<div class="modal-overlay" id="crearFlashcardModal" style="display: none;">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3>Crear Flashcard Premium</h3>
+            <button type="button" class="btn-cerrar-modal" onclick="cerrarModal('crearFlashcardModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="formCrearFlashcard">
+                <div class="form-group">
+                    <label for="mazoFlashcard">Mazo</label>
+                    <select id="mazoFlashcard" name="mazo_id" required>
+                        <option value="">Seleccione un mazo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="preguntaFlashcard">Pregunta</label>
+                    <textarea id="preguntaFlashcard" name="pregunta" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="respuestaFlashcard">Respuesta</label>
+                    <textarea id="respuestaFlashcard" name="respuesta" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="categoriaFlashcard">Categoría (opcional)</label>
+                    <input type="text" id="categoriaFlashcard" name="categoria">
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-cancelar" onclick="cerrarModal('crearFlashcardModal')">Cancelar</button>
+            <button type="button" class="btn-guardar" id="btnGuardarFlashcard">Guardar</button>
+        </div>
+    </div>
+</div>

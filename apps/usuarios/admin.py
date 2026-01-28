@@ -1,17 +1,12 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
-
-from .models import CambioRol, User
-
-@admin.register(User)
-class CustomUserAdmin(UserAdmin):
-    list_display = ('email', 'username', 'role', 'email_verificado', 'is_staff', 'is_active')
-    ordering = ('email',)
-    search_fields = ('email', 'username')
+from .models import UsuarioAuditoria
 
 
-@admin.register(CambioRol)
-class CambioRolAdmin(admin.ModelAdmin):
-    list_display = ('actor', 'objetivo', 'rol_anterior', 'rol_nuevo', 'creado_en')
-    search_fields = ('actor__email', 'objetivo__email', 'rol_anterior', 'rol_nuevo')
-    list_filter = ('rol_anterior', 'rol_nuevo', 'creado_en')
+@admin.register(UsuarioAuditoria)
+class UsuarioAuditoriaAdmin(admin.ModelAdmin):
+    list_display = ('usuario', 'accion', 'realizado_por', 'fecha')
+    list_filter = ('accion', 'fecha')
+    search_fields = ('usuario__email', 'realizado_por__email')
+    readonly_fields = ('usuario', 'accion', 'realizado_por', 'fecha', 'cambios')
+    date_hierarchy = 'fecha'
+

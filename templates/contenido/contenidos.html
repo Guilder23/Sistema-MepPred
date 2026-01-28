@@ -1,0 +1,146 @@
+{% extends 'base/base.html' %}
+
+{% block titulo %}Gestión de Contenidos - MeetWin{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="/static/css/contenido/contenidos.css">
+<link rel="stylesheet" href="/static/css/contenido/modals/crear.css">
+<link rel="stylesheet" href="/static/css/contenido/modals/ver.css">
+<link rel="stylesheet" href="/static/css/contenido/modals/editar.css">
+<link rel="stylesheet" href="/static/css/contenido/modals/eliminar.css">
+{% endblock %}
+
+{% block contenido %}
+<div class="container-fluid py-4">
+    <!-- Encabezado -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h1>Gestión de Contenidos</h1>
+        </div>
+        <div class="col-md-6 text-end">
+            <button class="btn btn-primary" id="btnAbrirCrear">
+                <i class="fas fa-plus"></i> Crear Contenido
+            </button>
+        </div>
+    </div>
+
+    <!-- Búsqueda y filtros -->
+    <form method="get" class="filtros-container mb-3">
+        <input type="text" class="form-control" name="busqueda" id="buscar" placeholder="Buscar por título o materia..." value="{{ busqueda }}">
+        <select class="form-select" name="estado" id="filtroEstado">
+            <option value="">Todos los estados</option>
+            <option value="activo" {% if estado == 'activo' %}selected{% endif %}>Activo</option>
+            <option value="inactivo" {% if estado == 'inactivo' %}selected{% endif %}>Inactivo</option>
+        </select>
+        <select class="form-select" name="publicacion" id="filtroPublicacion">
+            <option value="">Todas las publicaciones</option>
+            <option value="publicado" {% if publicacion == 'publicado' %}selected{% endif %}>Publicado</option>
+            <option value="no_publicado" {% if publicacion == 'no_publicado' %}selected{% endif %}>No Publicado</option>
+        </select>
+        <button type="submit" class="btn btn-secondary">
+            <i class="fas fa-search"></i> Buscar
+        </button>
+    </form>
+
+    <!-- Tabla de contenidos -->
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" id="contenidosTable">
+                <thead class="table-dark">
+                    <tr>
+                        <th>TÍTULO</th>
+                        <th>MATERIA</th>
+                        <th>TIPO</th>
+                        <th>ESTADO</th>
+                        <th>PUBLICADO</th>
+                        <th>FECHA CREACIÓN</th>
+                        <th>ACCIONES</th>
+                    </tr>
+                </thead>
+                <tbody id="contenidosTableBody">
+                    {% if contenidos %}
+                        {% for contenido in contenidos %}
+                        <tr>
+                            <td>{{ contenido.titulo }}</td>
+                            <td>{{ contenido.materia }}</td>
+                            <td>
+                                <span class="badge badge-{{ contenido.estado }}">
+                                    {% if contenido.estado == 'activo' %}Activo{% else %}Inactivo{% endif %}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge badge-{% if contenido.publicacion == 'publicado' %}publicado{% else %}no-publicado{% endif %}">
+                                    {% if contenido.publicacion == 'publicado' %}Publicado{% else %}No Publicado{% endif %}
+                                </span>
+                            </td>
+                            <td>{{ contenido.fecha_creacion|date:"d/m/Y H:i" }}</td>
+                            <td class="acciones-cell">
+                                <div class="acciones-buttons">
+                                    <button class="btn-icon btn-ver" data-contenido-id="{{ contenido.id }}" title="Ver">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn-icon btn-editar" data-contenido-id="{{ contenido.id }}" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn-icon btn-eliminar" data-contenido-id="{{ contenido.id }}" data-contenido-titulo="{{ contenido.titulo }}" title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center">No se encontraron contenidos</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Incluir modales -->
+{% include 'contenido/modals/crear.html' %}
+{% include 'contenido/modals/ver.html' %}
+{% include 'contenido/modals/editar.html' %}
+{% include 'contenido/modals/eliminar.html' %}
+
+{% endblock %}
+
+{% block js %}
+<script src="/static/js/contenido/contenidos.js"></script>
+<script src="/static/js/contenido/modals/crear.js"></script>
+<script src="/static/js/contenido/modals/ver.js"></script>
+<script src="/static/js/contenido/modals/editar.js"></script>
+<script src="/static/js/contenido/modals/eliminar.js"></script>
+<script>
+    // Event listeners para los botones de acción
+    document.addEventListener('DOMContentLoaded', function() {
+        // Botones Ver
+        document.querySelectorAll('.btn-ver').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const contenidoId = this.getAttribute('data-contenido-id');
+                verContenido(contenidoId);
+            });
+        });
+        
+        // Botones Editar
+        document.querySelectorAll('.btn-editar').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const contenidoId = this.getAttribute('data-contenido-id');
+                abrirModalEditar(contenidoId);
+            });
+        });
+        
+        // Botones Eliminar
+        document.querySelectorAll('.btn-eliminar').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const contenidoId = this.getAttribute('data-contenido-id');
+                const contenidoTitulo = this.getAttribute('data-contenido-titulo');
+                abrirModalEliminar(contenidoId, contenidoTitulo);
+            });
+        });
+    });
+</script>
+{% endblock %}

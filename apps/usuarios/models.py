@@ -1,71 +1,26 @@
-from django.conf import settings
 from django.db import models
-from django.contrib.auth.models import AbstractUser, UserManager
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
 
-class UserRole(models.TextChoices):
-    STUDENT = 'student', 'Estudiante'
-    ADMIN = 'admin', 'Administrador'
+class UsuarioAuditoria(models.Model):
+    """Modelo para auditar cambios en usuarios"""
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='auditorias')
+    accion = models.CharField(max_length=50, choices=[
+        ('crear', 'Crear'),
+        ('editar', 'Editar'),
+        ('eliminar', 'Eliminar'),
+        ('activar', 'Activar'),
+        ('desactivar', 'Desactivar'),
+    ])
+    realizado_por = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='acciones_auditoria')
+    fecha = models.DateTimeField(auto_now_add=True)
+    cambios = models.JSONField(null=True, blank=True)
 
+    class Meta:
+        ordering = ['-fecha']
+        verbose_name_plural = 'Auditorías de Usuarios'
 
-class StudyYear(models.TextChoices):
-    PRE_UNI = 'pre_uni', 'Pre-universitario'
-    YEAR_1 = 'year_1', 'Año 1'
-    YEAR_2 = 'year_2', 'Año 2'
-    YEAR_3 = 'year_3', 'Año 3'
-    YEAR_4 = 'year_4', 'Año 4'
-    YEAR_5 = 'year_5', 'Año 5'
+    def __str__(self):
+        return f"{self.accion} - {self.usuario.email} ({self.fecha.strftime('%d/%m/%Y %H:%M')})"
 
-
-class CustomUserManager(UserManager):
-    def create_superuser(self, username, email=None, password=None, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-        extra_fields.setdefault('role', UserRole.ADMIN)
-        user = super().create_superuser(username, email=email, password=password, **extra_fields)
-        if getattr(user, 'role', None) != UserRole.ADMIN:
-            user.role = UserRole.ADMIN
-            user.save(update_fields=['role'])
-        return user
-
-
-class User(AbstractUser):
-    email = models.EmailField(unique=True)
-    email_verificado = models.BooleanField(default=False)
-    verificacion_enviada_en = models.DateTimeField(blank=True, null=True)
-    verificacion_reenvios = models.PositiveIntegerField(default=0)
-    verificacion_ventana_inicio = models.DateTimeField(blank=True, null=True)
-
-    objects = CustomUserManager()
-    role = models.CharField(
-        max_length=20,
-        choices=UserRole.choices,
-        default=UserRole.STUDENT,
-    )
-    study_year = models.CharField(
-        max_length=20,
-        choices=StudyYear.choices,
-        default=StudyYear.PRE_UNI,
-    )
-
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
-
-    def __str__(self) -> str:
-        return self.email
-
-
-class CambioRol(models.Model):
-    actor = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.PROTECT,
-        related_name='cambios_rol_realizados',
-    )
-    objetivo = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.PROTECT,
-        related_name='cambios_rol_recibidos',
-    )
-    rol_anterior = models.CharField(max_length=20)
-    rol_nuevo = models.CharField(max_length=20)
-    creado_en = models.DateTimeField(auto_now_add=True)

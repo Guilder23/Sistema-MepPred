@@ -1,0 +1,46 @@
+<!-- Modal Crear Materia -->
+<div class="modal-crear-overlay" id="modalCrearOverlay">
+    <div class="modal-crear-container">
+        <div class="modal-crear-header">
+            <h2>Crear Nueva Materia</h2>
+            <button type="button" class="modal-crear-btn-close">&times;</button>
+        </div>
+        <form id="formCrearMateria">
+            <div class="modal-crear-body">
+                <div class="modal-crear-form-group modal-crear-required">
+                    <label for="crearNombre">Nombre de la Materia</label>
+                    <input 
+                        type="text" 
+                        class="modal-crear-form-control" 
+                        id="crearNombre" 
+                        name="nombre" 
+                        placeholder="Ej: Matemáticas"
+                        required
+                        minlength="3"
+                        maxlength="150">
+                </div>
+                <div class="modal-crear-form-group">
+                    <label for="crearDescripcion">Descripción</label>
+                    <textarea 
+                        class="modal-crear-form-control" 
+                        id="crearDescripcion" 
+                        name="descripcion" 
+                        placeholder="Descripción opcional..."
+                        maxlength="500"
+                        rows="4"></textarea>
+                </div>
+                <div class="modal-crear-form-group">
+                    <label class="modal-crear-checkbox-label">
+                        <input type="checkbox" id="crearRequiereSuscripcion" name="requiere_suscripcion">
+                        <span class="modal-crear-checkbox-text">Requiere Suscripción Premium</span>
+                    </label>
+                    <small class="modal-crear-form-help">Si está marcado, solo usuarios con suscripción premium podrán acceder a esta materia</small>
+                </div>
+            </div>
+            <div class="modal-crear-footer">
+                <button type="button" class="modal-crear-btn modal-crear-btn-cancelar" id="btnCancelarMateria">Cancelar</button>
+                <button type="button" class="modal-crear-btn modal-crear-btn-guardar" id="btnGuardarMateria">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>

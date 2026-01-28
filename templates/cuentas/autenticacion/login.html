@@ -1,0 +1,50 @@
+<!-- Modal de Login -->
+<div id="login-modal" class="modal">
+  <div class="modal__content">
+    <span class="modal__close" id="close-login-modal">&times;</span>
+    <h2>Iniciar Sesión</h2>
+    <form method="post" action="/login/" novalidate id="login-modal-form">
+      {% csrf_token %}
+      
+      <div class="form-group">
+        <label for="login-email">Correo electrónico</label>
+        <input 
+          type="email" 
+          id="login-email" 
+          name="email" 
+          placeholder="correo@ejemplo.com"
+          required 
+          maxlength="254"
+          data-next="login-password"
+        />
+        <span class="error-message" id="login-email-error"></span>
+      </div>
+
+      <div class="form-group password-group">
+        <label for="login-password">Contraseña</label>
+        <div class="password-wrapper">
+          <input 
+            type="password" 
+            id="login-password" 
+            name="password" 
+            placeholder="Tu contraseña"
+            required 
+            maxlength="64"
+            data-next="login-submit"
+          />
+          <button type="button" class="toggle-password" id="toggle-login-password" aria-label="Mostrar/ocultar contraseña">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+        <span class="error-message" id="login-password-error"></span>
+      </div>
+
+      <button type="submit" id="login-submit" class="btn btn--primary">Ingresar</button>
+    </form>
+    <div class="modal__links">
+      <a href="/recuperar/">¿Olvidaste tu contraseña?</a>
+      <a href="/verificacion/reenviar/">Reenviar verificación</a>
+      <a href="#" class="js-switch-to-registro">Crear cuenta</a>
+    </div>
+  </div>
+</div>

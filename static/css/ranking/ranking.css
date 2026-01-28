@@ -1,0 +1,921 @@
+/* ========================================
+   Estilos para el Ranking de Estudiantes
+   Diseño Profesional y Moderno
+   ======================================== */
+
+:root {
+    --primary-color: #4F46E5;
+    --primary-dark: #4338CA;
+    --primary-light: #6366F1;
+    --secondary-color: #10B981;
+    --accent-color: #F59E0B;
+    --danger-color: #EF4444;
+    --text-primary: #1F2937;
+    --text-secondary: #6B7280;
+    --text-light: #9CA3AF;
+    --bg-white: #FFFFFF;
+    --bg-gray: #F9FAFB;
+    --bg-light: #F3F4F6;
+    --border-color: #E5E7EB;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+}
+
+.ranking-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1.25rem 1rem;
+    background: var(--bg-gray);
+}
+
+.ranking-header {
+    background: var(--bg-white);
+    padding: 1.5rem;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.header-content {
+    flex: 1;
+    min-width: 250px;
+}
+
+.ranking-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 0.25rem 0;
+    letter-spacing: -0.025em;
+}
+
+.ranking-subtitle {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0;
+    font-weight: 400;
+}
+
+.header-stats {
+    display: flex;
+    gap: 1rem;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: var(--bg-light);
+    border-radius: var(--radius-lg);
+    min-width: 100px;
+}
+
+.stat-value {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+}
+
+.ranking-filters {
+    background: var(--bg-white);
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+    margin-bottom: 1.5rem;
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: nowrap;
+}
+
+.filter-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    min-width: 55px;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    flex: 1;
+}
+
+.filter-btn {
+    padding: 0.5rem 1rem;
+    background: var(--bg-light);
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 0.8125rem;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+    white-space: nowrap;
+    flex: 1;
+    min-width: 80px;
+    text-align: center;
+}
+
+.filter-btn:hover {
+    background: var(--primary-color);
+    color: var(--bg-white);
+    transform: translateY(0);
+}
+
+.filter-btn.active {
+    background: var(--primary-color);
+    color: var(--bg-white);
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+}
+
+/* Botón Mi Posición */
+.btn-mi-posicion {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.875rem 1.75rem;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: var(--bg-white);
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    border: none;
+}
+
+.btn-mi-posicion:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+}
+
+.btn-mi-posicion:active {
+    transform: translateY(0);
+}
+
+.ranking-table-wrapper {
+    background: var(--bg-white);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+.ranking-table-container {
+    overflow-x: auto;
+}
+
+.ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--bg-white);
+}
+
+.ranking-table thead {
+    background: var(--bg-light);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.ranking-table th {
+    padding: 0.875rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+
+.ranking-table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+}
+
+.ranking-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.ranking-table tbody tr:hover {
+    background: var(--bg-gray);
+}
+
+.ranking-table td {
+    padding: 1rem 1rem;
+    vertical-align: middle;
+}
+
+.col-posicion {
+    width: 100px;
+    text-align: center;
+}
+
+.position-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background: var(--bg-light);
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text-secondary);
+}
+
+.position-badge.badge-top {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: var(--bg-white);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.position-number {
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+
+.top-1 {
+    background: linear-gradient(90deg, rgba(79, 70, 229, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+}
+
+.top-2 {
+    background: linear-gradient(90deg, rgba(99, 102, 241, 0.03) 0%, rgba(255, 255, 255, 0) 100%);
+}
+
+.top-3 {
+    background: linear-gradient(90deg, rgba(99, 102, 241, 0.02) 0%, rgba(255, 255, 255, 0) 100%);
+}
+
+.mi-posicion {
+    background: linear-gradient(90deg, rgba(16, 185, 129, 0.08) 0%, rgba(255, 255, 255, 0) 100%);
+    border-left: 3px solid var(--secondary-color);
+}
+
+.estudiante-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.estudiante-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: var(--bg-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.875rem;
+    flex-shrink: 0;
+}
+
+.estudiante-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.estudiante-nombre {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.9375rem;
+}
+
+.badge-current {
+    display: inline-block;
+    background: var(--secondary-color);
+    color: var(--bg-white);
+    padding: 0.125rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.score-display {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+}
+
+.score-value {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: var(--secondary-color);
+}
+
+.score-max {
+    color: var(--text-light);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.exams-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.exams-total {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.exams-approved {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.best-score {
+    display: flex;
+}
+
+.best-value {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--accent-color);
+}
+
+.approval-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.approval-bar {
+    flex: 1;
+    height: 8px;
+    background: var(--bg-light);
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative;
+    min-width: 80px;
+}
+
+.approval-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--secondary-color) 0%, #34D399 100%);
+    border-radius: 999px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    width: var(--progress); /* 👈 ESTA LÍNEA */
+}
+
+.approval-text {
+    font-weight: 700;
+    color: var(--secondary-color);
+    min-width: 45px;
+    text-align: right;
+    font-size: 0.875rem;
+}
+
+.ranking-empty {
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.empty-state {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.empty-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    color: var(--text-light);
+}
+
+.empty-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 0.5rem 0;
+}
+
+.empty-text {
+    color: var(--text-secondary);
+    font-size: 0.9375rem;
+    margin: 0;
+}
+
+.user-stats {
+    margin-top: 1.5rem;
+}
+
+.user-stats-card {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    padding: 1.25rem;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    color: var(--bg-white);
+}
+
+.stats-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 1rem 0;
+    text-align: center;
+    letter-spacing: -0.5px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+}
+
+.stat-box {
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(10px);
+    padding: 0.9rem 0.75rem;
+    border-radius: var(--radius-lg);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.stat-box:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-1px);
+}
+
+.stat-box .stat-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 1;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.stat-box .stat-number {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1;
+}
+
+.filter-select {
+    padding: 0.5rem 0.75rem;
+    background: white;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 130px;
+}
+
+.filter-select:hover {
+    border-color: var(--primary-color);
+    background: var(--bg-light);
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+@media (max-width: 1200px) {
+    .ranking-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .header-stats {
+        width: 100%;
+        justify-content: flex-start;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 1024px) {
+    .ranking-container {
+        padding: 1rem;
+    }
+    
+    .ranking-filters {
+        padding: 1rem;
+    }
+    
+    .filter-group {
+        width: 100%;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+    
+    .filter-label {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .filter-buttons {
+        width: 100%;
+        gap: 0.4rem;
+    }
+    
+    .filter-btn {
+        flex: 1;
+        min-width: 70px;
+        padding: 0.45rem 0.75rem;
+        font-size: 0.75rem;
+    }
+    
+    .filter-select {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .ranking-container {
+        padding: 0.75rem;
+    }
+    
+    .ranking-header {
+        padding: 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .header-content {
+        width: 100%;
+    }
+    
+    .ranking-title {
+        font-size: 1.25rem;
+    }
+    
+    .ranking-subtitle {
+        font-size: 0.8rem;
+    }
+    
+    .header-stats {
+        width: 100%;
+        gap: 0.75rem;
+    }
+    
+    .stat-item {
+        padding: 0.6rem 0.8rem;
+        min-width: 90px;
+        flex: 1;
+    }
+    
+    .stat-value {
+        font-size: 1.25rem;
+    }
+    
+    .stat-label {
+        font-size: 0.7rem;
+    }
+    
+    .btn-mi-posicion {
+        width: 100%;
+        margin-top: 0.5rem;
+        padding: 0.7rem;
+        font-size: 0.875rem;
+    }
+    
+    .ranking-filters {
+        padding: 0.75rem;
+    }
+    
+    .filter-group {
+        width: 100%;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .filter-label {
+        width: 100%;
+        font-size: 0.75rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .filter-buttons {
+        width: 100%;
+        gap: 0.3rem;
+    }
+    
+    .filter-btn {
+        flex: 1;
+        padding: 0.4rem 0.5rem;
+        font-size: 0.7rem;
+        min-width: auto;
+    }
+    
+    .filter-select {
+        width: 100%;
+        padding: 0.4rem 0.6rem;
+        font-size: 0.75rem;
+        min-width: auto;
+    }
+    
+    .ranking-table {
+        font-size: 0.8rem;
+    }
+    
+    .ranking-table th,
+    .ranking-table td {
+        padding: 0.7rem 0.5rem;
+    }
+    
+    .col-posicion {
+        width: 60px;
+    }
+    
+    .estudiante-avatar {
+        width: 32px;
+        height: 32px;
+        font-size: 0.75rem;
+    }
+    
+    .position-badge {
+        width: 36px;
+        height: 36px;
+        font-size: 0.875rem;
+    }
+    
+    .col-mejor,
+    .col-aprobacion {
+        display: none;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .user-stats-card {
+        padding: 1rem;
+    }
+
+    .stats-title {
+        font-size: 0.95rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.6rem;
+    }
+
+    .stat-box {
+        padding: 0.75rem 0.6rem;
+        gap: 0.3rem;
+    }
+
+    .stat-box .stat-label {
+        font-size: 0.6rem;
+    }
+
+    .stat-box .stat-number {
+        font-size: 1.25rem;
+    }
+
+    .ranking-container {
+        padding: 0.5rem;
+    }
+    
+    .ranking-header {
+        padding: 0.75rem;
+    }
+    
+    .ranking-title {
+        font-size: 1.125rem;
+    }
+    
+    .ranking-subtitle {
+        font-size: 0.75rem;
+    }
+    
+    .header-stats {
+        gap: 0.5rem;
+    }
+    
+    .stat-item {
+        padding: 0.5rem 0.6rem;
+        min-width: 80px;
+    }
+    
+    .stat-value {
+        font-size: 1.125rem;
+    }
+    
+    .btn-mi-posicion {
+        font-size: 0.8rem;
+        padding: 0.6rem;
+    }
+    
+    .ranking-filters {
+        padding: 0.5rem;
+    }
+    
+    .filter-group {
+        gap: 0.25rem;
+    }
+    
+    .filter-label {
+        font-size: 0.7rem;
+    }
+    
+    .filter-buttons {
+        gap: 0.25rem;
+    }
+    
+    .filter-btn {
+        padding: 0.35rem 0.4rem;
+        font-size: 0.65rem;
+    }
+    
+    .filter-select {
+        padding: 0.35rem 0.5rem;
+        font-size: 0.7rem;
+    }
+    
+    .ranking-table {
+        font-size: 0.75rem;
+    }
+    
+    .ranking-table th,
+    .ranking-table td {
+        padding: 0.6rem 0.4rem;
+    }
+    
+    .col-posicion {
+        width: 50px;
+    }
+    
+    .position-badge {
+        width: 32px;
+        height: 32px;
+        font-size: 0.75rem;
+    }
+    
+    .estudiante-avatar {
+        width: 28px;
+        height: 28px;
+        font-size: 0.65rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .ranking-title {
+        font-size: 1rem;
+    }
+    
+    .ranking-filters {
+        padding: 0.5rem;
+    }
+    
+    .filter-group {
+        gap: 0.2rem;
+    }
+    
+    .filter-buttons {
+        gap: 0.2rem;
+    }
+    
+    .filter-btn {
+        padding: 0.3rem 0.3rem;
+        font-size: 0.6rem;
+        min-width: auto;
+    }
+    
+    .filter-select {
+        padding: 0.3rem 0.4rem;
+        font-size: 0.65rem;
+        min-width: auto;
+    }
+    
+    .btn-mi-posicion {
+        font-size: 0.75rem;
+        padding: 0.5rem;
+    }
+    
+    .ranking-table th,
+    .ranking-table td {
+        padding: 0.75rem 0.5rem;
+    }
+    
+    .col-posicion {
+        width: 60px;
+    }
+    
+    .position-badge {
+        width: 36px;
+        height: 36px;
+        font-size: 0.875rem;
+    }
+    
+    .estudiante-nombre {
+        font-size: 0.875rem;
+    }
+    
+    .score-value {
+        font-size: 1.125rem;
+    }
+    
+    .exams-total {
+        font-size: 1rem;
+    }
+    
+    .exams-approved {
+        font-size: 0.6875rem;
+    }
+    
+    .user-stats-card {
+        padding: 1rem;
+    }
+    
+    .stats-grid {
+        gap: 0.5rem;
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .stat-box {
+        padding: 0.65rem 0.5rem;
+        gap: 0.25rem;
+    }
+
+    .stat-box .stat-label {
+        font-size: 0.55rem;
+    }
+
+    .stat-box .stat-number {
+        font-size: 1.125rem;
+    }
+}
+
+/* Estilos para select de materias */
+.filter-select {
+    padding: 0.5rem 1rem;
+    background: var(--bg-light);
+    color: var(--text-secondary);
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 0.8125rem;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    min-width: 150px;
+}
+
+.filter-select:hover {
+    background: var(--bg-gray);
+    color: var(--text-primary);
+}
+
+.filter-select:focus {
+    outline: none;
+    background: var(--bg-light);
+    border-color: var(--primary-color);
+    color: var(--text-primary);
+}

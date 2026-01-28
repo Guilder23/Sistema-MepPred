@@ -1,0 +1,298 @@
+/* Contenedor principal */
+.estudio-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Header */
+.estudio-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.estudio-header h1 {
+    font-size: 2rem;
+    color: #1a1a1a;
+    margin: 0;
+}
+
+.btn-volver {
+    padding: 0.75rem 1.5rem;
+    background: #f3f4f6;
+    color: #374151;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.btn-volver:hover {
+    background: #e5e7eb;
+    transform: translateX(-3px);
+}
+
+/* Filtro por materias */
+.filtro-materias {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.filtro-materias label {
+    font-weight: 600;
+    color: #374151;
+    margin: 0;
+}
+
+.select-materia {
+    flex: 1;
+    max-width: 300px;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #374151;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.select-materia:hover {
+    border-color: #d1d5db;
+}
+
+.select-materia:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Estadísticas */
+.estadisticas {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 1rem;
+    border-radius: 12px;
+    color: white;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card h2 {
+    font-size: 2rem;
+    margin: 0 0 0.25rem 0;
+    font-weight: 700;
+}
+
+.stat-card p {
+    margin: 0;
+    font-size: 0.85rem;
+    opacity: 0.9;
+}
+
+/* Sección de Flashcard */
+.flashcard-section {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: center;
+    perspective: 1500px;
+}
+
+/* Wrapper para flip 3D */
+.flashcard-wrapper {
+    max-width: 700px;
+    width: 100%;
+    min-height: 400px;
+    cursor: pointer;
+}
+
+.flashcard-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 400px;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+.flashcard-wrapper.volteada .flashcard-inner {
+    transform: rotateY(180deg);
+}
+
+.flashcard-card {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    min-height: 400px;
+    backface-visibility: hidden;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.flashcard-card:hover {
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.flashcard-front {
+    z-index: 2;
+}
+
+.flashcard-back {
+    transform: rotateY(180deg);
+}
+
+.flashcard-categoria {
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+    background: #667eea;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.flashcard-contenido {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.flashcard-pregunta,
+.flashcard-respuesta {
+    font-size: 1.5rem;
+    color: #1a1a1a;
+    text-align: center;
+    line-height: 1.6;
+}
+
+.flashcard-instruccion {
+    text-align: center;
+    color: #9ca3af;
+    font-size: 0.875rem;
+    margin-top: 2rem;
+    margin-bottom: 0;
+}
+
+/* Botones de Dificultad */
+.botones-dificultad {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.btn-dificultad {
+    padding: 1rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-dificultad:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-otra-vez {
+    background: #ef4444;
+}
+
+.btn-dificil {
+    background: #f97316;
+}
+
+.btn-bien {
+    background: #3b82f6;
+}
+
+.btn-facil {
+    background: #10b981;
+}
+
+/* Mensaje sin flashcards */
+.sin-flashcards {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.sin-flashcards i {
+    font-size: 4rem;
+    color: #10b981;
+    margin-bottom: 1rem;
+}
+
+.sin-flashcards h2 {
+    font-size: 2rem;
+    color: #1a1a1a;
+    margin-bottom: 1rem;
+}
+
+.sin-flashcards p {
+    color: #6b7280;
+    font-size: 1.125rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .estudio-container {
+        padding: 1rem;
+    }
+
+    .estadisticas {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .flashcard-card {
+        padding: 2rem;
+        min-height: 300px;
+    }
+
+    .flashcard-pregunta,
+    .flashcard-respuesta {
+        font-size: 1.25rem;
+    }
+
+    .botones-dificultad {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .btn-dificultad {
+        width: 100%;
+    }
+}

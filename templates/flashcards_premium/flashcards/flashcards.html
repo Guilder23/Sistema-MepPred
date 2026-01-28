@@ -1,0 +1,64 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block titulo %}Gestión de Flashcards Premium{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/flashcards_premium/flashcards/flashcards.css' %}">
+<link rel="stylesheet" href="{% static 'css/flashcards_premium/flashcards/modals/crearFlashcard.css' %}">
+<link rel="stylesheet" href="{% static 'css/flashcards_premium/flashcards/modals/editarFlashcard.css' %}">
+<link rel="stylesheet" href="{% static 'css/flashcards_premium/flashcards/modals/verFlashcard.css' %}">
+<link rel="stylesheet" href="{% static 'css/flashcards_premium/flashcards/modals/eliminarFlashcard.css' %}">
+{% endblock %}
+
+{% block contenido %}
+<div class="flashcards-container">
+    <header class="flashcards-header">
+        <div class="header-content">
+            <h1>Gestión de Flashcards Premium</h1>
+            <button id="btnCrearFlashcard" class="btn-crear-flashcard">
+                <span class="btn-icon">+</span>
+                Nueva Flashcard
+            </button>
+        </div>
+        <a href="{% url 'flashcards_premium:dashboard' %}" class="btn-volver">← Volver al Dashboard</a>
+    </header>
+
+    <section class="busqueda-section">
+        <input type="text" id="buscarFlashcard" placeholder="Buscar flashcard por pregunta..." class="input-buscar">
+    </section>
+
+    <section class="tabla-section">
+        <table class="tabla-flashcards">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Mazo</th>
+                    <th>Pregunta</th>
+                    <th>Respuesta</th>
+                    <th>Categoría</th>
+                    <th>Nivel</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tablaFlashcards">
+                <!-- Se llena dinámicamente con JavaScript -->
+            </tbody>
+        </table>
+    </section>
+</div>
+
+<!-- Modales -->
+{% include 'flashcards_premium/flashcards/modals/crearFlashcard.html' %}
+{% include 'flashcards_premium/flashcards/modals/editarFlashcard.html' %}
+{% include 'flashcards_premium/flashcards/modals/verFlashcard.html' %}
+{% include 'flashcards_premium/flashcards/modals/eliminarFlashcard.html' %}
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/flashcards_premium/flashcards/flashcards.js' %}"></script>
+<script src="{% static 'js/flashcards_premium/flashcards/modals/crearFlashcard.js' %}"></script>
+<script src="{% static 'js/flashcards_premium/flashcards/modals/editarFlashcard.js' %}"></script>
+<script src="{% static 'js/flashcards_premium/flashcards/modals/verFlashcard.js' %}"></script>
+<script src="{% static 'js/flashcards_premium/flashcards/modals/eliminarFlashcard.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base/base.html' %}
+
+{% block titulo %}Reenviar verificación{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="/static/css/cuentas/verificacion/reenviar_verificacion.css" />
+{% endblock %}
+
+{% block contenido %}
+<section class="card">
+  <h1>Reenviar verificación</h1>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    <label>Correo electrónico</label>
+    <input type="email" name="email" required />
+    <button type="submit">Reenviar</button>
+  </form>
+</section>
+{% endblock %}
+
+{% block js %}
+<script src="/static/js/cuentas/verificacion/reenviar_verificacion.js"></script>
+{% endblock %}

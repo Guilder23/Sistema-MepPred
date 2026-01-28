@@ -1,0 +1,74 @@
+/* ===== ESTILOS ESPECÍFICOS - PANEL ADMIN ===== */
+
+.card {
+  background: var(--fondo-panel);
+  border: 1px solid var(--borde-sutil);
+  border-radius: var(--radio-xl);
+  box-shadow: var(--sombra-card);
+  padding: var(--espacio-2xl);
+  transition: all var(--transicion-normal);
+  width: 100%;
+}
+
+.card:hover {
+  box-shadow: var(--sombra-md);
+}
+
+.card h1 {
+  font-size: var(--fuente-tamano-2xl);
+  font-weight: var(--fuente-peso-bold);
+  margin: 0 0 var(--espacio-lg) 0;
+  color: var(--texto-principal);
+  line-height: 1.2;
+}
+
+.card p {
+  margin: 0 0 var(--espacio-md) 0;
+  color: var(--texto-secundario);
+}
+
+.links {
+  display: flex;
+  gap: var(--espacio-md);
+  flex-wrap: wrap;
+  margin-top: var(--espacio-xl);
+}
+
+.links a {
+  color: var(--texto-secundario);
+  text-decoration: none;
+  padding: var(--espacio-md) var(--espacio-lg);
+  border-radius: var(--radio-md);
+  border: 1px solid var(--borde-normal);
+  background: var(--fondo-panel);
+  transition: all var(--transicion-normal);
+  font-size: var(--fuente-tamano-sm);
+  font-weight: var(--fuente-peso-medium);
+  display: inline-block;
+}
+
+.links a:hover {
+  border-color: var(--color-primario-borde);
+  background: var(--color-primario-fondo);
+  color: var(--color-primario);
+  box-shadow: var(--sombra-sm);
+}
+
+@media (max-width: 768px) {
+  .card {
+    padding: var(--espacio-lg);
+  }
+
+  .card h1 {
+    font-size: var(--fuente-tamano-xl);
+  }
+
+  .links {
+    flex-direction: column;
+  }
+
+  .links a {
+    width: 100%;
+    text-align: center;
+  }
+}

@@ -1,0 +1,80 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block titulo %}Flashcards Premium{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/flashcards_premium/flashcards_premium.css' %}">
+{% endblock %}
+
+{% block contenido %}
+<div class="flashcards-premium-container">
+    <header class="header-premium">
+        <h1>Flashcards Premium</h1>
+    </header>
+
+    <!-- Sección de Estadísticas -->
+    <section class="estadisticas-section">
+        <div class="stat-card stat-card-mazos">
+            <div class="stat-icon">
+                <i class="fas fa-layer-group"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Total de Mazos</h3>
+                <p class="stat-number" id="totalMazos">0</p>
+            </div>
+        </div>
+        <div class="stat-card stat-card-flashcards">
+            <div class="stat-icon">
+                <i class="fas fa-clone"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Total de Flashcards</h3>
+                <p class="stat-number" id="totalFlashcards">0</p>
+            </div>
+        </div>
+        <div class="stat-card stat-card-progreso">
+            <div class="stat-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Progreso General</h3>
+                <p class="stat-number" id="progresoGeneral">0%</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de Navegación -->
+    <section class="navegacion-section">
+        <a href="{% url 'flashcards_premium:lista_mazos_premium' %}" class="nav-card nav-card-mazos">
+            <div class="nav-card-icon">
+                <i class="fas fa-layer-group"></i>
+            </div>
+            <div class="nav-content">
+                <h2>Gestionar Mazos</h2>
+                <p>Administra todos tus mazos premium</p>
+            </div>
+            <div class="nav-arrow">
+                <i class="fas fa-arrow-right"></i>
+            </div>
+        </a>
+
+        <a href="{% url 'flashcards_premium:lista_flashcards_premium' %}" class="nav-card nav-card-flashcards">
+            <div class="nav-card-icon">
+                <i class="fas fa-clone"></i>
+            </div>
+            <div class="nav-content">
+                <h2>Gestionar Flashcards</h2>
+                <p>Administra todas tus flashcards premium</p>
+            </div>
+            <div class="nav-arrow">
+                <i class="fas fa-arrow-right"></i>
+            </div>
+        </a>
+    </section>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/flashcards_premium/flashcards_premium.js' %}"></script>
+{% endblock %}

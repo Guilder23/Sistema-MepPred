@@ -1,0 +1,22 @@
+{% extends 'base/base.html' %}
+
+{% block titulo %}Panel Administrador{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="/static/css/cuentas/paneles/panel_admin.css" />
+{% endblock %}
+
+{% block contenido %}
+<section class="card">
+  <h1>Panel del administrador</h1>
+  <p>Bienvenido, {{ request.user.email }}.</p>
+  <div class="links">
+    <a href="/admin/">Ir al admin Django</a>
+    <a href="/admin/asignar/">Asignar administrador</a>
+  </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script src="/static/js/cuentas/paneles/panel_admin.js"></script>
+{% endblock %}

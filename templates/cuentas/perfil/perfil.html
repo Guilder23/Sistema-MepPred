@@ -1,0 +1,177 @@
+{% extends 'base/base.html' %}
+
+{% block titulo %}Mi Perfil - MedPred{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="/static/css/cuentas/perfil/perfil.css">
+{% endblock %}
+
+{% block contenido %}
+<div class="perfil-container">
+    <div class="perfil-header">
+        <div class="header-top">
+            <h1>Mi Perfil</h1>
+            <button type="button" id="btnEditar" class="btn btn-edit" onclick="habilitarEdicion()">
+                <span class="icon"></span> Editar Perfil
+            </button>
+        </div>
+        <p>Gestiona tu información personal</p>
+    </div>
+
+    <form method="POST" class="perfil-form" id="perfilForm">
+        {% csrf_token %}
+        
+        <div class="form-columns">
+            <!-- COLUMNA 1 -->
+            <div class="form-column">
+                <!-- Sección: Información de Cuenta -->
+                <div class="form-section">
+                    <h3 class="form-section-title">Información de Cuenta</h3>
+                    
+                    <div class="form-group">
+                        <label for="email" class="form-label">Correo Electrónico</label>
+                        <input type="email" id="email" value="{{ user.email }}" disabled class="form-control readonly" title="No se puede cambiar el correo">
+                        <small class="form-text text-muted">El correo electrónico no se puede modificar.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="username" class="form-label">Nombre de Usuario</label>
+                        <input type="text" id="username" value="{{ user.username }}" disabled class="form-control readonly" title="No se puede cambiar el nombre de usuario">
+                    </div>
+                </div>
+
+                <!-- Sección: Información Personal - Parte 1 -->
+                <div class="form-section">
+                    <h3 class="form-section-title">Información Personal</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="first_name" class="form-label">Nombres</label>
+                            <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" class="form-control editable" required placeholder="Ingresa tus nombres" disabled>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="last_name" class="form-label">Apellidos</label>
+                            <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}" class="form-control editable" required placeholder="Ingresa tus apellidos" disabled>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="birth_date" class="form-label">Fecha de Nacimiento</label>
+                        <input type="date" id="birth_date" name="birth_date" value="{% if user.birth_date %}{{ user.birth_date|date:'Y-m-d' }}{% endif %}" class="form-control editable" placeholder="dd/mm/aaaa" disabled>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gender" class="form-label">Sexo / Género</label>
+                        <select id="gender" name="gender" class="form-select editable" disabled>
+                            <option value="">-- Selecciona --</option>
+                            <option value="male" {% if user.gender == 'male' %}selected{% endif %}>Masculino</option>
+                            <option value="female" {% if user.gender == 'female' %}selected{% endif %}>Femenino</option>
+                            <option value="other" {% if user.gender == 'other' %}selected{% endif %}>Otro</option>
+                            <option value="prefer_not" {% if user.gender == 'prefer_not' %}selected{% endif %}>Prefiero no decirlo</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLUMNA 2 -->
+            <div class="form-column">
+                <!-- Sección: Información Personal - Parte 2 -->
+                <div class="form-section">
+                    <h3 class="form-section-title">Datos Personales</h3>
+                    
+                    <div class="form-group">
+                        <label for="identity_number" class="form-label">Número de Carnet de Identidad (CI)</label>
+                        <input type="text" id="identity_number" name="identity_number" value="{{ user.identity_number }}" class="form-control editable" placeholder="Ej: 12345678" disabled>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nationality" class="form-label">Nacionalidad</label>
+                        <input type="text" id="nationality" name="nationality" value="{{ user.nationality }}" class="form-control editable" placeholder="Ej: Boliviano" disabled>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone_number" class="form-label">Número de Teléfono / Celular</label>
+                        <input type="tel" id="phone_number" name="phone_number" value="{{ user.phone_number }}" class="form-control editable" placeholder="Ej: +591 7123456" disabled>
+                    </div>
+                </div>
+
+                <!-- Sección: Información Académica (solo para estudiantes) -->
+                {% if user.role == 'student' %}
+                <div class="form-section">
+                    <h3 class="form-section-title">Información Académica</h3>
+                    
+                    <div class="form-group">
+                        <label for="student_status" class="form-label">Estado como Estudiante</label>
+                        <select id="student_status" name="student_status" class="form-select editable" onchange="toggleUniversidadCampos()" disabled>
+                            <option value="">-- Selecciona --</option>
+                            <option value="aspirant" {% if user.student_status == 'aspirant' %}selected{% endif %}>Postulante (Aspirante a ingresar)</option>
+                            <option value="university" {% if user.student_status == 'university' %}selected{% endif %}>Universitario (Estudiante activo)</option>
+                        </select>
+                    </div>
+
+                    <!-- Campos condicionales para Universitarios -->
+                    <div id="universidad-campos" {% if user.student_status != 'university' %}style="display: none;"{% endif %}>
+                        <div class="form-group">
+                            <label for="university" class="form-label">Universidad</label>
+                            <select id="university" name="university" class="form-select editable" disabled>
+                                <option value="">-- Selecciona una universidad --</option>
+                                <option value="UMSA" {% if user.university == 'UMSA' %}selected{% endif %}>Universidad Mayor de San Andrés (UMSA)</option>
+                                <option value="UPSA" {% if user.university == 'UPSA' %}selected{% endif %}>Universidad Privada Boliviana (UPB)</option>
+                                <option value="UCB" {% if user.university == 'UCB' %}selected{% endif %}>Universidad Católica Boliviana (UCB)</option>
+                                <option value="UAGRM" {% if user.university == 'UAGRM' %}selected{% endif %}>Universidad Autónoma Gabriel René Moreno (UAGRM)</option>
+                                <option value="UAJMS" {% if user.university == 'UAJMS' %}selected{% endif %}>Universidad Autónoma Juan Misael Saracho (UAJMS)</option>
+                                <option value="OTROS" {% if user.university == 'OTROS' %}selected{% endif %}>Otra universidad</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="faculty" class="form-label">Facultad</label>
+                            <input type="text" id="faculty" name="faculty" value="{{ user.faculty }}" class="form-control editable" placeholder="Ej: Ingeniería, Medicina, etc." disabled>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="career" class="form-label">Carrera</label>
+                            <input type="text" id="career" name="career" value="{{ user.career }}" class="form-control editable" placeholder="Ej: Ingeniería de Sistemas, Medicina General, etc." disabled>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="study_year" class="form-label">Año de Estudio</label>
+                            <select id="study_year" name="study_year" class="form-select editable" disabled>
+                                <option value="">-- Selecciona --</option>
+                                <option value="year_1" {% if user.study_year == 'year_1' %}selected{% endif %}>Año 1</option>
+                                <option value="year_2" {% if user.study_year == 'year_2' %}selected{% endif %}>Año 2</option>
+                                <option value="year_3" {% if user.study_year == 'year_3' %}selected{% endif %}>Año 3</option>
+                                <option value="year_4" {% if user.study_year == 'year_4' %}selected{% endif %}>Año 4</option>
+                                <option value="year_5" {% if user.study_year == 'year_5' %}selected{% endif %}>Año 5</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Sección: Rol (en columna 2) -->
+        <div class="form-column">
+            <div class="form-section">
+                <h3 class="form-section-title">Rol de Usuario</h3>
+                <div class="form-group">
+                    <label class="form-label">Rol</label>
+                    <input type="text" value="{{ user.get_role_display }}" disabled class="form-control readonly">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions" id="formActions" style="display: none;">
+            <button type="button" class="btn btn-secondary" onclick="cancelarEdicion()">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="/static/js/cuentas/perfil/perfil.js"></script>
+{% endblock %}
+
+

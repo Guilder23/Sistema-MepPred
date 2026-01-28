@@ -1,0 +1,32 @@
+<div id="modal-crear-flashcard" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Crear Nueva Flashcard</h3>
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="crear-flashcard-mazo">Seleccionar Mazo:</label>
+                <select id="crear-flashcard-mazo" required>
+                    <option value="">-- Selecciona un mazo --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="crear-flashcard-categoria">Categoría:</label>
+                <input type="text" id="crear-flashcard-categoria" placeholder="Ej: Programación, Historia, Inglés...">
+            </div>
+            <div class="form-group">
+                <label for="crear-flashcard-pregunta">Pregunta/Frente:</label>
+                <textarea id="crear-flashcard-pregunta" placeholder="Escribe la pregunta o concepto aquí..." required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="crear-flashcard-respuesta">Respuesta/Reverso:</label>
+                <textarea id="crear-flashcard-respuesta" placeholder="Escribe la respuesta o definición aquí..." required></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" id="cancelar-crear-flashcard">Cancelar</button>
+            <button class="btn btn-primary" id="guardar-crear-flashcard">Crear Flashcard</button>
+        </div>
+    </div>
+</div>

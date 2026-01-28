@@ -1,0 +1,24 @@
+<!-- Modal Eliminar Mazo -->
+<div class="modal-overlay" id="eliminarMazoModal" style="display: none;">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3>Eliminar Mazo</h3>
+            <button type="button" class="btn-cerrar-modal" onclick="cerrarModal('eliminarMazoModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="eliminarMazoId">
+            <div class="alerta-eliminar">
+                <p><strong>⚠️ Advertencia:</strong> Esta acción eliminará el mazo y todas sus flashcards asociadas. Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="info-mazo">
+                <p><strong>Nombre:</strong> <span id="eliminarNombreMazo"></span></p>
+                <p><strong>Total de flashcards:</strong> <span id="eliminarTotalFlashcards"></span></p>
+            </div>
+            <p>¿Está seguro que desea eliminar este mazo?</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-cancelar" onclick="cerrarModal('eliminarMazoModal')">Cancelar</button>
+            <button type="button" class="btn-confirmar-eliminar" id="btnConfirmarEliminarMazo">Eliminar</button>
+        </div>
+    </div>
+</div>

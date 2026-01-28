@@ -1,0 +1,99 @@
+<!-- Modal Gestión de Preguntas -->
+<div class="modal-preguntas-overlay" id="modalPreguntasOverlay">
+    <div class="modal-preguntas-container">
+        <div class="modal-preguntas-header">
+            <h2>Gestión de Preguntas: <span id="tituloExamenPreguntas"></span></h2>
+            <button class="modal-preguntas-btn-close" type="button">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="modal-preguntas-body">
+            <input type="hidden" id="examenIdPreguntas">
+            
+            <!-- Botón agregar pregunta -->
+            <div class="modal-preguntas-header-actions">
+                <button type="button" class="btn-agregar-pregunta" id="btnAgregarPregunta">
+                    <i class="fas fa-plus"></i> Agregar Pregunta
+                </button>
+            </div>
+
+            <!-- Lista de preguntas -->
+            <div id="listaPreguntasContainer">
+                <!-- Se llena dinámicamente -->
+            </div>
+
+            <!-- Formulario para agregar/editar pregunta -->
+            <div class="formulario-pregunta" id="formularioPregunta" style="display: none;">
+                <h3 id="tituloPreguntaForm">Nueva Pregunta</h3>
+                <input type="hidden" id="preguntaIdEdit">
+                
+                <!-- Texto de la pregunta -->
+                <div class="form-group-pregunta">
+                    <label>Texto de la Pregunta *</label>
+                    <textarea id="textoPregunta" rows="3" placeholder="Respecto a..."></textarea>
+                </div>
+
+                <!-- Enunciados -->
+                <div class="form-group-pregunta">
+                    <label>Enunciados</label>
+                    <div id="enunciadosContainer">
+                        <!-- Enunciados dinámicos -->
+                    </div>
+                    <button type="button" class="btn-mini" onclick="agregarEnunciado()">
+                        <i class="fas fa-plus"></i> Agregar Enunciado
+                    </button>
+                </div>
+
+                <!-- Opciones de respuesta -->
+                <div class="form-group-pregunta">
+                    <label>Opciones de Respuesta</label>
+                    <div id="opcionesContainer">
+                        <!-- Opciones dinámicas -->
+                    </div>
+                    <button type="button" class="btn-mini" onclick="agregarOpcion()">
+                        <i class="fas fa-plus"></i> Agregar Opción
+                    </button>
+                </div>
+
+                <!-- Botones -->
+                <div class="form-pregunta-actions">
+                    <button type="button" class="btn-cancelar-pregunta" onclick="cancelarPregunta()">
+                        Cancelar
+                    </button>
+                    <button type="button" class="btn-guardar-pregunta" onclick="guardarPregunta()">
+                        <i class="fas fa-save"></i> Guardar Pregunta
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-preguntas-footer">
+            <button type="button" class="modal-preguntas-btn modal-preguntas-btn-cerrar" id="btnCerrarPreguntas">
+                Cerrar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Confirmación Eliminar Pregunta -->
+<div class="modal-confirmar-overlay" id="modalConfirmarEliminarPregunta">
+    <div class="modal-confirmar-container">
+        <div class="modal-confirmar-header">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h3>Confirmar Eliminación</h3>
+        </div>
+        <div class="modal-confirmar-body">
+            <p>¿Estás seguro de eliminar esta pregunta?</p>
+            <p class="modal-confirmar-warning">Esta acción no se puede deshacer.</p>
+        </div>
+        <div class="modal-confirmar-footer">
+            <button type="button" class="btn-cancelar-confirmar" onclick="cerrarModalConfirmarEliminar()">
+                Cancelar
+            </button>
+            <button type="button" class="btn-aceptar-confirmar" id="btnConfirmarEliminarPregunta">
+                Aceptar
+            </button>
+        </div>
+    </div>
+</div>

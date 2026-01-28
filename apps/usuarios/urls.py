@@ -1,20 +1,16 @@
 from django.urls import path
-
 from . import views
-
 
 app_name = 'usuarios'
 
 urlpatterns = [
-    path('', views.home, name='home'),
-    path('registro/', views.registro_estudiante, name='registro'),
-    path('login/', views.login_view, name='login'),
-    path('logout/', views.logout_view, name='logout'),
-    path('verificacion/enviada/', views.verificacion_enviada, name='verificacion_enviada'),
-    path('verificacion/reenviar/', views.reenviar_verificacion, name='reenviar_verificacion'),
-    path('verificar/<str:token>/', views.verificar_email, name='verificar_email'),
-    path('recuperar/', views.solicitar_recuperacion, name='solicitar_recuperacion'),
-    path('recuperar/<str:uidb64>/<str:token>/', views.confirmar_recuperacion, name='confirmar_recuperacion'),
-    path('panel/', views.panel, name='panel'),
-    path('admin/asignar/', views.asignar_administrador, name='asignar_administrador'),
+    # Vistas principales
+    path('', views.gestion_usuarios, name='gestion'),
+    
+    # APIs
+    path('api/listar/', views.listar_usuarios, name='api_listar'),
+    path('api/obtener/<int:usuario_id>/', views.obtener_usuario, name='api_obtener'),
+    path('api/crear/', views.crear_usuario, name='api_crear'),
+    path('api/editar/', views.editar_usuario, name='api_editar'),
+    path('api/eliminar/<int:usuario_id>/', views.eliminar_usuario, name='api_eliminar'),
 ]

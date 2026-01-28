@@ -1,0 +1,98 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block titulo %}Flashcards Premium - Modo Estudio{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/flashcards_premium/estudiante/modo_estudio.css' %}">
+{% endblock %}
+
+{% block contenido %}
+{% csrf_token %}
+<div class="estudio-container">
+    <header class="estudio-header">
+        <h1>Flashcards Premium</h1>
+        <a href="/panel/" class="btn-volver">← Volver</a>
+    </header>
+
+    <!-- Filtro por materias -->
+    <section class="filtro-materias">
+        <label for="filtroMateria">Filtrar por materia:</label>
+        <select id="filtroMateria" class="select-materia">
+            <option value="">Todas las materias</option>
+        </select>
+    </section>
+
+    <!-- Estadísticas -->
+    <section class="estadisticas">
+        <div class="stat-card stat-total">
+            <h2 id="totalFlashcards">0</h2>
+            <p>Total</p>
+        </div>
+        <div class="stat-card stat-pendientes">
+            <h2 id="porRepasar">0</h2>
+            <p>Por Repasar</p>
+        </div>
+        <div class="stat-card stat-hoy">
+            <h2 id="hoy">0</h2>
+            <p>Hoy</p>
+        </div>
+        <div class="stat-card stat-repasadas">
+            <h2 id="repasadas">0</h2>
+            <p>Repasadas</p>
+        </div>
+    </section>
+
+    <!-- Tarjeta de Flashcard -->
+    <section class="flashcard-section">
+        <div class="flashcard-wrapper" id="flashcardCard">
+            <div class="flashcard-inner">
+                <!-- Cara frontal -->
+                <div class="flashcard-card flashcard-front">
+                    <div class="flashcard-categoria" id="flashcardCategoria">asdaf</div>
+                    <div class="flashcard-contenido">
+                        <div class="flashcard-pregunta" id="flashcardPregunta">dfdgdfh</div>
+                    </div>
+                    <p class="flashcard-instruccion">Haz clic para voltear la tarjeta</p>
+                </div>
+                <!-- Cara trasera -->
+                <div class="flashcard-card flashcard-back">
+                    <div class="flashcard-categoria" id="flashcardCategoriaBack">asdaf</div>
+                    <div class="flashcard-contenido">
+                        <div class="flashcard-respuesta" id="flashcardRespuesta"></div>
+                    </div>
+                    <p class="flashcard-instruccion">Haz clic para ver la pregunta</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Botones de Dificultad -->
+    <section class="botones-dificultad">
+        <button class="btn-dificultad btn-otra-vez" data-dificultad="1" data-minutos="1">
+            <i class="fas fa-redo"></i> Otra vez (1 minuto)
+        </button>
+        <button class="btn-dificultad btn-dificil" data-dificultad="10" data-minutos="10">
+            <i class="fas fa-thumbs-down"></i> Difícil (10 minutos)
+        </button>
+        <button class="btn-dificultad btn-bien" data-dificultad="3">
+            <i class="fas fa-thumbs-up"></i> Bien (3-7 días)
+        </button>
+        <button class="btn-dificultad btn-facil" data-dificultad="7">
+            <i class="fas fa-check-circle"></i> Fácil (7+ días)
+        </button>
+    </section>
+
+    <!-- Mensaje cuando no hay flashcards -->
+    <div class="sin-flashcards" id="sinFlashcards" style="display: none;">
+        <i class="fas fa-check-circle"></i>
+        <h2>¡Excelente trabajo!</h2>
+        <p>No hay flashcards pendientes para repasar por ahora.</p>
+        <p>Vuelve más tarde para continuar estudiando.</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/flashcards_premium/estudiante/modo_estudio.js' %}"></script>
+{% endblock %}

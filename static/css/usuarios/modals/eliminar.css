@@ -1,0 +1,78 @@
+/* Estilos para el modal de eliminar usuario */
+
+#modalEliminar .modal-header {
+    background-color: #dc3545;
+    color: white;
+}
+
+#modalEliminar .modal-header-title {
+    color: white;
+    font-weight: 600;
+}
+
+#modalEliminar .modal-body {
+    padding: 1.5rem;
+    background-color: #fff;
+}
+
+#modalEliminar .modal-body p {
+    color: #2c3e50;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+#modalEliminar .modal-body strong {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+#modalEliminar .text-danger {
+    color: #dc3545;
+}
+
+#modalEliminar .text-danger small {
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+#modalEliminar .btn-danger {
+    background-color: #dc3545;
+    color: white;
+    font-weight: 500;
+}
+
+#modalEliminar .btn-danger:hover:not(:disabled) {
+    background-color: #c82333;
+}
+
+/* Alerta de peligro */
+#modalEliminar .alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #modalEliminar .modal-body {
+        padding: 1rem;
+    }
+
+    #modalEliminar .modal-body p {
+        font-size: 0.95rem;
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #modalEliminar .modal-body {
+        padding: 1rem;
+    }
+
+    #modalEliminar .modal-body p {
+        font-size: 0.95rem;
+    }
+}

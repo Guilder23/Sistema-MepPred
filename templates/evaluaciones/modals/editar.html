@@ -1,0 +1,78 @@
+<!-- Modal Editar Examen -->
+<div class="modal-editar-overlay" id="modalEditarOverlay">
+    <div class="modal-editar-container">
+        <div class="modal-editar-header">
+            <h2>Editar Examen</h2>
+            <button class="modal-editar-btn-close" type="button">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="modal-editar-body">
+            <form id="formEditarExamen">
+                <input type="hidden" id="editarId">
+
+                <!-- Título -->
+                <div class="modal-editar-form-group modal-editar-required">
+                    <label for="editarTitulo">Título del Examen</label>
+                    <input 
+                        type="text" 
+                        class="modal-editar-form-control" 
+                        id="editarTitulo" 
+                        placeholder="Ej: Examen de Matemáticas"
+                        minlength="3"
+                        maxlength="150"
+                        required>
+                </div>
+
+                <!-- Materia -->
+                <div class="modal-editar-form-group modal-editar-required">
+                    <label for="editarMateria">Materia</label>
+                    <select class="modal-editar-form-control" id="editarMateria" required>
+                        <option value="">Seleccione una materia</option>
+                    </select>
+                </div>
+
+                <!-- Descripción -->
+                <div class="modal-editar-form-group">
+                    <label for="editarDescripcion">Descripción</label>
+                    <textarea 
+                        class="modal-editar-form-control" 
+                        id="editarDescripcion" 
+                        placeholder="Descripción opcional..."
+                        maxlength="500"
+                        rows="3"></textarea>
+                </div>
+
+                <!-- Duración -->
+                <div class="modal-editar-form-group modal-editar-required">
+                    <label for="editarDuracion">Duración (minutos)</label>
+                    <input 
+                        type="number" 
+                        class="modal-editar-form-control" 
+                        id="editarDuracion" 
+                        min="1"
+                        max="1440"
+                        required>
+                </div>
+
+                <!-- Activo -->
+                <div class="modal-editar-form-group">
+                    <label class="modal-editar-checkbox-label">
+                        <input type="checkbox" id="editarActivo">
+                        <span>Examen activo</span>
+                    </label>
+                </div>
+            </form>
+        </div>
+
+        <div class="modal-editar-footer">
+            <button type="button" class="modal-editar-btn modal-editar-btn-cancelar" id="btnCancelarEditarExamen">
+                Cancelar
+            </button>
+            <button type="button" class="modal-editar-btn modal-editar-btn-actualizar" id="btnActualizarExamen">
+                <i class="fas fa-save"></i> Actualizar
+            </button>
+        </div>
+    </div>
+</div>

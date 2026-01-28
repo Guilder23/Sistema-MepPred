@@ -1,0 +1,338 @@
+{% extends 'base/base.html' %}
+
+{% block titulo %}Inicio - MeedPred{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="/static/css/home.css" />
+<link rel="stylesheet" href="/static/css/cuentas/autenticacion/login.css" />
+<link rel="stylesheet" href="/static/css/cuentas/autenticacion/registro.css" />
+{% endblock %}
+
+{% block contenido %}
+<!-- Hero Section -->
+<section class="hero">
+  <div class="hero__container">
+    <div class="hero__content">
+      <h1 class="hero__title">
+        Domina tus Estudios con <span class="hero__highlight">MedPred</span>
+      </h1>
+      <p class="hero__subtitle">
+        La plataforma educativa definitiva para estudiantes universitarios. Aprende, practica y supera tus exámenes con herramientas avanzadas de IA y contenido personalizado.
+      </p>
+      <div class="hero__buttons">
+        <button class="btn btn--primary btn--large" id="open-login-modal">
+          <i class="fas fa-rocket"></i>
+          Comenzar Ahora
+        </button>
+        <button class="btn btn--secondary btn--large" id="open-registro-modal">
+          <i class="fas fa-user-plus"></i>
+          Crear Cuenta
+        </button>
+      </div>
+      <div class="hero__stats">
+        <div class="stat">
+          <span class="stat__number">10,000+</span>
+          <span class="stat__label">Estudiantes</span>
+        </div>
+        <div class="stat">
+          <span class="stat__number">500+</span>
+          <span class="stat__label">Materias</span>
+        </div>
+        <div class="stat">
+          <span class="stat__number">95%</span>
+          <span class="stat__label">Éxito</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero__image">
+      <div class="hero__illustration">
+        <i class="fas fa-graduation-cap"></i>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Características Principales</h2>
+      <p class="section-subtitle">Herramientas poderosas diseñadas para potenciar tu aprendizaje</p>
+    </div>
+    <div class="features__grid">
+      <div class="feature-card">
+        <div class="feature-card__icon">
+          <i class="fas fa-brain"></i>
+        </div>
+        <h3 class="feature-card__title">IA Avanzada</h3>
+        <p class="feature-card__description">
+          Algoritmos de aprendizaje automático que se adaptan a tu ritmo de estudio y predicen áreas de mejora.
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon">
+          <i class="fas fa-book-open"></i>
+        </div>
+        <h3 class="feature-card__title">Biblioteca Completa</h3>
+        <p class="feature-card__description">
+          Acceso ilimitado a miles de recursos educativos, exámenes y materiales de estudio organizados por materia.
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon">
+          <i class="fas fa-layer-group"></i>
+        </div>
+        <h3 class="feature-card__title">Flashcards Premium</h3>
+        <p class="feature-card__description">
+          Sistema de tarjetas de memoria inteligente con espaciado repetitivo para un aprendizaje efectivo y duradero.
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon">
+          <i class="fas fa-trophy"></i>
+        </div>
+        <h3 class="feature-card__title">Ranking Competitivo</h3>
+        <p class="feature-card__description">
+          Compite con otros estudiantes, sube en el ranking y gana recompensas por tu desempeño académico.
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <h3 class="feature-card__title">Análisis de Progreso</h3>
+        <p class="feature-card__description">
+          Seguimiento detallado de tu evolución con gráficos y métricas que te ayudan a identificar fortalezas y debilidades.
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <h3 class="feature-card__title">Comunidad Activa</h3>
+        <p class="feature-card__description">
+          Conecta con estudiantes de tu universidad, comparte conocimientos y aprende en comunidad.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Benefits Section -->
+<section class="benefits">
+  <div class="container">
+    <div class="benefits__content">
+      <div class="benefits__text">
+        <h2 class="section-title">¿Por qué elegir MedPred?</h2>
+        <p class="section-subtitle">
+          Únete a miles de estudiantes que ya han transformado su forma de estudiar
+        </p>
+        <ul class="benefits__list">
+          <li class="benefit-item">
+            <i class="fas fa-check-circle"></i>
+            <span>Aumenta tu rendimiento académico en un 40%</span>
+          </li>
+          <li class="benefit-item">
+            <i class="fas fa-check-circle"></i>
+            <span>Estudia de manera más eficiente y menos estresante</span>
+          </li>
+          <li class="benefit-item">
+            <i class="fas fa-check-circle"></i>
+            <span>Acceso 24/7 desde cualquier dispositivo</span>
+          </li>
+          <li class="benefit-item">
+            <i class="fas fa-check-circle"></i>
+            <span>Contenido actualizado constantemente</span>
+          </li>
+          <li class="benefit-item">
+            <i class="fas fa-check-circle"></i>
+            <span>Soporte personalizado y comunidad de estudio</span>
+          </li>
+        </ul>
+      </div>
+      <div class="benefits__image">
+        <div class="benefits__illustration">
+          <i class="fas fa-chart-bar"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Lo que dicen nuestros estudiantes</h2>
+      <p class="section-subtitle">Historias reales de éxito académico</p>
+    </div>
+    <div class="testimonials__grid">
+      <div class="testimonial-card">
+        <div class="testimonial-card__content">
+          <p class="testimonial-card__text">
+            "MedPred cambió completamente mi forma de estudiar. Pasé de reprobar exámenes a ser el primero de mi clase. Las flashcards y el análisis de progreso son increíbles."
+          </p>
+        </div>
+        <div class="testimonial-card__author">
+          <div class="author__avatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="author__info">
+            <h4 class="author__name">María González</h4>
+            <p class="author__role">Estudiante de Medicina</p>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-card__content">
+          <p class="testimonial-card__text">
+            "La plataforma es intuitiva y el contenido está muy bien organizado. El ranking me motiva a estudiar más duro cada día."
+          </p>
+        </div>
+        <div class="testimonial-card__author">
+          <div class="author__avatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="author__info">
+            <h4 class="author__name">Carlos Rodríguez</h4>
+            <p class="author__role">Estudiante de Ingeniería</p>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-card__content">
+          <p class="testimonial-card__text">
+            "Gracias a MedPred, pude mantener mi beca. Las herramientas de IA realmente entienden cómo aprendo mejor."
+          </p>
+        </div>
+        <div class="testimonial-card__author">
+          <div class="author__avatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="author__info">
+            <h4 class="author__name">Ana López</h4>
+            <p class="author__role">Estudiante de Derecho</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta">
+  <div class="container">
+    <div class="cta__content">
+      <h2 class="cta__title">¿Listo para revolucionar tus estudios?</h2>
+      <p class="cta__subtitle">
+        Únete hoy y comienza tu viaje hacia el éxito académico
+      </p>
+      <div class="cta__buttons">
+        <button class="btn btn--primary btn--large" id="open-registro-modal-cta">
+          <i class="fas fa-user-plus"></i>
+          Registrarme Gratis
+        </button>
+        <a href="/ranking/" class="btn btn--secondary btn--large">
+          <i class="fas fa-trophy"></i>
+          Ver Ranking
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer Section -->
+<footer class="home-footer">
+  <div class="home-footer__container">
+    <div class="home-footer__grid">
+      <div class="footer-section">
+        <div class="footer-logo">
+          <h3 class="footer-logo__text">MedPred</h3>
+          <p class="footer-logo__tagline">La plataforma educativa del futuro</p>
+        </div>
+        <p class="footer-description">
+          Revolucionando la educación universitaria con IA avanzada, contenido personalizado y herramientas de aprendizaje efectivas.
+        </p>
+        <div class="footer-social">
+          <a href="#" class="social-link" aria-label="Facebook">
+            <i class="fab fa-facebook-f"></i>
+          </a>
+          <a href="#" class="social-link" aria-label="Twitter">
+            <i class="fab fa-twitter"></i>
+          </a>
+          <a href="#" class="social-link" aria-label="Instagram">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a href="#" class="social-link" aria-label="LinkedIn">
+            <i class="fab fa-linkedin-in"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-section">
+        <h4 class="footer-title">Plataforma</h4>
+        <ul class="footer-links">
+          <li><a href="#features">Características</a></li>
+          <li><a href="/ranking/">Ranking</a></li>
+          <li><a href="/contenido/biblioteca/">Biblioteca</a></li>
+          <li><a href="/contenido/progreso/">Mi Progreso</a></li>
+          <li><a href="/flashcards/">Flashcards</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h4 class="footer-title">Soporte</h4>
+        <ul class="footer-links">
+          <li><a href="/ayuda/">Centro de Ayuda</a></li>
+          <li><a href="/contacto/">Contacto</a></li>
+          <li><a href="/faq/">Preguntas Frecuentes</a></li>
+          <li><a href="/tutoriales/">Tutoriales</a></li>
+          <li><a href="/soporte/">Soporte Técnico</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h4 class="footer-title">Empresa</h4>
+        <ul class="footer-links">
+          <li><a href="/acerca/">Acerca de Nosotros</a></li>
+          <li><a href="/privacidad/">Política de Privacidad</a></li>
+          <li><a href="/terminos/">Términos de Servicio</a></li>
+          <li><a href="/carreras/">Carreras</a></li>
+          <li><a href="/blog/">Blog</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h4 class="footer-title">Suscríbete</h4>
+        <p class="footer-newsletter__text">
+          Recibe las últimas actualizaciones y consejos de estudio.
+        </p>
+        <form class="footer-newsletter">
+          <input type="email" placeholder="Tu correo electrónico" class="newsletter-input">
+          <button type="submit" class="btn btn--primary btn--small">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="home-footer__bottom">
+      <div class="footer-bottom__content">
+        <p class="footer-copyright">
+          © {% now 'Y' %} MedPred. Todos los derechos reservados.
+        </p>
+        <div class="footer-bottom__links">
+          <a href="/privacidad/">Privacidad</a>
+          <a href="/terminos/">Términos</a>
+          <a href="/cookies/">Cookies</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+{% endblock %}
+
+{% block js %}
+<script src="/static/js/home.js"></script>
+{% endblock %}

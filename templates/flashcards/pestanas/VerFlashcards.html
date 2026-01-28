@@ -1,0 +1,35 @@
+<div id="ver-flashcards" class="tab-content">
+    <div class="list-flashcards-section">
+        <div class="list-section-header">
+            <h3>Todas mis Flashcards</h3>
+        </div>
+        
+        <div id="flashcards-container">
+            {% if tarjetas %}
+                <div class="list-flashcards-grid">
+                    {% for tarjeta in tarjetas %}
+                        <div class="list-card" data-flashcard-id="{{ tarjeta.id }}">
+                            <div class="list-card-header">
+                                <h4 class="list-card-pregunta">{{ tarjeta.pregunta }}</h4>
+                                <span class="list-card-mazo">{{ tarjeta.mazo.nombre }}</span>
+                            </div>
+                            <div class="list-card-body">
+                                <p class="list-card-respuesta">{{ tarjeta.respuesta }}</p>
+                                {% if tarjeta.categoria %}
+                                    <span class="list-card-categoria">
+                                        <i class="fas fa-tag"></i> {{ tarjeta.categoria }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="list-empty-state" id="flashcards-list-empty">
+                    <i class="fas fa-inbox"></i>
+                    <p>No tienes flashcards creadas todavía.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

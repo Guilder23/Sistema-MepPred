@@ -1,0 +1,138 @@
+/* Estilos para el modal de editar usuario */
+
+#modalEditar .modal-header {
+    background-color: #ffc107;
+    color: #2c3e50;
+}
+
+#modalEditar .modal-header-title {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+#modalEditar .form-label {
+    font-weight: 500;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+#modalEditar .form-control,
+#modalEditar .form-select {
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+    transition: all 0.3s ease;
+}
+
+#modalEditar .form-control:focus,
+#modalEditar .form-select:focus {
+    border-color: #ffc107;
+    box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+}
+
+#modalEditar .modal-body {
+    padding: 1.5rem;
+}
+
+#modalEditar .modal-body hr {
+    border-color: #dee2e6;
+    margin: 1rem 0;
+}
+
+#modalEditar .modal-body h6 {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+#modalEditar .btn-warning {
+    background-color: #ffc107;
+    color: #2c3e50;
+}
+
+#modalEditar .btn-warning:hover:not(:disabled) {
+    background-color: #e0a800;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #modalEditar .modal-body {
+        padding: 1rem;
+    }
+
+    #modalEditar .form-label {
+        font-size: 0.9rem;
+    }
+}
+
+
+#modalEditar .form-check-label {
+    color: #2c3e50;
+    font-weight: 500;
+    cursor: pointer;
+    margin-left: 0.5rem;
+}
+
+#modalEditar .modal-footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+}
+
+#modalEditar .btn-primary {
+    background-color: #ffc107;
+    border-color: #e0a800;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+#modalEditar .btn-primary:hover {
+    background-color: #e0a800;
+    border-color: #d39e00;
+    box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Estilos para validaciones */
+#modalEditar .form-control.is-invalid,
+#modalEditar .form-select.is-invalid {
+    border-color: #ef4444;
+}
+
+#modalEditar .form-control.is-invalid:focus,
+#modalEditar .form-select.is-invalid:focus {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 0.2rem rgba(239, 68, 68, 0.25);
+}
+
+#modalEditar .form-text.text-danger {
+    color: #ef4444;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: block;
+    animation: slideInError 0.3s ease-out;
+}
+
+@keyframes slideInError {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #modalEditar .modal-body {
+        padding: 1rem;
+    }
+
+    #modalEditar .form-label {
+        font-size: 0.9rem;
+    }
+
+    #modalEditar .form-switch {
+        padding-left: 2.25rem;
+    }
+}

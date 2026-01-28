@@ -1,0 +1,89 @@
+<!-- Modal Crear Usuario -->
+<div class="modal-overlay" id="modalCrearOverlay">
+    <div class="modal-content" id="modalCrear">
+        <div class="modal-header">
+            <h5 class="modal-header-title">Crear Nuevo Usuario</h5>
+            <button type="button" class="modal-close-btn" onclick="ocultarModal('modalCrearOverlay')">×</button>
+        </div>
+        <form id="formCrear" method="POST">
+            {% csrf_token %}
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Nombre Completo</label>
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        name="nombre" 
+                        placeholder="Ej: Juan Pablo García"
+                        required
+                        minlength="3"
+                        maxlength="150">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input 
+                        type="email" 
+                        class="form-control" 
+                        name="email" 
+                        placeholder="ejemplo@correo.com"
+                        required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Usuario</label>
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        name="username" 
+                        placeholder="nombre_usuario"
+                        required
+                        minlength="3"
+                        maxlength="150">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Contraseña</label>
+                    <div class="input-group">
+                        <input 
+                            type="password" 
+                            class="form-control" 
+                            name="password" 
+                            placeholder="Mínimo 8 caracteres"
+                            required
+                            minlength="8"
+                            maxlength="128">
+                        <button type="button" class="btn btn-outline-secondary toggle-password" data-target="password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirmar Contraseña</label>
+                    <div class="input-group">
+                        <input 
+                            type="password" 
+                            class="form-control" 
+                            name="password2" 
+                            placeholder="Repite tu contraseña"
+                            required
+                            minlength="8"
+                            maxlength="128">
+                        <button type="button" class="btn btn-outline-secondary toggle-password" data-target="password2">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Rol</label>
+                    <select class="form-select" name="role" required>
+                        <option value="">Selecciona un rol</option>
+                        <option value="student">Estudiante</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="ocultarModal('modalCrearOverlay')">Cancelar</button>
+                <button type="submit" class="btn btn-success">Crear Usuario</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,9 +1,116 @@
-<aside class="sidebar">
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar__user">
+    <div class="sidebar__user-avatar">
+      <i class="fas fa-user-circle"></i>
+    </div>
+    <div class="sidebar__user-info">
+      <div class="sidebar__user-name">{{ request.user.get_full_name|default:request.user.username }}</div>
+      <div class="sidebar__user-role">{{ request.user.role|title }}</div>
+    </div>
+  </div>
   <div class="sidebar__section">
-    <div class="sidebar__title">Navegación</div>
-    <a class="sidebar__link" href="/panel/">Inicio</a>
-    {% if request.user.is_superuser or request.user.role == 'admin' %}
-      <a class="sidebar__link" href="/admin/asignar/">Asignar admin</a>
+    <div class="sidebar__title"><i class="fas fa-compass"></i> Navegación</div>
+    <a class="sidebar__link" href="/panel/" data-page="panel">
+      <i class="fas fa-home"></i>
+      <span>Inicio</span>
+    </a>
+    <a class="sidebar__link" href="{% url 'cuentas:perfil' %}" data-page="perfil">
+      <i class="fas fa-user"></i>
+      <span>Mi Perfil</span>
+    </a>
+    <a class="sidebar__link {% if tiene_suscripcion_premium %}sidebar__link--premium{% endif %}" href="/contenido/biblioteca/" data-page="biblioteca">
+      <i class="fas fa-book"></i>
+      <span>Biblioteca de Contenidos</span>
+    </a>
+    <a class="sidebar__link" href="/contenido/progreso/" data-page="progreso">
+      <i class="fas fa-chart-line"></i>
+      <span>Mi Progreso</span>
+    </a>
+    {% if request.user.role == 'student' %}
+      <a class="sidebar__link" href="{% url 'flashcards:flashcards' %}" data-page="flashcards">
+        <i class="fas fa-layer-group"></i>
+        <span>Mis Flashcards</span>
+      </a>
+    {% endif %}
+    
+    {% comment %} Opción de Exámenes para todos los estudiantes {% endcomment %}
+    {% if not request.user.is_staff %}
+      <a class="sidebar__link {% if tiene_suscripcion_premium %}sidebar__link--premium{% endif %}" href="{% url 'evaluaciones:examenes_disponibles' %}" data-page="examenes">
+        <i class="fas fa-file-alt"></i>
+        <span>
+          {% if tiene_suscripcion_premium %}
+            Exámenes Premium
+          {% else %}
+            Exámenes
+          {% endif %}
+        </span>
+      </a>
+    {% endif %}
+    
+    {% comment %} Opciones Premium para estudiantes con suscripción activa {% endcomment %}
+    {% if tiene_suscripcion_premium and not request.user.is_staff %}
+      <a class="sidebar__link sidebar__link--premium" href="{% url 'flashcards_premium:modo_estudio' %}" data-page="flashcards-premium">
+        <i class="fas fa-crown"></i>
+        <span>Flashcards Premium</span>
+      </a>
+    {% endif %}
+    
+    {% if not request.user.is_staff %}
+      <a class="sidebar__link {% if tiene_suscripcion_premium %}sidebar__link--premium{% endif %}" href="{% url 'suscripciones:suscripcion_estudiante' %}" data-page="suscripcion">
+        <i class="fas fa-crown"></i>
+        <span>
+          {% if tiene_suscripcion_premium %}
+            Premium Activo
+          {% else %}
+            Suscripción Premium
+          {% endif %}
+        </span>
+      </a>
     {% endif %}
   </div>
+  
+  {% if request.user.is_superuser or request.user.role == 'admin' %}
+  <div class="sidebar__section">
+    <div class="sidebar__title"><i class="fas fa-cog"></i> Administración</div>
+    <a class="sidebar__link" href="/usuarios/" data-page="usuarios">
+      <i class="fas fa-users"></i>
+      <span>Gestión de Usuarios</span>
+    </a>
+    <a class="sidebar__link" href="/materias/" data-page="materias">
+      <i class="fas fa-book-open"></i>
+      <span>Gestión de Materias</span>
+    </a>
+    <a class="sidebar__link" href="/examenes/" data-page="admin-examenes">
+      <i class="fas fa-file-alt"></i>
+      <span>Gestión de Exámenes</span>
+    </a>
+    <a class="sidebar__link" href="/contenido/admin/contenidos/" data-page="admin-contenidos">
+      <i class="fas fa-folder"></i>
+      <span>Gestión de Contenidos</span>
+    </a>
+    <a class="sidebar__link" href="{% url 'flashcards_premium:dashboard' %}" data-page="admin-flashcards">
+      <i class="fas fa-crown"></i>
+      <span>Flashcards Premium</span>
+    </a>
+    <!-- <a class="sidebar__link" href="/admin/asignar/" data-page="asignar-admin">
+      <i class="fas fa-user-shield"></i>
+      <span>Asignar Admin</span>
+    </a> -->
+  </div>
+  {% endif %}
+  
+  {% if request.user.is_superuser or request.user.role == 'admin' %}
+  <div class="sidebar__section">
+    <div class="sidebar__title"><i class="fas fa-credit-card"></i> Pagos</div>
+    <a class="sidebar__link" href="{% url 'suscripciones:panel_verificacion' %}" data-page="verificar-pagos">
+      <i class="fas fa-check-circle"></i>
+      <span>Verificar Pagos</span>
+    </a>
+    <a class="sidebar__link" href="{% url 'suscripciones:configuracion_pago' %}" data-page="configurar-pago">
+      <i class="fas fa-qrcode"></i>
+      <span>Configurar Pago</span>
+    </a>
+  </div>
+  {% endif %}
 </aside>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>

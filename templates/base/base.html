@@ -3,7 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{% block titulo %}MeetWin{% endblock %}</title>
+  <title>{% block titulo %}MedPred{% endblock %}</title>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="/static/css/base/base.css" />
   <link rel="stylesheet" href="/static/css/componentes/navbar.css" />
   <link rel="stylesheet" href="/static/css/componentes/sidebar.css" />
@@ -13,13 +15,13 @@
 <body>
   {% include 'componentes/navbar.html' %}
 
-  <main class="layout">
-    <div class="layout__container">
+  <main class="layout {% if not request.user.is_authenticated %}layout--centrado{% endif %}">
+    <div class="layout__container {% if not request.user.is_authenticated %}layout__container--sin-sidebar{% endif %}">
       {% if request.user.is_authenticated %}
         {% include 'componentes/sidebar.html' %}
       {% endif %}
 
-      <div class="layout__content">
+      <div class="layout__content {% if not request.user.is_authenticated %}layout__content--centrado{% endif %}">
     {% if messages %}
       <div class="mensajes">
         {% for message in messages %}
@@ -35,10 +37,19 @@
 
   {% include 'componentes/footer.html' %}
 
+  <!-- Modales de Autenticación -->
+  {% include 'cuentas/autenticacion/login.html' %}
+  {% include 'cuentas/autenticacion/registro.html' %}
+
+  <link rel="stylesheet" href="/static/css/cuentas/autenticacion/login.css" />
+  <link rel="stylesheet" href="/static/css/cuentas/autenticacion/registro.css" />
+
   <script src="/static/js/base/base.js"></script>
   <script src="/static/js/componentes/navbar.js"></script>
   <script src="/static/js/componentes/sidebar.js"></script>
   <script src="/static/js/componentes/footer.js"></script>
+  <script src="/static/js/cuentas/autenticacion/login.js"></script>
+  <script src="/static/js/cuentas/autenticacion/registro.js"></script>
   {% block js %}{% endblock %}
 </body>
 </html>

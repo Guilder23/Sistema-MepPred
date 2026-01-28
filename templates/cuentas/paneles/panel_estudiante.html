@@ -1,0 +1,19 @@
+{% extends 'base/base.html' %}
+
+{% block titulo %}Panel Estudiante{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="/static/css/cuentas/paneles/panel_estudiante.css" />
+{% endblock %}
+
+{% block contenido %}
+<section class="card">
+  <h1>Panel del estudiante</h1>
+  <p>Bienvenido, {{ request.user.email }}.</p>
+  <p>Rol: Estudiante</p>
+</section>
+{% endblock %}
+
+{% block js %}
+<script src="/static/js/cuentas/paneles/panel_estudiante.js"></script>
+{% endblock %}

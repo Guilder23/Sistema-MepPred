@@ -1,0 +1,41 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block titulo %}{% if es_premium %}Exámenes Premium{% else %}Exámenes{% endif %}{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/evaluaciones/estudiante/examenes_disponibles.css' %}">
+{% endblock %}
+
+{% block contenido %}
+<div class="examenes-container">
+    <header class="examenes-header">
+        <h1>{% if es_premium %}Exámenes Premium{% else %}Exámenes{% endif %}</h1>
+        <a href="/panel/" class="btn-volver">← Volver</a>
+    </header>
+
+    <!-- Buscador -->
+    <div class="buscador-container">
+        <input type="text" id="buscarExamen" placeholder="Buscar exámenes..." class="input-buscar">
+        <select id="filtroMateria" class="select-materia">
+            <option value="">Todas las materias</option>
+        </select>
+    </div>
+
+    <!-- Lista de Exámenes por Materia -->
+    <div id="materiasContainer" class="materias-container">
+        <!-- Se llena dinámicamente -->
+    </div>
+
+    <!-- Mensaje sin exámenes -->
+    <div class="sin-examenes" id="sinExamenes" style="display: none;">
+        <i class="fas fa-book-open"></i>
+        <h2>No hay exámenes disponibles</h2>
+        <p>No se encontraron exámenes premium en este momento.</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/evaluaciones/estudiante/examenes_disponibles.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,18 @@
+<!-- Modal Eliminar Contenido -->
+<div class="modal-overlay" id="modalEliminarOverlay">
+    <div class="modal-content modal-sm" id="modalEliminar">
+        <div class="modal-header modal-header-danger">
+            <h5 class="modal-header-title">Eliminar Contenido</h5>
+            <button type="button" class="modal-close-btn" onclick="ocultarModal('modalEliminarOverlay')">×</button>
+        </div>
+        <div class="modal-body">
+            <p>¿Estás seguro de que deseas eliminar este contenido?</p>
+            <p><strong id="eliminarContenidoNombre"></strong></p>
+            <p class="text-muted">Esta acción no se puede deshacer.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="ocultarModal('modalEliminarOverlay')">Cancelar</button>
+            <button type="button" class="btn btn-danger" id="btnConfirmarEliminar">Eliminar</button>
+        </div>
+    </div>
+</div>
