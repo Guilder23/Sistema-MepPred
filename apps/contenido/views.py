@@ -330,10 +330,10 @@ def listar_contenidos_publicados(request):
                     ).exists()
                     
                     if intento_aprobado:
-                        # Aprobó, puede ver la siguiente materia
-                        siguiente_materia = materias_ordenadas[i + 1]
-                        if siguiente_materia not in materias_accesibles:
-                            materias_accesibles.append(siguiente_materia)
+                        # Aprobó, puede ver el siguiente tema
+                        siguiente_tema = temas_ordenados[i + 1]
+                        if siguiente_tema not in temas_accesibles:
+                            temas_accesibles.append(siguiente_tema)
                     else:
                         # No aprobó, no puede ver las siguientes
                         break
@@ -341,16 +341,16 @@ def listar_contenidos_publicados(request):
                     # No hay examen, no puede avanzar
                     break
     else:
-        # No premium: SOLO ve la primera materia (gratis)
-        if materias_ordenadas:
-            materias_accesibles.append(materias_ordenadas[0])
+        # No premium: SOLO ve el primer tema (gratis)
+        if temas_ordenados:
+            temas_accesibles.append(temas_ordenados[0])
     
-    # Filtrar contenidos solo de materias accesibles
+    # Filtrar contenidos solo de temas accesibles
     contenidos = Contenido.objects.filter(
         estado='activo',
         publicacion='publicado',
-        materia__in=materias_accesibles
-    ).select_related('materia').order_by('materia__id', 'orden')
+        tema__in=temas_accesibles
+    ).select_related('tema').order_by('tema__id', 'orden')
     
     contenidos_data = []
     for contenido in contenidos:
@@ -370,8 +370,8 @@ def listar_contenidos_publicados(request):
             'id': contenido.id,
             'titulo': contenido.titulo,
             'descripcion': contenido.descripcion,
-            'materia': contenido.materia.nombre if contenido.materia else '',
-            'materia_requiere_suscripcion': contenido.materia.requiere_suscripcion if contenido.materia else False,
+            'tema': contenido.tema.nombre if contenido.tema else '',
+            'tema_requiere_suscripcion': contenido.tema.requiere_suscripcion if contenido.tema else False,
             'nivel_curso': contenido.nivel_curso,
             'fecha_creacion': contenido.fecha_creacion.isoformat(),
             'orden': contenido.orden,
@@ -413,30 +413,30 @@ def obtener_progreso_usuario(request):
     contenidos = Contenido.objects.filter(
         estado='activo',
         publicacion='publicado'
-    ).select_related('materia').order_by('materia', 'orden')
+    ).select_related('tema').order_by('tema', 'orden')
     
     # Obtener progresos del usuario
     progresos = ProgresoContenido.objects.filter(usuario=request.user)
     progresos_dict = {p.contenido_id: p for p in progresos}
     
-    # Agrupar por materia
-    materias_data = {}
+    # Agrupar por tema
+    temas_data = {}
     for contenido in contenidos:
-        # Verificar acceso según tipo de materia
-        if contenido.materia:
-            # Si la materia es premium
-            if contenido.materia.requiere_suscripcion:
+        # Verificar acceso según tipo de tema
+        if contenido.tema:
+            # Si el tema es premium
+            if contenido.tema.requiere_suscripcion:
                 # Solo mostrar si:
                 # 1. Es administrador, O
                 # 2. El estudiante tiene suscripción aprobada y activa
                 if not es_admin and not tiene_suscripcion_activa:
                     continue  # Saltar este contenido
         
-        materia_nombre = contenido.materia.nombre if contenido.materia else 'Sin materia'
+        tema_nombre = contenido.tema.nombre if contenido.tema else 'Sin tema'
         
-        if materia_nombre not in materias_data:
-            materias_data[materia_nombre] = {
-                'materia': materia_nombre,
+        if tema_nombre not in temas_data:
+            temas_data[tema_nombre] = {
+                'tema': tema_nombre,
                 'contenidos': [],
                 'total': 0,
                 'completados': 0,
@@ -448,7 +448,7 @@ def obtener_progreso_usuario(request):
         porcentaje_avance = progreso.porcentaje_avance if progreso else 0
         esta_disponible = contenido.esta_disponible_para(request.user)
         
-        materias_data[materia_nombre]['contenidos'].append({
+        temas_data[tema_nombre]['contenidos'].append({
             'id': contenido.id,
             'titulo': contenido.titulo,
             'descripcion': contenido.descripcion,
@@ -460,22 +460,22 @@ def obtener_progreso_usuario(request):
             'prerequisito_titulo': contenido.prerequisito.titulo if contenido.prerequisito else None,
         })
         
-        materias_data[materia_nombre]['total'] += 1
+        temas_data[tema_nombre]['total'] += 1
         if completado:
-            materias_data[materia_nombre]['completados'] += 1
+            temas_data[tema_nombre]['completados'] += 1
     
     # Calcular porcentajes
-    for materia_data in materias_data.values():
-        if materia_data['total'] > 0:
-            materia_data['porcentaje'] = round((materia_data['completados'] / materia_data['total']) * 100)
+    for tema_data in temas_data.values():
+        if tema_data['total'] > 0:
+            tema_data['porcentaje'] = round((tema_data['completados'] / tema_data['total']) * 100)
     
     # Calcular progreso general
-    total_contenidos = sum(m['total'] for m in materias_data.values())
-    total_completados = sum(m['completados'] for m in materias_data.values())
+    total_contenidos = sum(m['total'] for m in temas_data.values())
+    total_completados = sum(m['completados'] for m in temas_data.values())
     porcentaje_general = round((total_completados / total_contenidos) * 100) if total_contenidos > 0 else 0
     
     return JsonResponse({
-        'materias': list(materias_data.values()),
+        'temas': list(temas_data.values()),
         'estadisticas': {
             'total_contenidos': total_contenidos,
             'completados': total_completados,

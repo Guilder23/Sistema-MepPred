@@ -57,11 +57,11 @@ class Contenido(models.Model):
         Reglas:
         1. Si es administrador, siempre disponible
         2. Debe estar publicado y activo
-        3. El primer contenido de la primera materia está siempre disponible
-        4. Dentro de una materia: solo se desbloquea si el contenido anterior está completado
-        5. Para pasar a la siguiente materia: debe haber aprobado el examen de la materia anterior (>=80%)
-        6. Si es premium: ve todas las materias (si aprobó las anteriores)
-        7. Si NO es premium: solo ve la primera materia y las que haya desbloqueado aprobando exámenes
+        3. El primer contenido del primer tema está siempre disponible
+        4. Dentro de un tema: solo se desbloquea si el contenido anterior está completado
+        5. Para pasar al siguiente tema: debe haber aprobado el examen del tema anterior (>=80%)
+        6. Si es premium: ve todos los temas (si aprobó los anteriores)
+        7. Si NO es premium: solo ve el primer tema y los que haya desbloqueado aprobando exámenes
         """
         # Si es admin, siempre disponible
         if usuario.is_superuser or getattr(usuario, 'role', '') == 'admin':
@@ -71,40 +71,40 @@ class Contenido(models.Model):
         if self.estado != 'activo' or self.publicacion != 'publicado':
             return False
         
-        # Obtener todos los contenidos publicados ordenados por materia y orden
+        # Obtener todos los contenidos publicados ordenados por tema y orden
         todos_contenidos = Contenido.objects.filter(
             estado='activo',
             publicacion='publicado'
-        ).order_by('materia__id', 'orden')
+        ).order_by('tema__id', 'orden')
         
-        # Agrupar por materia
-        materias = {}
+        # Agrupar por tema
+        temas = {}
         for cont in todos_contenidos:
-            if cont.materia not in materias:
-                materias[cont.materia] = []
-            materias[cont.materia].append(cont)
+            if cont.tema not in temas:
+                temas[cont.tema] = []
+            temas[cont.tema].append(cont)
         
-        # Obtener lista de materias ordenadas
-        materias_ordenadas = list(materias.keys())
+        # Obtener lista de temas ordenados
+        temas_ordenados = list(temas.keys())
         
-        # Verificar si es el primer contenido de la primera materia
-        if materias_ordenadas and materias[materias_ordenadas[0]]:
-            primer_contenido = materias[materias_ordenadas[0]][0]
+        # Verificar si es el primer contenido del primer tema
+        if temas_ordenados and temas[temas_ordenados[0]]:
+            primer_contenido = temas[temas_ordenados[0]][0]
             if self.id == primer_contenido.id:
                 return True  # El primer contenido siempre está disponible
         
         # Encontrar la posición de este contenido
-        materia_actual = self.materia
-        contenidos_materia = materias.get(materia_actual, [])
+        tema_actual = self.tema
+        contenidos_tema = temas.get(tema_actual, [])
         
         try:
-            indice_contenido = next(i for i, c in enumerate(contenidos_materia) if c.id == self.id)
+            indice_contenido = next(i for i, c in enumerate(contenidos_tema) if c.id == self.id)
         except StopIteration:
             return False
         
-        # Si NO es el primer contenido de la materia, verificar que el anterior esté completado
+        # Si NO es el primer contenido del tema, verificar que el anterior esté completado
         if indice_contenido > 0:
-            contenido_anterior = contenidos_materia[indice_contenido - 1]
+            contenido_anterior = contenidos_tema[indice_contenido - 1]
             try:
                 progreso_anterior = ProgresoContenido.objects.get(
                     usuario=usuario,
@@ -115,21 +115,21 @@ class Contenido(models.Model):
             except ProgresoContenido.DoesNotExist:
                 return False
         else:
-            # ES el primer contenido de la materia actual (pero no la primera materia en general)
+            # ES el primer contenido del tema actual (pero no el primer tema en general)
             try:
-                indice_materia = materias_ordenadas.index(materia_actual)
+                indice_tema = temas_ordenados.index(tema_actual)
             except ValueError:
                 return False
             
-            if indice_materia > 0:
-                # Hay una materia anterior - verificar que haya aprobado su examen
+            if indice_tema > 0:
+                # Hay un tema anterior - verificar que haya aprobado su examen
                 from apps.evaluaciones.models import Examen, IntentoExamen
                 
-                materia_anterior = materias_ordenadas[indice_materia - 1]
+                tema_anterior = temas_ordenados[indice_tema - 1]
                 
-                # Buscar el examen de la materia anterior
+                # Buscar el examen del tema anterior
                 examen_anterior = Examen.objects.filter(
-                    materia=materia_anterior,
+                    tema=tema_anterior,
                     activo=True
                 ).first()
                 
@@ -144,9 +144,9 @@ class Contenido(models.Model):
                     if not intento_aprobado:
                         return False  # No aprobó el examen anterior
                 else:
-                    # No hay examen de la materia anterior, debe completar todos sus contenidos
-                    contenidos_materia_anterior = materias[materia_anterior]
-                    for contenido_ant in contenidos_materia_anterior:
+                    # No hay examen del tema anterior, debe completar todos sus contenidos
+                    contenidos_tema_anterior = temas[tema_anterior]
+                    for contenido_ant in contenidos_tema_anterior:
                         try:
                             progreso = ProgresoContenido.objects.get(
                                 usuario=usuario,

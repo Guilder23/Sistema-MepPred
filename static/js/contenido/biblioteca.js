@@ -50,10 +50,10 @@ function cargarContenidos() {
             console.log('Contenidos recibidos:', data);
             todosLosContenidos = data;
             
-            // Extraer materias y niveles únicos
+            // Extraer temas y niveles únicos
             data.forEach(contenido => {
-                if (contenido.materia) {
-                    materiasUnicas.add(contenido.materia);
+                if (contenido.tema) {
+                    materiasUnicas.add(contenido.tema);
                 }
                 if (contenido.nivel_curso) {
                     nivelesUnicos.add(contenido.nivel_curso);

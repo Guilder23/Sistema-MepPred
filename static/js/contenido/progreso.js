@@ -31,7 +31,7 @@ async function cargarProgreso() {
         datosProgreso = await response.json();
         
         mostrarEstadisticas(datosProgreso.estadisticas);
-        mostrarMaterias(datosProgreso.materias);
+        mostrarTemas(datosProgreso.temas);
         
         document.getElementById('loadingMessage').style.display = 'none';
         
@@ -60,29 +60,29 @@ function mostrarEstadisticas(stats) {
 }
 
 // ============================================
-// MOSTRAR MATERIAS
+// MOSTRAR TEMAS
 // ============================================
 
-function mostrarMaterias(materias) {
+function mostrarTemas(temas) {
     const container = document.getElementById('materiasContainer');
     
-    if (!materias || materias.length === 0) {
+    if (!temas || temas.length === 0) {
         document.getElementById('noResultsMessage').style.display = 'block';
         return;
     }
     
     container.innerHTML = '';
     
-    materias.forEach(materia => {
-        const materiaCard = crearTarjetaMateria(materia);
-        container.appendChild(materiaCard);
+    temas.forEach(tema => {
+        const temaCard = crearTarjetaTema(tema);
+        container.appendChild(temaCard);
     });
 }
 
-function crearTarjetaMateria(materia) {
+function crearTarjetaTema(tema) {
     const card = document.createElement('div');
     card.className = 'materia-card';
-    card.dataset.materia = materia.materia.toLowerCase();
+    card.dataset.materia = tema.tema.toLowerCase();
     
     const header = document.createElement('div');
     header.className = 'materia-header';
@@ -90,11 +90,11 @@ function crearTarjetaMateria(materia) {
     header.innerHTML = `
         <h3>
             <i class="fas fa-book"></i>
-            ${materia.materia}
+            ${tema.tema}
         </h3>
         <div class="materia-stats">
-            <span class="materia-porcentaje">${materia.porcentaje}%</span>
-            <span class="materia-detalle">${materia.completados}/${materia.total} completados</span>
+            <span class="materia-porcentaje">${tema.porcentaje}%</span>
+            <span class="materia-detalle">${tema.completados}/${tema.total} completados</span>
             <i class="fas fa-chevron-down chevron-icon"></i>
         </div>
     `;
@@ -103,10 +103,10 @@ function crearTarjetaMateria(materia) {
     body.className = 'materia-body';
     body.innerHTML = `
         <div class="materia-progreso">
-            <div class="materia-progreso-fill" style="width: ${materia.porcentaje}%"></div>
+            <div class="materia-progreso-fill" style="width: ${tema.porcentaje}%"></div>
         </div>
-        <div class="contenidos-list" id="contenidos-${materia.materia.replace(/\s+/g, '-')}">
-            ${materia.contenidos.map(contenido => crearItemContenido(contenido)).join('')}
+        <div class="contenidos-list" id="contenidos-${tema.tema.replace(/\s+/g, '-')}">
+            ${tema.contenidos.map(contenido => crearItemContenido(contenido)).join('')}
         </div>
     `;
     
@@ -229,8 +229,8 @@ function mostrarModalContenido(contenido) {
 function encontrarContenidoEnProgreso(contenidoId) {
     if (!datosProgreso) return null;
     
-    for (const materia of datosProgreso.materias) {
-        const contenido = materia.contenidos.find(c => c.id === contenidoId);
+    for (const tema of datosProgreso.temas) {
+        const contenido = tema.contenidos.find(c => c.id === contenidoId);
         if (contenido) return contenido;
     }
     return null;
