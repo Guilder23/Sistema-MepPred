@@ -28,7 +28,7 @@ def gestion_contenidos(request):
     if busqueda:
         contenidos = contenidos.filter(
             Q(titulo__icontains=busqueda) |
-            Q(materia__nombre__icontains=busqueda) |
+            Q(tema__nombre__icontains=busqueda) |
             Q(descripcion__icontains=busqueda)
         )
     
@@ -64,7 +64,7 @@ def listar_contenidos(request):
     if busqueda:
         contenidos = contenidos.filter(
             Q(titulo__icontains=busqueda) |
-            Q(materia__nombre__icontains=busqueda) |
+            Q(tema__nombre__icontains=busqueda) |
             Q(descripcion__icontains=busqueda)
         )
     
@@ -79,9 +79,8 @@ def listar_contenidos(request):
         contenidos_data.append({
             'id': contenido.id,
             'titulo': contenido.titulo,
-            'materia': contenido.materia.nombre if contenido.materia else '',
-            'materia_id': contenido.materia.id if contenido.materia else None,
-            'materia_requiere_suscripcion': contenido.materia.requiere_suscripcion if contenido.materia else False,
+            'tema': contenido.tema.nombre if contenido.tema else '',
+            'tema_id': contenido.tema.id if contenido.tema else None,
             'nivel_curso': contenido.nivel_curso,
             'estado': contenido.estado,
             'publicacion': contenido.publicacion,
@@ -126,7 +125,7 @@ def obtener_contenido(request, contenido_id):
         'titulo': contenido.titulo,
         'descripcion': contenido.descripcion,
         'contenido_tema': contenido.contenido_tema,
-        'materia': contenido.materia.nombre if contenido.materia else '',
+        'tema': contenido.tema.nombre if contenido.tema else '',
         'nivel_curso': contenido.nivel_curso,
         'tipo_contenido': contenido.tipo_contenido,
         'estado': contenido.estado,
@@ -150,7 +149,7 @@ def crear_contenido(request):
         titulo = request.POST.get('titulo', '').strip()
         descripcion = request.POST.get('descripcion', '').strip()
         contenido_tema = request.POST.get('contenido_tema', '').strip()
-        materia_nombre = request.POST.get('materia', '').strip()
+        tema_nombre = request.POST.get('tema', '').strip()
         nivel_curso = request.POST.get('nivel_curso', '').strip()
         estado = request.POST.get('estado', 'activo')
         publicacion = request.POST.get('publicacion', 'no_publicado')
@@ -160,15 +159,15 @@ def crear_contenido(request):
         videos_enlaces = request.POST.getlist('videos[]')
         
         # Validaciones
-        if not all([titulo, descripcion, contenido_tema, materia_nombre, nivel_curso]):
+        if not all([titulo, descripcion, contenido_tema, tema_nombre, nivel_curso]):
             return JsonResponse({'success': False, 'error': 'Todos los campos son requeridos'})
         
-        # Buscar la materia
-        from apps.materias.models import Materia
+        # Buscar el tema
+        from apps.temas.models import Tema
         try:
-            materia = Materia.objects.get(nombre=materia_nombre)
-        except Materia.DoesNotExist:
-            return JsonResponse({'success': False, 'error': 'Materia no encontrada'})
+            tema = Tema.objects.get(nombre=tema_nombre)
+        except Tema.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Tema no encontrado'})
         
         # Crear contenido con transacción
         with transaction.atomic():
@@ -176,7 +175,7 @@ def crear_contenido(request):
                 titulo=titulo,
                 descripcion=descripcion,
                 contenido_tema=contenido_tema,
-                materia=materia,
+                tema=tema,
                 nivel_curso=nivel_curso,
                 tipo_contenido=tipo_contenido,
                 estado=estado,
@@ -211,7 +210,7 @@ def editar_contenido(request):
         titulo = request.POST.get('titulo', '').strip()
         descripcion = request.POST.get('descripcion', '').strip()
         contenido_tema = request.POST.get('contenido_tema', '').strip()
-        materia_nombre = request.POST.get('materia', '').strip()
+        tema_nombre = request.POST.get('tema', '').strip()
         nivel_curso = request.POST.get('nivel_curso', '').strip()
         estado = request.POST.get('estado', 'activo')
         publicacion = request.POST.get('publicacion', 'no_publicado')
@@ -222,19 +221,19 @@ def editar_contenido(request):
         
         contenido = Contenido.objects.get(id=contenido_id)
         
-        # Buscar la materia
-        from apps.materias.models import Materia
+        # Buscar el tema
+        from apps.temas.models import Tema
         try:
-            materia = Materia.objects.get(nombre=materia_nombre)
-        except Materia.DoesNotExist:
-            return JsonResponse({'success': False, 'error': 'Materia no encontrada'})
+            tema = Tema.objects.get(nombre=tema_nombre)
+        except Tema.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Tema no encontrado'})
         
         # Actualizar contenido con transacción
         with transaction.atomic():
             contenido.titulo = titulo
             contenido.descripcion = descripcion
             contenido.contenido_tema = contenido_tema
-            contenido.materia = materia
+            contenido.tema = tema
             contenido.nivel_curso = nivel_curso
             contenido.tipo_contenido = tipo_contenido
             contenido.estado = estado
@@ -303,25 +302,25 @@ def listar_contenidos_publicados(request):
         ).first()
         tiene_suscripcion_activa = suscripcion and suscripcion.esta_activa()
     
-    # Obtener todas las materias ordenadas
-    from apps.materias.models import Materia
-    materias_ordenadas = list(Materia.objects.filter(
+    # Obtener todos los temas ordenados
+    from apps.temas.models import Tema
+    temas_ordenados = list(Tema.objects.filter(
         contenido__estado='activo',
         contenido__publicacion='publicado'
     ).distinct().order_by('id'))
     
-    # Determinar qué materias puede ver el usuario
-    materias_accesibles = []
+    # Determinar qué temas puede ver el usuario
+    temas_accesibles = []
     
     if es_admin or tiene_suscripcion_activa:
-        # Premium: ve todas las materias según haya aprobado las anteriores
-        if materias_ordenadas:
-            materias_accesibles.append(materias_ordenadas[0])
+        # Premium: ve todos los temas según haya aprobado los anteriores
+        if temas_ordenados:
+            temas_accesibles.append(temas_ordenados[0])
             
-            # Verificar cuántas materias ha aprobado
-            for i, materia in enumerate(materias_ordenadas[:-1]):
-                # Buscar el examen de esta materia
-                examen = Examen.objects.filter(materia=materia, activo=True).first()
+            # Verificar cuántos temas ha aprobado
+            for i, tema in enumerate(temas_ordenados[:-1]):
+                # Buscar el examen de este tema
+                examen = Examen.objects.filter(tema=tema, activo=True).first()
                 if examen:
                     # Verificar si aprobó (nota >= 16/20 = 80%)
                     intento_aprobado = IntentoExamen.objects.filter(

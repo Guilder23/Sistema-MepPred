@@ -1,0 +1,22 @@
+<!-- Modal Eliminar Tema -->
+<div class="modal-eliminar-overlay" id="modalEliminarOverlay">
+    <div class="modal-eliminar-container">
+        <div class="modal-eliminar-header">
+            <h2>Eliminar Tema</h2>
+            <button type="button" class="modal-eliminar-btn-close">&times;</button>
+        </div>
+        <div class="modal-eliminar-body">
+            <div class="modal-eliminar-warning-icon">⚠️</div>
+            <div class="modal-eliminar-warning-text">
+                ¿Está seguro que desea eliminar este tema?
+                <strong id="nombreTemaEliminar">-</strong>
+                <span>Esta acción no se puede deshacer y eliminará también todo el contenido asociado.</span>
+            </div>
+            <input type="hidden" id="idTemaEliminar">
+        </div>
+        <div class="modal-eliminar-footer">
+            <button type="button" class="modal-eliminar-btn modal-eliminar-btn-cancelar" id="btnCancelarEliminarTema">Cancelar</button>
+            <button type="button" class="modal-eliminar-btn modal-eliminar-btn-eliminar" id="btnEliminarTema">Eliminar</button>
+        </div>
+    </div>
+</div>

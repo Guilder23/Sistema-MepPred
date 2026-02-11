@@ -67,7 +67,7 @@ function mostrarExamenes(examenes) {
             <tr>
                 <td>${examen.id}</td>
                 <td>${escapeHtml(examen.titulo)}</td>
-                <td>${escapeHtml(examen.materia_nombre)}</td>
+                <td>${escapeHtml(examen.tema_nombre)}</td>
                 <td>${tipoBadge}</td>
                 <td>${examen.duracion_minutos} min</td>
                 <td>${examen.total_preguntas}</td>
@@ -104,7 +104,7 @@ function filtrarExamenes() {
 
     const filtrados = examenesData.filter(examen => 
         examen.titulo.toLowerCase().includes(searchTerm) ||
-        examen.materia_nombre.toLowerCase().includes(searchTerm) ||
+        examen.tema_nombre.toLowerCase().includes(searchTerm) ||
         (examen.descripcion && examen.descripcion.toLowerCase().includes(searchTerm))
     );
 
@@ -119,8 +119,8 @@ function abrirModalCrear() {
         // Limpiar formulario
         const form = document.getElementById('formCrearExamen');
         if (form) form.reset();
-        // Cargar materias en el select
-        cargarMateriasSelect('crearMateria');
+        // Cargar temas en el select
+        cargarTemasSelect('crearTema');
     }
 }
 
@@ -135,7 +135,7 @@ function abrirModalVer(id) {
             
             // Cargar detalles
             document.getElementById('verTitulo').textContent = escapeHtml(examen.titulo);
-            document.getElementById('verMateria').textContent = escapeHtml(examen.materia_nombre);
+            document.getElementById('verTema').textContent = escapeHtml(examen.tema_nombre);
             document.getElementById('verDescripcion').textContent = examen.descripcion || 'Sin descripción';
             document.getElementById('verDuracion').textContent = `${examen.duracion_minutos} minutos`;
             document.getElementById('verTotalPreguntas').textContent = examen.total_preguntas;
@@ -156,8 +156,8 @@ function abrirModalEditar(id) {
             window.examenEditar = examen;
             modal.classList.add('active');
             
-            // Cargar materias
-            cargarMateriasSelect('editarMateria', examen.materia_id);
+            // Cargar temas
+            cargarTemasSelect('editarTema', examen.tema_id);
             
             // Llenar formulario
             document.getElementById('editarId').value = examen.id;
@@ -204,20 +204,20 @@ function abrirModalEliminar(id) {
     }
 }
 
-// Cargar materias en select
-function cargarMateriasSelect(selectId, selectedId = null) {
-    fetch('/examenes/api/materias/')
+// Cargar temas en select
+function cargarTemasSelect(selectId, selectedId = null) {
+    fetch('/temas/api/temas/')
         .then(response => response.json())
         .then(data => {
             if (data.success) {
                 const select = document.getElementById(selectId);
                 if (select) {
-                    select.innerHTML = '<option value="">Seleccione una materia</option>';
-                    data.data.forEach(materia => {
+                    select.innerHTML = '<option value="">Seleccione un tema</option>';
+                    (data.temas || []).forEach(tema => {
                         const option = document.createElement('option');
-                        option.value = materia.id;
-                        option.textContent = materia.nombre;
-                        if (selectedId && materia.id === selectedId) {
+                        option.value = tema.id;
+                        option.textContent = tema.nombre;
+                        if (selectedId && tema.id === selectedId) {
                             option.selected = true;
                         }
                         select.appendChild(option);
@@ -226,7 +226,7 @@ function cargarMateriasSelect(selectId, selectedId = null) {
             }
         })
         .catch(error => {
-            mostrarMensaje('No se pudieron cargar las materias', 'error');
+            mostrarMensaje('No se pudieron cargar los temas', 'error');
         });
 }
 

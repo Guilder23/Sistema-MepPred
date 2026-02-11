@@ -15,9 +15,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (btnCrear) {
         btnCrear.addEventListener('click', async function() {
             console.log('Click en botón crear mazo');
-            // Cargar materias antes de abrir el modal
-            if (typeof cargarMateriasCrear === 'function') {
-                await cargarMateriasCrear();
+            // Cargar temas antes de abrir el modal
+            if (typeof cargarTemasCrear === 'function') {
+                await cargarTemasCrear();
             }
             abrirModal('crearMazoModal');
         });
@@ -67,7 +67,7 @@ function mostrarMazos(mazos) {
         tr.innerHTML = `
             <td>${mazo.id}</td>
             <td><strong>${mazo.nombre}</strong></td>
-            <td><span style="background: #10b981; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.85rem;">${mazo.materia_nombre || 'Sin materia'}</span></td>
+            <td><span style="background: #10b981; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.85rem;">${mazo.tema_nombre || 'Sin tema'}</span></td>
             <td>${mazo.descripcion || '-'}</td>
             <td><span style="background: #667eea; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.85rem;">${mazo.tarjetas_count || 0}</span></td>
             <td>${mazo.created_at}</td>

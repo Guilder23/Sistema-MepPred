@@ -8,7 +8,7 @@ function verContenido(contenidoId) {
             document.getElementById('verTitulo').textContent = data.titulo;
             document.getElementById('verDescripcion').textContent = data.descripcion;
             document.getElementById('verContenidoTema').textContent = data.contenido_tema;
-            document.getElementById('verMateria').textContent = data.materia;
+            document.getElementById('verTema').textContent = data.tema;
             document.getElementById('verNivelCurso').textContent = data.nivel_curso;
             document.getElementById('verTipoContenido').textContent = data.tipo_contenido === 'universitario' ? 'Universitario' : 'Postulante';
             

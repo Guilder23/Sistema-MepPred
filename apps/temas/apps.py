@@ -1,6 +1,7 @@
 from django.apps import AppConfig
 
 
-class MateriasConfig(AppConfig):
+class TemasConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'apps.materias'
+    name = 'apps.temas'
+    verbose_name = 'Gestión de Temas'

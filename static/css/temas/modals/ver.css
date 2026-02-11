@@ -1,0 +1,192 @@
+/* Modal para ver detalles de materia - Azul */
+
+.modal-ver-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-ver-overlay.active {
+    display: flex;
+}
+
+.modal-ver-container {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: modalVerSlideUp 0.3s ease-out;
+}
+
+@keyframes modalVerSlideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-ver-header {
+    background: #17a2b8;
+    color: white;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: none;
+}
+
+.modal-ver-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+    flex: 1;
+}
+
+.modal-ver-btn-close {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    padding: 0.5rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    font-size: 1.2rem;
+    margin-left: auto;
+}
+
+.modal-ver-btn-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.modal-ver-body {
+    padding: 2rem;
+    text-align: left;
+}
+
+.modal-ver-info-row {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.modal-ver-info-row:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.modal-ver-info-label {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+    text-align: left;
+}
+
+.modal-ver-info-value {
+    color: #34495e;
+    font-size: 0.95rem;
+    word-break: break-word;
+}
+
+.modal-ver-info-value.empty {
+    color: #95a5a6;
+    font-style: italic;
+}
+
+/* Badge de suscripción */
+.modal-ver-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.modal-ver-badge-premium {
+    background: #ffd700;
+    color: #2c3e50;
+}
+
+.modal-ver-badge-free {
+    background: #e9ecef;
+    color: #6c757d;
+}
+
+.modal-ver-footer {
+    padding: 1.25rem 2rem;
+    background: #f8f9fa;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    border-top: 1px solid #dee2e6;
+}
+
+.modal-ver-btn {
+    padding: 0.65rem 1.75rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 100px;
+}
+
+.modal-ver-btn-cerrar {
+    background: #6c757d;
+    color: white;
+}
+
+.modal-ver-btn-cerrar:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .modal-ver-container {
+        width: 95%;
+        max-height: 95vh;
+    }
+
+    .modal-ver-body {
+        padding: 1.5rem;
+    }
+
+    .modal-ver-header h2 {
+        font-size: 1.25rem;
+    }
+
+    .modal-ver-footer {
+        padding: 1rem 1.5rem;
+    }
+
+    .modal-ver-btn {
+        width: 100%;
+    }
+}

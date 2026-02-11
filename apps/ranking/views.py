@@ -60,7 +60,7 @@ def ranking_estudiantes(request):
     }.get(periodo, 'Histórico')
     
     # Obtener lista de materias para el filtro
-    from apps.materias.models import Materia
+    from apps.materias_nueva.models import Materia
     materias = Materia.objects.all().order_by('nombre')
     
     context = {

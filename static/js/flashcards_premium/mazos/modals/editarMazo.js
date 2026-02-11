@@ -26,31 +26,31 @@ document.addEventListener('click', function(e) {
     }
 });
 
-// Cargar materias en el select
-async function cargarMateriasEditar() {
+// Cargar temas en el select
+async function cargarTemasEditar() {
     try {
-        const response = await fetch('/materias/api/materias/');
+        const response = await fetch('/temas/api/temas/');
         const data = await response.json();
         
-        const selectMateria = document.getElementById('editMateriaMazo');
-        if (selectMateria && data.success && data.data) {
-            selectMateria.innerHTML = '<option value="">Seleccione una materia</option>';
-            data.data.forEach(materia => {
+        const selectTema = document.getElementById('editTemaMazo');
+        if (selectTema && data.success && data.temas) {
+            selectTema.innerHTML = '<option value="">Seleccione un tema</option>';
+            data.temas.forEach(tema => {
                 const option = document.createElement('option');
-                option.value = materia.id;
-                option.textContent = materia.nombre;
-                selectMateria.appendChild(option);
+                option.value = tema.id;
+                option.textContent = tema.nombre;
+                selectTema.appendChild(option);
             });
         }
     } catch (error) {
-        console.error('Error al cargar materias:', error);
+        console.error('Error al cargar temas:', error);
     }
 }
 
 window.editarMazoModal = async function(mazoId) {
     try {
-        // Primero cargar las materias
-        await cargarMateriasEditar();
+        // Primero cargar los temas
+        await cargarTemasEditar();
         
         // Luego cargar los datos del mazo
         const response = await fetch('/flashcards-premium/api/mazos/');
@@ -64,10 +64,10 @@ window.editarMazoModal = async function(mazoId) {
                 document.getElementById('editNombreMazo').value = mazo.nombre;
                 document.getElementById('editDescripcionMazo').value = mazo.descripcion || '';
                 
-                // Seleccionar la materia actual
-                const selectMateria = document.getElementById('editMateriaMazo');
-                if (selectMateria && mazo.materia_id) {
-                    selectMateria.value = mazo.materia_id;
+                // Seleccionar el tema actual
+                const selectTema = document.getElementById('editTemaMazo');
+                if (selectTema && mazo.tema_id) {
+                    selectTema.value = mazo.tema_id;
                 }
                 
                 abrirModal('editarMazoModal');
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const formData = new FormData();
             formData.append('nombre', document.getElementById('editNombreMazo').value);
             formData.append('descripcion', document.getElementById('editDescripcionMazo').value);
-            formData.append('materia_id', document.getElementById('editMateriaMazo').value);
+            formData.append('tema_id', document.getElementById('editTemaMazo').value);
             
             try {
                 const response = await fetch(`/flashcards-premium/api/mazos/${id}/editar/`, {

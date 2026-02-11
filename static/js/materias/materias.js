@@ -32,7 +32,7 @@ function cargarMaterias() {
         })
         .then(data => {
             if (data.success) {
-                materiasData = data.data || [];
+                materiasData = data.materias || [];
                 mostrarMaterias(materiasData);
             } else {
                 mostrarMensaje('Error', data.error || 'Error desconocido', 'error');
@@ -50,23 +50,19 @@ function mostrarMaterias(materias) {
     if (!tableBody) return;
 
     if (materias.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="6" class="text-center">No hay materias registradas</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="5" class="text-center">No hay materias registradas</td></tr>';
         return;
     }
 
     tableBody.innerHTML = materias.map(materia => {
         const fechaCreacion = new Date(materia.created_at).toLocaleDateString('es-ES');
         const descripcion = materia.descripcion ? materia.descripcion.substring(0, 50) + '...' : 'Sin descripción';
-        const tipoAcceso = materia.requiere_suscripcion ? 
-            '<span class="badge-premium">Premium</span>' : 
-            '<span class="badge-gratis">Gratis</span>';
         
         return `
             <tr>
                 <td>${materia.id}</td>
                 <td>${escapeHtml(materia.nombre)}</td>
                 <td title="${materia.descripcion || ''}">${escapeHtml(descripcion)}</td>
-                <td>${tipoAcceso}</td>
                 <td>${fechaCreacion}</td>
                 <td>
                     <div class="acciones-cell">
@@ -128,7 +124,6 @@ function abrirModalVer(id) {
             // Cargar detalles
             document.getElementById('verNombre').textContent = escapeHtml(materia.nombre);
             document.getElementById('verDescripcion').textContent = materia.descripcion || 'Sin descripción';
-            document.getElementById('verRequiereSuscripcion').textContent = materia.requiere_suscripcion ? 'Premium (Requiere Suscripción)' : 'Gratis (Acceso Libre)';
             document.getElementById('verFechaCreacion').textContent = new Date(materia.created_at).toLocaleDateString('es-ES');
             document.getElementById('verFechaActualizacion').textContent = new Date(materia.updated_at).toLocaleDateString('es-ES');
         }
@@ -148,7 +143,6 @@ function abrirModalEditar(id) {
             document.getElementById('editarId').value = materia.id;
             document.getElementById('editarNombre').value = materia.nombre;
             document.getElementById('editarDescripcion').value = materia.descripcion || '';
-            document.getElementById('editarRequiereSuscripcion').checked = materia.requiere_suscripcion || false;
         }
     }
 }
@@ -255,4 +249,20 @@ function mostrarMensaje(titulo, mensaje, tipo) {
         toast.classList.remove('show');
         setTimeout(() => toast.remove(), 300);
     }, 5000);
+}
+
+// Función para obtener cookie CSRF
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
 }

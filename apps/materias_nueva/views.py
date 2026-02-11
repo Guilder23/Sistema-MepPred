@@ -1,7 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
-from django.views.decorators.csrf import csrf_exempt
 from django.contrib.admin.views.decorators import staff_member_required
 import json
 from .models import Materia
@@ -18,7 +17,7 @@ def obtener_materias(request):
     """API: Obtener todas las materias"""
     try:
         materias = Materia.objects.all().values(
-            'id', 'nombre', 'descripcion', 'requiere_suscripcion', 'created_at', 'updated_at'
+            'id', 'nombre', 'descripcion', 'created_at', 'updated_at'
         )
         
         # Formatear fechas
@@ -30,7 +29,7 @@ def obtener_materias(request):
         
         return JsonResponse({
             'success': True,
-            'data': list(materias_list)
+            'materias': list(materias_list)
         })
     except Exception as e:
         return JsonResponse({
@@ -50,7 +49,6 @@ def obtener_materia(request, materia_id):
                 'id': materia.id,
                 'nombre': materia.nombre,
                 'descripcion': materia.descripcion,
-                'requiere_suscripcion': materia.requiere_suscripcion,
                 'created_at': materia.created_at.strftime('%d/%m/%Y %H:%M'),
                 'updated_at': materia.updated_at.strftime('%d/%m/%Y %H:%M')
             }
@@ -84,8 +82,7 @@ def crear_materia(request):
         
         materia = Materia.objects.create(
             nombre=data['nombre'].strip(),
-            descripcion=data.get('descripcion', '').strip(),
-            requiere_suscripcion=data.get('requiere_suscripcion', False)
+            descripcion=data.get('descripcion', '').strip()
         )
         
         return JsonResponse({
@@ -95,7 +92,6 @@ def crear_materia(request):
                 'id': materia.id,
                 'nombre': materia.nombre,
                 'descripcion': materia.descripcion,
-                'requiere_suscripcion': materia.requiere_suscripcion,
                 'created_at': materia.created_at.strftime('%d/%m/%Y %H:%M')
             }
         }, status=201)
@@ -134,9 +130,6 @@ def actualizar_materia(request, materia_id):
         if 'descripcion' in data:
             materia.descripcion = data['descripcion'].strip()
         
-        if 'requiere_suscripcion' in data:
-            materia.requiere_suscripcion = data['requiere_suscripcion']
-        
         materia.save()
         
         return JsonResponse({
@@ -146,7 +139,6 @@ def actualizar_materia(request, materia_id):
                 'id': materia.id,
                 'nombre': materia.nombre,
                 'descripcion': materia.descripcion,
-                'requiere_suscripcion': materia.requiere_suscripcion,
                 'updated_at': materia.updated_at.strftime('%d/%m/%Y %H:%M')
             }
         })

@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from datetime import timedelta
-from apps.materias.models import Materia
+from apps.materias_nueva.models import Materia
 
 User = get_user_model()
 

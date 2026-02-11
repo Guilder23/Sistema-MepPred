@@ -9,7 +9,7 @@ function abrirModalEditar(contenidoId) {
             document.getElementById('editarTitulo').value = data.titulo;
             document.getElementById('editarDescripcion').value = data.descripcion;
             document.getElementById('editarContenidoTema').value = data.contenido_tema;
-            document.getElementById('editarMateria').value = data.materia;
+            document.getElementById('editarTema').value = data.tema;
             document.getElementById('editarNivelCurso').value = data.nivel_curso;
             document.getElementById('editarTipoContenido').value = data.tipo_contenido;
             document.getElementById('editarEstado').value = data.estado;
