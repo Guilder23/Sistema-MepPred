@@ -119,8 +119,8 @@ function abrirModalCrear() {
         // Limpiar formulario
         const form = document.getElementById('formCrearExamen');
         if (form) form.reset();
-        // Cargar temas en el select
-        cargarTemasSelect('crearTema');
+        // Cargar materias
+        cargarMateriasSelect('crearMateria');
     }
 }
 
@@ -135,6 +135,7 @@ function abrirModalVer(id) {
             
             // Cargar detalles
             document.getElementById('verTitulo').textContent = escapeHtml(examen.titulo);
+            document.getElementById('verMateria').textContent = escapeHtml(examen.tema_nombre || 'N/A');
             document.getElementById('verTema').textContent = escapeHtml(examen.tema_nombre);
             document.getElementById('verDescripcion').textContent = examen.descripcion || 'Sin descripción';
             document.getElementById('verDuracion').textContent = `${examen.duracion_minutos} minutos`;
@@ -156,8 +157,23 @@ function abrirModalEditar(id) {
             window.examenEditar = examen;
             modal.classList.add('active');
             
-            // Cargar temas
-            cargarTemasSelect('editarTema', examen.tema_id);
+            // Cargar materias primero
+            cargarMateriasSelect('editarMateria', () => {
+                // Seleccionar la materia del examen
+                if (examen.materia_id) {
+                    document.getElementById('editarMateria').value = examen.materia_id;
+                }
+                // Después cargar temas de esa materia
+                setTimeout(() => {
+                    cargarTemasEditarExamen();
+                    // Seleccionar el tema del examen
+                    setTimeout(() => {
+                        if (examen.tema) {
+                            document.getElementById('editarTema').value = examen.tema;
+                        }
+                    }, 100);
+                }, 100);
+            });
             
             // Llenar formulario
             document.getElementById('editarId').value = examen.id;
@@ -204,7 +220,86 @@ function abrirModalEliminar(id) {
     }
 }
 
-// Cargar temas en select
+// Cargar materias en select
+function cargarMateriasSelect(selectId, callback) {
+    fetch('/temas/api/materias/')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const select = document.getElementById(selectId);
+                if (select) {
+                    select.innerHTML = '<option value="">Seleccione una materia</option>';
+                    (data.materias || []).forEach(materia => {
+                        const option = document.createElement('option');
+                        option.value = materia.id;
+                        option.textContent = materia.nombre;
+                        select.appendChild(option);
+                    });
+                }
+            }
+            if (callback) callback();
+        })
+        .catch(error => {
+            mostrarMensaje('No se pudieron cargar las materias', 'error');
+        });
+}
+
+// Cargar temas filtrados por materia para crear
+function cargarTemasCrearExamen() {
+    const materiaSelect = document.getElementById('crearMateria');
+    const temaSelect = document.getElementById('crearTema');
+    
+    if (!materiaSelect || !temaSelect || !materiaSelect.value) {
+        temaSelect.innerHTML = '<option value="">Seleccione un tema</option>';
+        return;
+    }
+    
+    fetch(`/temas/api/temas/por-materia/${materiaSelect.value}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                temaSelect.innerHTML = '<option value="">Seleccione un tema</option>';
+                data.temas.forEach(tema => {
+                    const option = document.createElement('option');
+                    option.value = tema.id;
+                    option.textContent = tema.nombre;
+                    temaSelect.appendChild(option);
+                });
+            }
+        })
+        .catch(error => console.error('Error al cargar temas:', error));
+}
+
+// Cargar temas filtrados por materia para editar
+function cargarTemasEditarExamen() {
+    const materiaSelect = document.getElementById('editarMateria');
+    const temaSelect = document.getElementById('editarTema');
+    
+    if (!materiaSelect || !temaSelect || !materiaSelect.value) {
+        temaSelect.innerHTML = '<option value="">Seleccione un tema</option>';
+        return;
+    }
+    
+    const temaActual = temaSelect.value;
+    
+    fetch(`/temas/api/temas/por-materia/${materiaSelect.value}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                temaSelect.innerHTML = '<option value="">Seleccione un tema</option>';
+                data.temas.forEach(tema => {
+                    const option = document.createElement('option');
+                    option.value = tema.id;
+                    option.textContent = tema.nombre;
+                    temaSelect.appendChild(option);
+                });
+                temaSelect.value = temaActual;
+            }
+        })
+        .catch(error => console.error('Error al cargar temas:', error));
+}
+
+// Cargar temas en select (usado anterior)
 function cargarTemasSelect(selectId, selectedId = null) {
     fetch('/temas/api/temas/')
         .then(response => response.json())

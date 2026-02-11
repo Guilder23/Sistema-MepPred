@@ -53,6 +53,7 @@ def api_listar_mazos(request):
                 'id': mazo.id,
                 'nombre': mazo.nombre,
                 'descripcion': mazo.descripcion,
+                'materia_id': mazo.tema.materia_id if mazo.tema and mazo.tema.materia else '',
                 'tema_id': mazo.tema_id,
                 'tema_nombre': mazo.tema.nombre if mazo.tema else 'Sin tema',
                 'tarjetas_count': mazo.contar_tarjetas(),
@@ -141,6 +142,7 @@ def api_crear_mazo(request):
     nombre = request.POST.get('nombre', '').strip()
     descripcion = request.POST.get('descripcion', '').strip()
     tema_id = request.POST.get('tema_id', '').strip()
+    # materia_id es ignorado - el tema ya contiene la referencia a la materia
 
     if not nombre:
         return JsonResponse({'success': False, 'error': 'El nombre es requerido'})
@@ -167,6 +169,7 @@ def api_crear_mazo(request):
                 'id': mazo.id,
                 'nombre': mazo.nombre,
                 'descripcion': mazo.descripcion,
+                'materia_id': mazo.tema.materia_id if mazo.tema and mazo.tema.materia else '',
                 'tema_id': mazo.tema_id,
                 'tema_nombre': mazo.tema.nombre if mazo.tema else None,
             },

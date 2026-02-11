@@ -26,32 +26,50 @@ document.addEventListener('click', function(e) {
     }
 });
 
-// Cargar temas en el select
-async function cargarTemasCrear() {
+// Cargar materias en el select crear
+async function cargarMateriasCrearMazo() {
     try {
-        console.log('Cargando temas...');
-        const response = await fetch('/temas/api/temas/');
+        const response = await fetch('/temas/api/materias/');
         const data = await response.json();
-        console.log('Respuesta de temas:', data);
         
-        const selectTema = document.getElementById('temaMazo');
-        console.log('Select encontrado:', selectTema);
+        if (data.success) {
+            const selectMateria = document.getElementById('materiaMazo');
+            if (selectMateria) {
+                selectMateria.innerHTML = '<option value="">Seleccione una materia</option>';
+                data.materias.forEach(materia => {
+                    const option = document.createElement('option');
+                    option.value = materia.id;
+                    option.textContent = materia.nombre;
+                    selectMateria.appendChild(option);
+                });
+            }
+        }
+    } catch (error) {
+        console.error('Error al cargar materias:', error);
+    }
+}
+
+// Cargar temas filtrados por materia
+async function cargarTemasCrearMazo() {
+    try {
+        const materiaSelect = document.getElementById('materiaMazo');
+        const temaSelect = document.getElementById('temaMazo');
         
-        if (selectTema && data.success && data.temas) {
-            selectTema.innerHTML = '<option value="">Seleccione un tema</option>';
-            console.log('Cantidad de temas:', data.temas.length);
+        if (!materiaSelect || !temaSelect || !materiaSelect.value) {
+            temaSelect.innerHTML = '<option value="">Seleccione un tema</option>';
+            return;
+        }
+        
+        const response = await fetch(`/temas/api/temas/por-materia/${materiaSelect.value}/`);
+        const data = await response.json();
+        
+        if (data.success) {
+            temaSelect.innerHTML = '<option value="">Seleccione un tema</option>';
             data.temas.forEach(tema => {
                 const option = document.createElement('option');
                 option.value = tema.id;
                 option.textContent = tema.nombre;
-                selectTema.appendChild(option);
-                console.log('Tema agregado:', tema.nombre);
-            });
-        } else {
-            console.log('No se cumplió la condición:', {
-                selectTema: !!selectTema,
-                success: data.success,
-                hasTemas: !!data.temas
+                temaSelect.appendChild(option);
             });
         }
     } catch (error) {
@@ -60,13 +78,13 @@ async function cargarTemasCrear() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Cargar temas cuando se abre el modal
+    // Cargar materias cuando se abre el modal
     const crearMazoModal = document.getElementById('crearMazoModal');
     if (crearMazoModal) {
         // Observar cambios en el display del modal
         const observer = new MutationObserver(() => {
             if (crearMazoModal.style.display === 'flex') {
-                cargarTemasCrear();
+                cargarMateriasCrearMazo();
             }
         });
         observer.observe(crearMazoModal, { attributes: true, attributeFilter: ['style'] });
@@ -79,6 +97,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const formData = new FormData();
             formData.append('nombre', document.getElementById('nombreMazo').value);
             formData.append('descripcion', document.getElementById('descripcionMazo').value);
+            formData.append('materia_id', document.getElementById('materiaMazo').value);
             formData.append('tema_id', document.getElementById('temaMazo').value);
             
             try {

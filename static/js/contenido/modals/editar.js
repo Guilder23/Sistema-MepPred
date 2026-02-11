@@ -9,11 +9,25 @@ function abrirModalEditar(contenidoId) {
             document.getElementById('editarTitulo').value = data.titulo;
             document.getElementById('editarDescripcion').value = data.descripcion;
             document.getElementById('editarContenidoTema').value = data.contenido_tema;
-            document.getElementById('editarTema').value = data.tema;
-            document.getElementById('editarNivelCurso').value = data.nivel_curso;
             document.getElementById('editarTipoContenido').value = data.tipo_contenido;
             document.getElementById('editarEstado').value = data.estado;
             document.getElementById('editarPublicacion').value = data.publicacion;
+            
+            // Cargar materias primero
+            cargarMateriasEditar(() => {
+                // Seleccionar la materia actual
+                if (data.materia_id) {
+                    document.getElementById('editarMateria').value = data.materia_id;
+                    // Después cargar temas de la materia seleccionada
+                    cargarTemasEditar();
+                    // Seleccionar el tema después de cargarlos
+                    setTimeout(() => {
+                        if (data.tema || data.tema_id) {
+                            document.getElementById('editarTema').value = data.tema_id || data.tema;
+                        }
+                    }, 100);
+                }
+            });
             
             // Cargar videos existentes
             const videosContainer = document.getElementById('editarVideosContainer');
@@ -45,6 +59,59 @@ function abrirModalEditar(contenidoId) {
             console.error('Error al cargar contenido:', error);
             mostrarAlerta('Error al cargar el contenido', 'danger');
         });
+}
+
+// Cargar materias en editar
+function cargarMateriasEditar(callback) {
+    fetch('/temas/api/materias/')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const select = document.getElementById('editarMateria');
+                if (select) {
+                    const materiaActual = select.value;
+                    select.innerHTML = '<option value="">Seleccione una materia</option>';
+                    data.materias.forEach(materia => {
+                        const option = document.createElement('option');
+                        option.value = materia.id;
+                        option.textContent = materia.nombre;
+                        select.appendChild(option);
+                    });
+                    select.value = materiaActual;
+                }
+            }
+            if (callback) callback();
+        })
+        .catch(error => console.error('Error al cargar materias:', error));
+}
+
+// Cargar temas filtrados para editar
+function cargarTemasEditar() {
+    const materiaSelect = document.getElementById('editarMateria');
+    const temaSelect = document.getElementById('editarTema');
+    
+    if (!materiaSelect || !temaSelect || !materiaSelect.value) {
+        temaSelect.innerHTML = '<option value="">Seleccione un tema</option>';
+        return;
+    }
+    
+    const temaActual = temaSelect.value;
+    
+    fetch(`/temas/api/temas/por-materia/${materiaSelect.value}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                temaSelect.innerHTML = '<option value="">Seleccione un tema</option>';
+                data.temas.forEach(tema => {
+                    const option = document.createElement('option');
+                    option.value = tema.id;
+                    option.textContent = tema.nombre;
+                    temaSelect.appendChild(option);
+                });
+                temaSelect.value = temaActual;
+            }
+        })
+        .catch(error => console.error('Error al cargar temas:', error));
 }
 
 // Agregar campo de video en edición

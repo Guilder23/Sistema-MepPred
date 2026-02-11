@@ -14,6 +14,64 @@ def lista_temas(request):
 
 
 @require_http_methods(["GET"])
+def obtener_materias(request):
+    """API: Obtener todas las materias"""
+    try:
+        materias = Materia.objects.all().order_by('nombre')
+        
+        materias_list = []
+        for materia in materias:
+            materias_list.append({
+                'id': materia.id,
+                'nombre': materia.nombre,
+            })
+        
+        return JsonResponse({
+            'success': True,
+            'materias': materias_list
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+
+
+@require_http_methods(["GET"])
+def obtener_temas_por_materia(request, materia_id):
+    """API: Obtener temas de una materia específica"""
+    try:
+        temas = Tema.objects.filter(materia_id=materia_id).select_related('materia').order_by('nombre')
+        
+        temas_list = []
+        for tema in temas:
+            temas_list.append({
+                'id': tema.id,
+                'nombre': tema.nombre,
+                'descripcion': tema.descripcion,
+                'requiere_suscripcion': tema.requiere_suscripcion,
+                'materia_id': tema.materia_id,
+                'materia_nombre': tema.materia.nombre if tema.materia else '-',
+            })
+        
+        return JsonResponse({
+            'success': True,
+            'temas': temas_list
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+
+
+@staff_member_required
+def lista_temas(request):
+    """Vista para mostrar la página de gestión de temas"""
+    return render(request, 'temas/temas.html')
+
+
+@require_http_methods(["GET"])
 def obtener_temas(request):
     """API: Obtener todos los temas"""
     try:

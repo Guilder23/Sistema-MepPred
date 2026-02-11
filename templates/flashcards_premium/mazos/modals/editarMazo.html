@@ -13,6 +13,12 @@
                     <input type="text" id="editNombreMazo" name="nombre" required>
                 </div>
                 <div class="form-group">
+                    <label for="editMateriaMazo">Materia</label>
+                    <select id="editMateriaMazo" name="materia_id" onchange="cargarTemasEditarMazo()" required>
+                        <option value="">Seleccione una materia</option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label for="editTemaMazo">Tema</label>
                     <select id="editTemaMazo" name="tema_id" required>
                         <option value="">Seleccione un tema</option>

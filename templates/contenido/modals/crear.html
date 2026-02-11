@@ -26,16 +26,18 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label class="form-label">Tema *</label>
-                            <select class="form-select" name="tema" id="crearTema" required>
-                                <option value="">Seleccione un tema</option>
+                            <label class="form-label">Materia *</label>
+                            <select class="form-select" name="materia" id="crearMateria" required onchange="cargarTemasCrear()">
+                                <option value="">Seleccione una materia</option>
                             </select>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label class="form-label">Nivel / Curso *</label>
-                            <input type="text" class="form-control" name="nivel_curso" required>
+                            <label class="form-label">Tema *</label>
+                            <select class="form-select" name="tema" id="crearTema" required>
+                                <option value="">Seleccione un tema</option>
+                            </select>
                         </div>
                     </div>
                 </div>
