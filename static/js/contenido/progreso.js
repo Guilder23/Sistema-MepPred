@@ -33,14 +33,8 @@ async function cargarProgreso() {
         
         mostrarEstadisticas(datosProgreso.estadisticas);
         
-        // Cargar materias
-        const responseMaterias = await fetch('/temas/api/materias/');
-        if (!responseMaterias.ok) {
-            throw new Error('Error al cargar materias');
-        }
-        
-        const dataMaterias = await responseMaterias.json();
-        mostrarMaterias(dataMaterias.materias);
+        // Mostrar materias con datos de progreso
+        mostrarMaterias(datosProgreso.materias);
         
         document.getElementById('loadingMessage').style.display = 'none';
         
@@ -79,14 +73,24 @@ function crearTarjetaMateria(materia) {
     card.dataset.materiaId = materia.id;
     card.dataset.materiaNombre = materia.nombre.toLowerCase();
     
+    const porcentaje = materia.porcentaje || 0;
+    const temasCompletados = materia.temas_completados || 0;
+    const totalTemas = materia.total_temas || 0;
+    
     const header = document.createElement('div');
     header.className = 'materia-header';
     header.onclick = () => toggleMateriaCard(card, materia.id);
     header.innerHTML = `
-        <h3>
-            <i class="fas fa-book"></i>
-            ${materia.nombre}
-        </h3>
+        <div class="materia-header-content">
+            <h3>
+                <i class="fas fa-book"></i>
+                ${materia.nombre}
+            </h3>
+            <div class="materia-progreso-info">
+                <span class="materia-porcentaje">${porcentaje}%</span>
+                <span class="materia-detalle">${temasCompletados}/${totalTemas} temas completados</span>
+            </div>
+        </div>
         <div class="materia-stats">
             <span class="materia-loading" style="display: none;">
                 <i class="fas fa-spinner fa-spin"></i>
@@ -95,11 +99,17 @@ function crearTarjetaMateria(materia) {
         </div>
     `;
     
+    // Barra de progreso de la materia
+    const progressBar = document.createElement('div');
+    progressBar.className = 'materia-progreso';
+    progressBar.innerHTML = `<div class="materia-progreso-fill" style="width: ${porcentaje}%"></div>`;
+    
     const body = document.createElement('div');
     body.className = 'materia-body';
     body.innerHTML = '<div class="temas-loading" style="padding: 2rem; text-align: center; color: var(--text-secondary);">Haz clic para cargar los temas</div>';
     
     card.appendChild(header);
+    card.appendChild(progressBar);
     card.appendChild(body);
     
     return card;
@@ -117,7 +127,17 @@ async function toggleMateriaCard(card, materiaId) {
         return;
     }
     
-    // Activar
+    // Cerrar todas las demás materias (comportamiento de acordeón)
+    document.querySelectorAll('.materia-card').forEach(otherCard => {
+        if (otherCard !== card) {
+            const otherBody = otherCard.querySelector('.materia-body');
+            const otherChevron = otherCard.querySelector('.chevron-icon');
+            if (otherBody) otherBody.classList.remove('active');
+            if (otherChevron) otherChevron.classList.remove('rotated');
+        }
+    });
+    
+    // Activar esta materia
     body.classList.add('active');
     chevron.classList.add('rotated');
     
@@ -173,18 +193,24 @@ function crearTarjetaTema(tema) {
     const totalContenidos = tema.total_contenidos || 0;
     const completados = tema.contenidos_completados || 0;
     const porcentaje = tema.porcentaje || 0;
+    const temaCompletado = tema.completado || false;
+    
+    // Si el tema está completado, agregar clase especial
+    if (temaCompletado) {
+        card.classList.add('tema-completado');
+    }
     
     const header = document.createElement('div');
     header.className = 'tema-header';
     header.onclick = () => toggleTemaCard(card);
     header.innerHTML = `
         <h4>
-            <i class="fas fa-bookmark"></i>
+            ${temaCompletado ? '<i class="fas fa-check-circle" style="color: var(--success-color); margin-right: 0.5rem;" title="Tema Completado"></i>' : '<i class="fas fa-bookmark"></i>'}
             ${tema.nombre}
             ${tema.requiere_suscripcion ? '<i class="fas fa-crown" style="color: var(--warning-color); margin-left: 0.5rem;" title="Premium"></i>' : ''}
         </h4>
         <div class="tema-stats">
-            <span class="tema-porcentaje">${porcentaje}%</span>
+            <span class="tema-porcentaje" style="color: ${temaCompletado ? 'var(--success-color)' : 'inherit'}">${porcentaje}%</span>
             <span class="tema-detalle">${completados}/${totalContenidos} completados</span>
             <i class="fas fa-chevron-down chevron-icon"></i>
         </div>

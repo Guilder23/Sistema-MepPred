@@ -480,6 +480,8 @@ def obtener_progreso_usuario(request):
         materias_data = []
         total_contenidos_general = 0
         total_completados_general = 0
+        suma_porcentajes_materias = 0
+        total_materias_con_temas = 0
         
         for materia in materias:
             # Obtener temas de esta materia
@@ -488,6 +490,8 @@ def obtener_progreso_usuario(request):
             temas_data = []
             total_contenidos_materia = 0
             total_completados_materia = 0
+            total_temas_materia = 0
+            temas_completados_materia = 0
             
             for tema in temas:
                 # Verificar si el estudiante puede ver este tema
@@ -566,45 +570,59 @@ def obtener_progreso_usuario(request):
                         'total_intentos': intentos.count(),
                         'primer_intento_aprobado': primer_intento_aprobado,
                     }
+                
+                # Calcular porcentaje del tema
+                porcentaje_tema = round((tema_completados / tema_total) * 100) if tema_total > 0 else 0
+                
+                # Un tema está completado cuando todos sus contenidos están completados
+                tema_esta_completado = (tema_completados == tema_total and tema_total > 0)
+                
+                temas_data.append({
+                    'id': tema.id,
+                    'nombre': tema.nombre,
+                    'descripcion': tema.descripcion,
+                    'requiere_suscripcion': tema.requiere_suscripcion,
+                    'contenidos': contenidos_data,
+                    'total_contenidos': tema_total,
+                    'contenidos_completados': tema_completados,
+                    'porcentaje': porcentaje_tema,
+                    'completado': tema_esta_completado,
+                    'examen': examen_info,
+                })
+                
+                # Sumar al total de la materia
+                total_contenidos_materia += tema_total
+                total_completados_materia += tema_completados
+                total_temas_materia += 1
+                if tema_esta_completado:
+                    temas_completados_materia += 1
             
-            # Calcular porcentaje del tema
-            porcentaje_tema = round((tema_completados / tema_total) * 100) if tema_total > 0 else 0
+            # Calcular porcentaje de la materia basado en TEMAS completados
+            porcentaje_materia = round((temas_completados_materia / total_temas_materia) * 100) if total_temas_materia > 0 else 0
             
-            temas_data.append({
-                'id': tema.id,
-                'nombre': tema.nombre,
-                'descripcion': tema.descripcion,
-                'requiere_suscripcion': tema.requiere_suscripcion,
-                'contenidos': contenidos_data,
-                'total_contenidos': tema_total,
-                'contenidos_completados': tema_completados,
-                'porcentaje': porcentaje_tema,
-                'examen': examen_info,
+            # Solo contar materias que tienen temas
+            if total_temas_materia > 0:
+                total_materias_con_temas += 1
+                suma_porcentajes_materias += porcentaje_materia
+            
+            materias_data.append({
+                'id': materia.id,
+                'nombre': materia.nombre,
+                'descripcion': materia.descripcion,
+                'temas': temas_data,
+                'total_contenidos': total_contenidos_materia,
+                'contenidos_completados': total_completados_materia,
+                'total_temas': total_temas_materia,
+                'temas_completados': temas_completados_materia,
+                'porcentaje': porcentaje_materia,
             })
             
-            # Sumar al total de la materia
-            total_contenidos_materia += tema_total
-            total_completados_materia += tema_completados
+            # Sumar al total general (para estadísticas de contenidos)
+            total_contenidos_general += total_contenidos_materia
+            total_completados_general += total_completados_materia
         
-        # Calcular porcentaje de la materia
-        porcentaje_materia = round((total_completados_materia / total_contenidos_materia) * 100) if total_contenidos_materia > 0 else 0
-        
-        materias_data.append({
-            'id': materia.id,
-            'nombre': materia.nombre,
-            'descripcion': materia.descripcion,
-            'temas': temas_data,
-            'total_contenidos': total_contenidos_materia,
-            'contenidos_completados': total_completados_materia,
-            'porcentaje': porcentaje_materia,
-        })
-        
-        # Sumar al total general
-        total_contenidos_general += total_contenidos_materia
-        total_completados_general += total_completados_materia
-    
-        # Calcular porcentaje general
-        porcentaje_general = round((total_completados_general / total_contenidos_general) * 100) if total_contenidos_general > 0 else 0
+        # Calcular porcentaje general basado en el PROMEDIO de porcentajes de materias
+        porcentaje_general = round(suma_porcentajes_materias / total_materias_con_temas) if total_materias_con_temas > 0 else 0
         
         return JsonResponse({
             'materias': materias_data,

@@ -31,14 +31,17 @@ function cargarExamenes() {
             return response.json();
         })
         .then(data => {
+            console.log('Datos recibidos:', data);
             if (data.success) {
                 examenesData = data.data || [];
+                console.log('Exámenes cargados:', examenesData);
                 mostrarExamenes(examenesData);
             } else {
                 mostrarMensaje(data.error || 'Error desconocido', 'error');
             }
         })
         .catch(error => {
+            console.error('Error al cargar exámenes:', error);
             mostrarMensaje('No se pudieron cargar los exámenes', 'error');
         });
 }
@@ -151,36 +154,38 @@ function abrirModalVer(id) {
 // Abrir modal para editar
 function abrirModalEditar(id) {
     const examen = examenesData.find(e => e.id === id);
+    console.log('Editar examen:', examen);
+    
     if (examen) {
         const modal = document.getElementById('modalEditarOverlay');
         if (modal) {
             window.examenEditar = examen;
             modal.classList.add('active');
             
-            // Cargar materias primero
+            // Llenar campos básicos primero
+            document.getElementById('editarId').value = examen.id || '';
+            document.getElementById('editarTitulo').value = examen.titulo || '';
+            document.getElementById('editarDescripcion').value = examen.descripcion || '';
+            document.getElementById('editarDuracion').value = examen.duracion_minutos || 60;
+            document.getElementById('editarActivo').checked = examen.activo !== false;
+            
+            // Cargar materias y temas
             cargarMateriasSelect('editarMateria', () => {
                 // Seleccionar la materia del examen
                 if (examen.materia_id) {
                     document.getElementById('editarMateria').value = examen.materia_id;
-                }
-                // Después cargar temas de esa materia
-                setTimeout(() => {
-                    cargarTemasEditarExamen();
-                    // Seleccionar el tema del examen
+                    // Después cargar temas de esa materia
                     setTimeout(() => {
-                        if (examen.tema) {
-                            document.getElementById('editarTema').value = examen.tema;
-                        }
+                        cargarTemasEditarExamen();
+                        // Seleccionar el tema del examen
+                        setTimeout(() => {
+                            if (examen.tema_id) {
+                                document.getElementById('editarTema').value = examen.tema_id;
+                            }
+                        }, 150);
                     }, 100);
-                }, 100);
+                }
             });
-            
-            // Llenar formulario
-            document.getElementById('editarId').value = examen.id;
-            document.getElementById('editarTitulo').value = examen.titulo;
-            document.getElementById('editarDescripcion').value = examen.descripcion || '';
-            document.getElementById('editarDuracion').value = examen.duracion_minutos;
-            document.getElementById('editarActivo').checked = examen.activo;
         }
     }
 }

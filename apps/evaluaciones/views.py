@@ -89,6 +89,7 @@ def obtener_examenes(request):
                     'descripcion': examen.descripcion,
                     'tema_id': examen.tema.id if examen.tema else None,
                     'tema_nombre': examen.tema.nombre if examen.tema else 'Sin tema',
+                    'materia_id': examen.tema.materia.id if examen.tema and examen.tema.materia else None,
                     'materia_nombre': examen.tema.materia.nombre if examen.tema and examen.tema.materia else 'Sin materia',
                     'materia_requiere_suscripcion': examen.tema.requiere_suscripcion if examen.tema else False,
                     'duracion_minutos': examen.duracion_minutos,
