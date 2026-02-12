@@ -53,7 +53,7 @@ function mostrarExamenes(examenes) {
     if (!tableBody) return;
 
     if (examenes.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="8" class="text-center">No hay exámenes registrados</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="9" class="text-center">No hay exámenes registrados</td></tr>';
         return;
     }
 
@@ -70,6 +70,7 @@ function mostrarExamenes(examenes) {
             <tr>
                 <td>${examen.id}</td>
                 <td>${escapeHtml(examen.titulo)}</td>
+                <td>${escapeHtml(examen.materia_nombre || 'Sin materia')}</td>
                 <td>${escapeHtml(examen.tema_nombre)}</td>
                 <td>${tipoBadge}</td>
                 <td>${examen.duracion_minutos} min</td>
@@ -108,6 +109,7 @@ function filtrarExamenes() {
     const filtrados = examenesData.filter(examen => 
         examen.titulo.toLowerCase().includes(searchTerm) ||
         examen.tema_nombre.toLowerCase().includes(searchTerm) ||
+        (examen.materia_nombre && examen.materia_nombre.toLowerCase().includes(searchTerm)) ||
         (examen.descripcion && examen.descripcion.toLowerCase().includes(searchTerm))
     );
 

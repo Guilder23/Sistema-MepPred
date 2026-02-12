@@ -54,6 +54,7 @@ def api_listar_mazos(request):
                 'nombre': mazo.nombre,
                 'descripcion': mazo.descripcion,
                 'materia_id': mazo.tema.materia_id if mazo.tema and mazo.tema.materia else '',
+                'materia_nombre': mazo.tema.materia.nombre if mazo.tema and mazo.tema.materia else 'Sin materia',
                 'tema_id': mazo.tema_id,
                 'tema_nombre': mazo.tema.nombre if mazo.tema else 'Sin tema',
                 'tarjetas_count': mazo.contar_tarjetas(),

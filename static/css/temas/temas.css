@@ -209,6 +209,49 @@ h1 {
     align-items: center;
 }
 
+.btn-icon {
+    padding: 0.5rem;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: white;
+    font-size: 1rem;
+}
+
+.btn-icon:hover {
+    transform: translateY(-2px);
+}
+
+.btn-icon.btn-info {
+    background-color: #3498db;
+}
+
+.btn-icon.btn-info:hover {
+    background-color: #2980b9;
+}
+
+.btn-icon.btn-warning {
+    background-color: #f39c12;
+}
+
+.btn-icon.btn-warning:hover {
+    background-color: #e67e22;
+}
+
+.btn-icon.btn-danger {
+    background-color: #e74c3c;
+}
+
+.btn-icon.btn-danger:hover {
+    background-color: #c0392b;
+}
+
 /* Utilities */
 .py-4 {
     padding-top: 1.5rem;
@@ -296,7 +339,7 @@ h1 {
 
 /* Badges para tipo de acceso */
 .badge {
-    padding: 0.35rem 0.65rem;
+    padding: 0.35rem 0.75rem;
     border-radius: 12px;
     font-size: 0.75rem;
     font-weight: 600;
@@ -306,15 +349,14 @@ h1 {
 }
 
 .badge.bg-warning {
-    background-color: #f39c12 !important;
-    color: white;
+    background-color: #fef3c7 !important;
+    color: #92400e !important;
 }
 
 .badge.bg-success {
-    background-color: #2ecc71 !important;
-    color: white;
+    background-color: #d1fae5 !important;
+    color: #065f46 !important;
 }
-
 
 .badge.text-dark {
     color: #2c3e50 !important;

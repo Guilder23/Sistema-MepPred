@@ -113,15 +113,17 @@ function mostrarTemas(temas) {
                 <td>${tipoAcceso}</td>
                 <td>${fechaCreacion}</td>
                 <td>
-                    <button class="btn btn-sm btn-info" onclick="abrirModalVer(${tema.id})" title="Ver detalles">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button class="btn btn-sm btn-warning" onclick="abrirModalEditar(${tema.id})" title="Editar">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger" onclick="abrirModalEliminar(${tema.id})" title="Eliminar">
-                        <i class="fas fa-trash"></i>
-                    </button>
+                    <div class="acciones-cell">
+                        <button class="btn-icon btn-info" onclick="abrirModalVer(${tema.id})" title="Ver detalles">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn-icon btn-warning" onclick="abrirModalEditar(${tema.id})" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-icon btn-danger" onclick="abrirModalEliminar(${tema.id})" title="Eliminar">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
                 </td>
             </tr>
         `;
