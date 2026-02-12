@@ -207,8 +207,7 @@ function renderizarTemas(materiaId, temas) {
     
     temas.forEach((tema, index) => {
         const isPremium = tema.requiere_suscripcion || false;
-        const isFirstTema = index === 0; // El primer tema siempre es gratis
-        const estaHabilitado = isFirstTema || tieneSuscripcion;
+        const estaHabilitado = !isPremium || tieneSuscripcion;
         
         const temaDiv = document.createElement('div');
         temaDiv.className = `tema-item ${!estaHabilitado ? 'bloqueado' : ''}`;
@@ -218,20 +217,24 @@ function renderizarTemas(materiaId, temas) {
         let badge = '';
         let icon = '';
         
-        if (isFirstTema) {
-            badge = '<span class="tema-badge gratis">Gratis</span>';
-        } else if (isPremium && !tieneSuscripcion) {
-            badge = '<span class="tema-badge bloqueado"><i class="fas fa-lock"></i> Premium</span>';
-            icon = '<i class="fas fa-lock tema-icon"></i>';
-        } else if (isPremium && tieneSuscripcion) {
-            badge = '<span class="tema-badge premium">Premium</span>';
+        // Mostrar badge según si es premium o gratis
+        if (isPremium) {
+            if (tieneSuscripcion) {
+                // Usuario tiene suscripción, mostrar badge premium sin bloqueo
+                badge = '<span class="tema-badge premium"><i class="fas fa-crown"></i> Premium</span>';
+            } else {
+                // Usuario no tiene suscripción, mostrar badge premium bloqueado
+                badge = '<span class="tema-badge bloqueado"><i class="fas fa-lock"></i> Premium</span>';
+                icon = '<i class="fas fa-lock tema-icon"></i>';
+            }
         } else {
+            // Tema gratis
             badge = '<span class="tema-badge gratis">Gratis</span>';
         }
         
         temaDiv.innerHTML = `
             <span class="tema-nombre">${tema.nombre}</span>
-            <div style="display: flex; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
                 ${badge}
                 ${icon}
             </div>
@@ -363,12 +366,38 @@ function cargarContenidos() {
         })
         .then(data => {
             console.log('Contenidos recibidos:', data);
-            todosLosContenidos = data;
+            
+            // Convertir la estructura de materias/temas/contenidos en un array plano
+            const contenidosFlat = [];
+            
+            if (data.materias && Array.isArray(data.materias)) {
+                data.materias.forEach(materia => {
+                    if (materia.temas && Array.isArray(materia.temas)) {
+                        materia.temas.forEach(tema => {
+                            if (tema.contenidos && Array.isArray(tema.contenidos)) {
+                                tema.contenidos.forEach(contenido => {
+                                    // Agregar información adicional al contenido
+                                    contenidosFlat.push({
+                                        ...contenido,
+                                        materia: materia.nombre,
+                                        materia_id: materia.id,
+                                        tema: tema.nombre,
+                                        tema_id: tema.id
+                                    });
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+            
+            todosLosContenidos = contenidosFlat;
+            console.log('Contenidos procesados:', todosLosContenidos.length);
             
             // Extraer temas y niveles únicos
-            data.forEach(contenido => {
-                if (contenido.tema) {
-                    materiasUnicas.add(contenido.tema);
+            todosLosContenidos.forEach(contenido => {
+                if (contenido.materia) {
+                    materiasUnicas.add(contenido.materia);
                 }
                 if (contenido.nivel_curso) {
                     nivelesUnicos.add(contenido.nivel_curso);
@@ -379,7 +408,7 @@ function cargarContenidos() {
             actualizarFiltros();
             
             // Mostrar contenidos
-            mostrarContenidos(data);
+            mostrarContenidos(todosLosContenidos);
             mostrarCargando(false);
         })
         .catch(error => {

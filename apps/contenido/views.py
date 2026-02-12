@@ -365,6 +365,8 @@ def listar_contenidos_publicados(request):
                         'titulo': contenido.titulo,
                         'descripcion': contenido.descripcion,
                         'orden': contenido.orden,
+                        'nivel_curso': contenido.nivel_curso,
+                        'fecha_creacion': contenido.fecha_creacion.strftime('%Y-%m-%d %H:%M:%S'),
                         'esta_disponible': esta_disponible,
                         'completado': completado,
                         'porcentaje_avance': porcentaje,
