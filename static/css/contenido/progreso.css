@@ -299,6 +299,93 @@
 }
 
 /* ============================================
+   TEMAS (ACORDEÓN DENTRO DE MATERIAS)
+   ============================================ */
+
+.temas-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.tema-card {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.tema-header {
+    background: #f8f9fa;
+    padding: 1rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.tema-header:hover {
+    background: #e9ecef;
+}
+
+.tema-header h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tema-header h4 i {
+    color: var(--info-color);
+    font-size: 0.9rem;
+}
+
+.tema-stats {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.tema-porcentaje {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--success-color);
+}
+
+.tema-detalle {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.tema-body {
+    padding: 1rem 1.25rem;
+    display: none;
+}
+
+.tema-body.active {
+    display: block;
+}
+
+.tema-progreso {
+    background-color: #e9ecef;
+    border-radius: 50px;
+    height: 16px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.tema-progreso-fill {
+    background: linear-gradient(90deg, var(--info-color), #2980b9);
+    height: 100%;
+    border-radius: 50px;
+    transition: width 0.8s ease;
+}
+
+/* ============================================
    LISTA DE CONTENIDOS
    ============================================ */
 

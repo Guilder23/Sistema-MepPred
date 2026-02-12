@@ -22,16 +22,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function cargarProgreso() {
     try {
-        const response = await fetch('/contenido/api/progreso/');
+        // Cargar progreso del usuario
+        const responseProgreso = await fetch('/contenido/api/progreso/');
         
-        if (!response.ok) {
+        if (!responseProgreso.ok) {
             throw new Error('Error al cargar progreso');
         }
         
-        datosProgreso = await response.json();
+        datosProgreso = await responseProgreso.json();
         
         mostrarEstadisticas(datosProgreso.estadisticas);
-        mostrarTemas(datosProgreso.temas);
+        
+        // Cargar materias
+        const responseMaterias = await fetch('/temas/api/materias/');
+        if (!responseMaterias.ok) {
+            throw new Error('Error al cargar materias');
+        }
+        
+        const dataMaterias = await responseMaterias.json();
+        mostrarMaterias(dataMaterias.materias);
         
         document.getElementById('loadingMessage').style.display = 'none';
         
@@ -42,6 +51,169 @@ async function cargarProgreso() {
             <p class="text-muted mt-3">Error al cargar el progreso</p>
         `;
     }
+}
+
+// ============================================
+// MOSTRAR MATERIAS
+// ============================================
+
+function mostrarMaterias(materias) {
+    const container = document.getElementById('materiasContainer');
+    
+    if (!materias || materias.length === 0) {
+        document.getElementById('noResultsMessage').style.display = 'block';
+        return;
+    }
+    
+    container.innerHTML = '';
+    
+    materias.forEach(materia => {
+        const materiaCard = crearTarjetaMateria(materia);
+        container.appendChild(materiaCard);
+    });
+}
+
+function crearTarjetaMateria(materia) {
+    const card = document.createElement('div');
+    card.className = 'materia-card';
+    card.dataset.materiaId = materia.id;
+    card.dataset.materiaNombre = materia.nombre.toLowerCase();
+    
+    const header = document.createElement('div');
+    header.className = 'materia-header';
+    header.onclick = () => toggleMateriaCard(card, materia.id);
+    header.innerHTML = `
+        <h3>
+            <i class="fas fa-book"></i>
+            ${materia.nombre}
+        </h3>
+        <div class="materia-stats">
+            <span class="materia-loading" style="display: none;">
+                <i class="fas fa-spinner fa-spin"></i>
+            </span>
+            <i class="fas fa-chevron-down chevron-icon"></i>
+        </div>
+    `;
+    
+    const body = document.createElement('div');
+    body.className = 'materia-body';
+    body.innerHTML = '<div class="temas-loading" style="padding: 2rem; text-align: center; color: var(--text-secondary);">Haz clic para cargar los temas</div>';
+    
+    card.appendChild(header);
+    card.appendChild(body);
+    
+    return card;
+}
+
+async function toggleMateriaCard(card, materiaId) {
+    const body = card.querySelector('.materia-body');
+    const chevron = card.querySelector('.chevron-icon');
+    const loading = card.querySelector('.materia-loading');
+    
+    // Si ya está activo, cerrar
+    if (body.classList.contains('active')) {
+        body.classList.remove('active');
+        chevron.classList.remove('rotated');
+        return;
+    }
+    
+    // Activar
+    body.classList.add('active');
+    chevron.classList.add('rotated');
+    
+    // Si ya se cargaron los temas, no volver a cargar
+    if (card.dataset.temasLoaded === 'true') {
+        return;
+    }
+    
+    // Mostrar loading
+    loading.style.display = 'inline-block';
+    
+    try {
+        const response = await fetch(`/temas/api/temas/por-materia/${materiaId}/`);
+        if (!response.ok) throw new Error('Error al cargar temas');
+        
+        const data = await response.json();
+        mostrarTemasEnMateria(body, data.temas, materiaId);
+        card.dataset.temasLoaded = 'true';
+    } catch (error) {
+        console.error('Error al cargar temas:', error);
+        body.innerHTML = '<p class="text-muted text-center" style="padding: 2rem;">Error al cargar los temas</p>';
+    } finally {
+        loading.style.display = 'none';
+    }
+}
+
+function mostrarTemasEnMateria(bodyElement, temas, materiaId) {
+    if (!temas || temas.length === 0) {
+        bodyElement.innerHTML = '<p class="text-muted text-center" style="padding: 2rem;">No hay temas disponibles</p>';
+        return;
+    }
+    
+    const temasContainer = document.createElement('div');
+    temasContainer.className = 'temas-container';
+    
+    temas.forEach(tema => {
+        const temaCard = crearTarjetaTema(tema);
+        temasContainer.appendChild(temaCard);
+    });
+    
+    bodyElement.innerHTML = '';
+    bodyElement.appendChild(temasContainer);
+}
+
+function crearTarjetaTema(tema) {
+    const card = document.createElement('div');
+    card.className = 'tema-card';
+    card.dataset.temaId = tema.id;
+    card.dataset.temaNombre = tema.nombre.toLowerCase();
+    
+    // Buscar contenidos de este tema en datosProgreso
+    const temaProgreso = datosProgreso?.temas?.find(t => t.tema === tema.nombre) || { contenidos: [], completados: 0, total: 0, porcentaje: 0 };
+    
+    const header = document.createElement('div');
+    header.className = 'tema-header';
+    header.onclick = () => toggleTemaCard(card);
+    header.innerHTML = `
+        <h4>
+            <i class="fas fa-bookmark"></i>
+            ${tema.nombre}
+        </h4>
+        <div class="tema-stats">
+            <span class="tema-porcentaje">${temaProgreso.porcentaje}%</span>
+            <span class="tema-detalle">${temaProgreso.completados}/${temaProgreso.total} completados</span>
+            <i class="fas fa-chevron-down chevron-icon"></i>
+        </div>
+    `;
+    
+    const body = document.createElement('div');
+    body.className = 'tema-body';
+    
+    // Barra de progreso del tema
+    body.innerHTML = `
+        <div class="tema-progreso">
+            <div class="tema-progreso-fill" style="width: ${temaProgreso.porcentaje}%"></div>
+        </div>
+        <div class="contenidos-list">
+            ${temaProgreso.contenidos && temaProgreso.contenidos.length > 0 
+                ? temaProgreso.contenidos.map(contenido => crearItemContenido(contenido)).join('')
+                : '<p class="text-muted text-center" style="padding: 1rem;">No hay contenidos disponibles en este tema</p>'
+            }
+        </div>
+    `;
+    
+    card.appendChild(header);
+    card.appendChild(body);
+    
+    return card;
+}
+
+function toggleTemaCard(card) {
+    const body = card.querySelector('.tema-body');
+    const chevron = card.querySelector('.chevron-icon');
+    
+    body.classList.toggle('active');
+    chevron.classList.toggle('rotated');
 }
 
 // ============================================
@@ -62,59 +234,6 @@ function mostrarEstadisticas(stats) {
 // ============================================
 // MOSTRAR TEMAS
 // ============================================
-
-function mostrarTemas(temas) {
-    const container = document.getElementById('materiasContainer');
-    
-    if (!temas || temas.length === 0) {
-        document.getElementById('noResultsMessage').style.display = 'block';
-        return;
-    }
-    
-    container.innerHTML = '';
-    
-    temas.forEach(tema => {
-        const temaCard = crearTarjetaTema(tema);
-        container.appendChild(temaCard);
-    });
-}
-
-function crearTarjetaTema(tema) {
-    const card = document.createElement('div');
-    card.className = 'materia-card';
-    card.dataset.materia = tema.tema.toLowerCase();
-    
-    const header = document.createElement('div');
-    header.className = 'materia-header';
-    header.onclick = () => toggleMateria(card);
-    header.innerHTML = `
-        <h3>
-            <i class="fas fa-book"></i>
-            ${tema.tema}
-        </h3>
-        <div class="materia-stats">
-            <span class="materia-porcentaje">${tema.porcentaje}%</span>
-            <span class="materia-detalle">${tema.completados}/${tema.total} completados</span>
-            <i class="fas fa-chevron-down chevron-icon"></i>
-        </div>
-    `;
-    
-    const body = document.createElement('div');
-    body.className = 'materia-body';
-    body.innerHTML = `
-        <div class="materia-progreso">
-            <div class="materia-progreso-fill" style="width: ${tema.porcentaje}%"></div>
-        </div>
-        <div class="contenidos-list" id="contenidos-${tema.tema.replace(/\s+/g, '-')}">
-            ${tema.contenidos.map(contenido => crearItemContenido(contenido)).join('')}
-        </div>
-    `;
-    
-    card.appendChild(header);
-    card.appendChild(body);
-    
-    return card;
-}
 
 function crearItemContenido(contenido) {
     const estado = contenido.completado ? 'completado' : (contenido.esta_disponible ? 'pendiente' : 'bloqueado');
@@ -147,14 +266,6 @@ function crearItemContenido(contenido) {
             </div>
         </div>
     `;
-}
-
-function toggleMateria(card) {
-    const body = card.querySelector('.materia-body');
-    const chevron = card.querySelector('.chevron-icon');
-    
-    body.classList.toggle('active');
-    chevron.classList.toggle('rotated');
 }
 
 // ============================================
@@ -327,28 +438,40 @@ function aplicarFiltros() {
     const materias = document.querySelectorAll('.materia-card');
     
     materias.forEach(materia => {
-        const nombreMateria = materia.dataset.materia;
-        const cumpleBusqueda = nombreMateria.includes(textoBusqueda);
+        const nombreMateria = materia.dataset.materiaNombre || '';
+        let mostrarMateria = false;
         
-        if (cumpleBusqueda) {
-            materia.style.display = 'block';
+        // Buscar en temas dentro de la materia
+        const temas = materia.querySelectorAll('.tema-card');
+        
+        temas.forEach(tema => {
+            const nombreTema = tema.dataset.temaNombre || '';
+            const cumpleBusqueda = nombreMateria.includes(textoBusqueda) || nombreTema.includes(textoBusqueda);
             
-            // Filtrar contenidos dentro de la materia
-            if (estadoFiltro) {
-                const contenidos = materia.querySelectorAll('.contenido-item');
-                contenidos.forEach(contenido => {
-                    const estado = contenido.dataset.estado;
-                    contenido.style.display = estado === estadoFiltro ? 'flex' : 'none';
-                });
+            if (cumpleBusqueda) {
+                tema.style.display = 'block';
+                mostrarMateria = true;
+                
+                // Filtrar contenidos dentro del tema
+                if (estadoFiltro) {
+                    const contenidos = tema.querySelectorAll('.contenido-item');
+                    contenidos.forEach(contenido => {
+                        const estado = contenido.dataset.estado;
+                        contenido.style.display = estado === estadoFiltro ? 'flex' : 'none';
+                    });
+                } else {
+                    const contenidos = tema.querySelectorAll('.contenido-item');
+                    contenidos.forEach(contenido => {
+                        contenido.style.display = 'flex';
+                    });
+                }
             } else {
-                const contenidos = materia.querySelectorAll('.contenido-item');
-                contenidos.forEach(contenido => {
-                    contenido.style.display = 'flex';
-                });
+                tema.style.display = 'none';
             }
-        } else {
-            materia.style.display = 'none';
-        }
+        });
+        
+        // Mostrar materia si algún tema coincide con la búsqueda
+        materia.style.display = mostrarMateria ? 'block' : 'none';
     });
 }
 
