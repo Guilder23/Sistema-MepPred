@@ -105,7 +105,14 @@ def obtener_examenes(request):
             })
         
         # Para estudiantes, devolver lista simple de exámenes accesibles
-        examenes = Examen.objects.filter(activo=True).select_related('tema', 'tema__materia').order_by('tema__materia__id', 'tema__id')
+        examenes = Examen.objects.filter(activo=True).select_related('tema', 'tema__materia').order_by('tema__materia__id', 'tema__id', 'id')
+        
+        # Agrupar exámenes por tema para verificar habilitación secuencial
+        examenes_por_tema = {}
+        for examen in examenes:
+            if examen.tema.id not in examenes_por_tema:
+                examenes_por_tema[examen.tema.id] = []
+            examenes_por_tema[examen.tema.id].append(examen)
         
         examenes_data = []
         for examen in examenes:
@@ -157,6 +164,25 @@ def obtener_examenes(request):
                 mejor_nota = float(mejor_intento.nota)
                 aprobado = mejor_intento.aprobado
             
+            # Verificar habilitación secuencial dentro del tema
+            bloqueado_secuencial = False
+            if contenido_completado:  # Solo si el contenido está completado
+                # Obtener la posición de este examen dentro del tema
+                examenes_del_tema = examenes_por_tema[examen.tema.id]
+                posicion_examen = next((i for i, e in enumerate(examenes_del_tema) if e.id == examen.id), -1)
+                
+                # Si no es el primer examen del tema, verificar que el anterior fue aprobado
+                if posicion_examen > 0:
+                    examen_anterior = examenes_del_tema[posicion_examen - 1]
+                    intento_anterior_aprobado = IntentoExamen.objects.filter(
+                        estudiante=request.user,
+                        examen=examen_anterior,
+                        aprobado=True
+                    ).exists()
+                    
+                    if not intento_anterior_aprobado:
+                        bloqueado_secuencial = True
+            
             examenes_data.append({
                 'id': examen.id,
                 'titulo': examen.titulo,
@@ -169,7 +195,8 @@ def obtener_examenes(request):
                 'duracion_minutos': examen.duracion_minutos,
                 'total_preguntas': examen.preguntas.count(),
                 'activo': examen.activo,
-                'bloqueado': not contenido_completado,
+                'bloqueado': not contenido_completado or bloqueado_secuencial,
+                'bloqueado_secuencial': bloqueado_secuencial,
                 'contenido_completado': contenido_completado,
                 'total_contenidos': total_contenidos,
                 'contenidos_completados': contenidos_completados,
