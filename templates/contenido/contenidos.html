@@ -49,6 +49,7 @@
                 <thead class="table-dark">
                     <tr>
                         <th>TÍTULO</th>
+                        <th>MATERIA</th>
                         <th>TEMA</th>
                         <th>ESTADO</th>
                         <th>PUBLICACIÓN</th>
@@ -61,7 +62,8 @@
                         {% for contenido in contenidos %}
                         <tr>
                             <td>{{ contenido.titulo }}</td>
-                            <td>{{ contenido.tema }}</td>
+                            <td>{{ contenido.tema.materia.nombre }}</td>
+                            <td>{{ contenido.tema.nombre }}</td>
                             <td>
                                 <span class="badge badge-{{ contenido.estado }}">
                                     {% if contenido.estado == 'activo' %}Activo{% else %}Inactivo{% endif %}
@@ -90,7 +92,7 @@
                         {% endfor %}
                     {% else %}
                         <tr>
-                            <td colspan="6" class="text-center">No se encontraron contenidos</td>
+                            <td colspan="7" class="text-center">No se encontraron contenidos</td>
                         </tr>
                     {% endif %}
                 </tbody>

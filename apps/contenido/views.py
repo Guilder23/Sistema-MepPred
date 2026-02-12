@@ -23,7 +23,7 @@ def gestion_contenidos(request):
     publicacion = request.GET.get('publicacion', '')
     
     # Filtrar contenidos
-    contenidos = Contenido.objects.all()
+    contenidos = Contenido.objects.select_related('tema__materia').all()
     
     if busqueda:
         contenidos = contenidos.filter(
@@ -59,7 +59,7 @@ def listar_contenidos(request):
     estado = request.GET.get('estado', '')
     publicacion = request.GET.get('publicacion', '')
     
-    contenidos = Contenido.objects.all()
+    contenidos = Contenido.objects.select_related('tema__materia').all()
     
     if busqueda:
         contenidos = contenidos.filter(
@@ -81,6 +81,7 @@ def listar_contenidos(request):
             'titulo': contenido.titulo,
             'tema': contenido.tema.nombre if contenido.tema else '',
             'tema_id': contenido.tema.id if contenido.tema else None,
+            'materia_nombre': contenido.tema.materia.nombre if contenido.tema and contenido.tema.materia else '-',
             'nivel_curso': contenido.nivel_curso,
             'estado': contenido.estado,
             'publicacion': contenido.publicacion,
@@ -125,7 +126,7 @@ def obtener_contenido(request, contenido_id):
         'titulo': contenido.titulo,
         'descripcion': contenido.descripcion,
         'contenido_tema': contenido.contenido_tema,
-        'tema': contenido.tema.id if contenido.tema else '',
+        'tema': contenido.tema.nombre if contenido.tema else '',
         'materia_id': contenido.tema.materia_id if contenido.tema else '',
         'nivel_curso': contenido.nivel_curso,
         'tipo_contenido': contenido.tipo_contenido,

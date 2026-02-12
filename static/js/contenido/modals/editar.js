@@ -9,6 +9,7 @@ function abrirModalEditar(contenidoId) {
             document.getElementById('editarTitulo').value = data.titulo;
             document.getElementById('editarDescripcion').value = data.descripcion;
             document.getElementById('editarContenidoTema').value = data.contenido_tema;
+            document.getElementById('editarNivelCurso').value = data.nivel_curso || '';
             document.getElementById('editarTipoContenido').value = data.tipo_contenido;
             document.getElementById('editarEstado').value = data.estado;
             document.getElementById('editarPublicacion').value = data.publicacion;
@@ -22,8 +23,8 @@ function abrirModalEditar(contenidoId) {
                     cargarTemasEditar();
                     // Seleccionar el tema después de cargarlos
                     setTimeout(() => {
-                        if (data.tema || data.tema_id) {
-                            document.getElementById('editarTema').value = data.tema_id || data.tema;
+                        if (data.tema) {
+                            document.getElementById('editarTema').value = data.tema;
                         }
                     }, 100);
                 }
@@ -104,7 +105,7 @@ function cargarTemasEditar() {
                 temaSelect.innerHTML = '<option value="">Seleccione un tema</option>';
                 data.temas.forEach(tema => {
                     const option = document.createElement('option');
-                    option.value = tema.id;
+                    option.value = tema.nombre;
                     option.textContent = tema.nombre;
                     temaSelect.appendChild(option);
                 });

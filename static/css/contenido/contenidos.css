@@ -26,7 +26,7 @@ body {
 }
 
 .container-fluid {
-    padding: 2rem;
+    padding: 1.25rem 1rem;
     max-width: 1400px;
     margin: 0 auto;
 }
@@ -35,8 +35,8 @@ body {
 h1 {
     color: var(--text-primary);
     font-weight: 700;
-    margin-bottom: 0.5rem;
-    font-size: 1.75rem;
+    margin-bottom: 0;
+    font-size: 1.5rem;
     letter-spacing: -0.5px;
 }
 
@@ -45,8 +45,8 @@ h1 {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0.6rem 1.2rem;
-    font-size: 0.95rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
     font-weight: 500;
     border-radius: 6px;
     border: none;
@@ -117,8 +117,8 @@ h1 {
 /* Formularios */
 .form-control, .form-select {
     width: 100%;
-    padding: 0.6rem 0.9rem;
-    font-size: 0.95rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
     border: 1px solid var(--border-color);
     border-radius: 6px;
     transition: all 0.2s ease;
@@ -133,10 +133,10 @@ h1 {
 /* Tarjetas */
 .card {
     background: white;
-    border-radius: 8px;
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    box-shadow: var(--shadow-md);
     overflow: hidden;
+    border: 1px solid var(--border-color);
 }
 
 /* Tabla */
@@ -146,9 +146,8 @@ h1 {
 
 .table {
     width: 100%;
+    border-collapse: collapse;
     margin-bottom: 0;
-    border-collapse: separate;
-    border-spacing: 0;
 }
 
 .table thead {
@@ -156,17 +155,24 @@ h1 {
     color: white;
 }
 
-.table thead th {
-    padding: 1rem;
+.table th {
+    padding: 0.75rem;
+    text-align: left;
+    font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
-    font-size: 0.85rem;
     letter-spacing: 0.5px;
     border: none;
 }
 
-.table tbody tr {
+.table td {
+    padding: 0.875rem;
+    vertical-align: middle;
     border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.table tbody tr {
     transition: all 0.2s ease;
 }
 
@@ -174,20 +180,18 @@ h1 {
     background-color: #f8f9fa;
 }
 
-.table tbody td {
-    padding: 1rem;
-    vertical-align: middle;
-    font-size: 0.95rem;
+.table tbody tr:last-child td {
+    border-bottom: none;
 }
 
 /* Badges */
 .badge {
-    display: inline-block;
     padding: 0.4rem 0.8rem;
+    border-radius: 20px;
     font-size: 0.85rem;
     font-weight: 500;
-    border-radius: 20px;
     text-transform: capitalize;
+    display: inline-block;
 }
 
 .badge-activo {
@@ -220,11 +224,12 @@ h1 {
     color: #0284c7;
 }
 
-/* Contenedor de filtros en fila */
+/* Búsqueda y Filtros */
 .filtros-container {
     display: flex;
-    gap: 1rem;
+    gap: 0.5rem;
     align-items: center;
+    margin-bottom: 1rem;
 }
 
 .filtros-container .form-control,
@@ -314,11 +319,11 @@ h1 {
 
 /* Espaciado */
 .mb-3 {
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
 }
 
 .mb-4 {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 .mt-2 {
@@ -341,7 +346,7 @@ h1 {
 
     .filtros-container {
         flex-direction: column;
-        gap: 0.75rem;
+        gap: 0.5rem;
     }
 
     .filtros-container .form-control,
@@ -349,8 +354,8 @@ h1 {
         min-width: 100%;
     }
 
-    .table thead th,
-    .table tbody td {
+    .table th,
+    .table td {
         padding: 0.75rem 0.5rem;
         font-size: 0.875rem;
     }
@@ -359,5 +364,13 @@ h1 {
         padding: 0.4rem 0.6rem;
         font-size: 0.8rem;
         margin-right: 0.2rem;
+    }
+    
+    .row.mb-4 {
+        flex-direction: column;
+    }
+    
+    .col-md-6 {
+        width: 100%;
     }
 }

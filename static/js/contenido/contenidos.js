@@ -295,8 +295,8 @@ function renderizarContenidos(contenidos) {
         return `
         <tr>
             <td>${contenido.titulo}</td>
+            <td>${contenido.materia_nombre || '-'}</td>
             <td>${contenido.tema}</td>
-            <td>
             <td>
                 <span class="badge badge-${contenido.estado}">
                     ${contenido.estado === 'activo' ? 'Activo' : 'Inactivo'}

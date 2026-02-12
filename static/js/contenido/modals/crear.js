@@ -70,7 +70,7 @@ function cargarTemasCrear() {
                 temaSelect.innerHTML = '<option value="">Seleccione un tema</option>';
                 data.temas.forEach(tema => {
                     const option = document.createElement('option');
-                    option.value = tema.id;
+                    option.value = tema.nombre;
                     option.textContent = tema.nombre;
                     temaSelect.appendChild(option);
                 });
