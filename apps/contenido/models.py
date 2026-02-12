@@ -54,14 +54,12 @@ class Contenido(models.Model):
     def esta_disponible_para(self, usuario):
         """
         Verifica si el contenido está disponible para el usuario.
-        Reglas:
+        NUEVO FLUJO:
         1. Si es administrador, siempre disponible
         2. Debe estar publicado y activo
-        3. El primer contenido del primer tema está siempre disponible
-        4. Dentro de un tema: solo se desbloquea si el contenido anterior está completado
-        5. Para pasar al siguiente tema: debe haber aprobado el examen del tema anterior (>=80%)
-        6. Si es premium: ve todos los temas (si aprobó los anteriores)
-        7. Si NO es premium: solo ve el primer tema y los que haya desbloqueado aprobando exámenes
+        3. Verificar si el tema es premium y si el usuario tiene suscripción activa
+        4. Dentro de un tema: desbloqueo secuencial (completar contenido anterior)
+        5. Primer contenido de cada tema: verificar que aprobó el examen del tema anterior
         """
         # Si es admin, siempre disponible
         if usuario.is_superuser or getattr(usuario, 'role', '') == 'admin':
@@ -71,61 +69,50 @@ class Contenido(models.Model):
         if self.estado != 'activo' or self.publicacion != 'publicado':
             return False
         
-        # Obtener todos los contenidos publicados ordenados por tema y orden
-        todos_contenidos = Contenido.objects.filter(
+        # Verificar si el tema requiere suscripción premium
+        if self.tema and self.tema.requiere_suscripcion:
+            from apps.suscripciones.models import Suscripcion
+            suscripcion = Suscripcion.objects.filter(
+                estudiante=usuario,
+                estado='APROBADO'
+            ).first()
+            
+            if not suscripcion or not suscripcion.esta_activa():
+                return False  # Tema premium bloqueado sin suscripción
+        
+        # Obtener todos los contenidos del mismo tema, ordenados
+        contenidos_tema = Contenido.objects.filter(
+            tema=self.tema,
             estado='activo',
             publicacion='publicado'
-        ).order_by('tema__id', 'orden')
+        ).order_by('orden', 'id')
         
-        # Agrupar por tema
-        temas = {}
-        for cont in todos_contenidos:
-            if cont.tema not in temas:
-                temas[cont.tema] = []
-            temas[cont.tema].append(cont)
-        
-        # Obtener lista de temas ordenados
-        temas_ordenados = list(temas.keys())
-        
-        # Verificar si es el primer contenido del primer tema
-        if temas_ordenados and temas[temas_ordenados[0]]:
-            primer_contenido = temas[temas_ordenados[0]][0]
-            if self.id == primer_contenido.id:
-                return True  # El primer contenido siempre está disponible
-        
-        # Encontrar la posición de este contenido
-        tema_actual = self.tema
-        contenidos_tema = temas.get(tema_actual, [])
+        contenidos_lista = list(contenidos_tema)
         
         try:
-            indice_contenido = next(i for i, c in enumerate(contenidos_tema) if c.id == self.id)
+            indice_contenido = next(i for i, c in enumerate(contenidos_lista) if c.id == self.id)
         except StopIteration:
             return False
         
-        # Si NO es el primer contenido del tema, verificar que el anterior esté completado
-        if indice_contenido > 0:
-            contenido_anterior = contenidos_tema[indice_contenido - 1]
+        # Si es el primer contenido del tema
+        if indice_contenido == 0:
+            # Verificar si debe aprobar examen del tema anterior
+            from apps.temas.models import Tema
+            from apps.evaluaciones.models import Examen, IntentoExamen
+            
+            # Obtener todos los temas de la misma materia, ordenados
+            temas_materia = list(Tema.objects.filter(
+                materia=self.tema.materia
+            ).order_by('id'))
+            
             try:
-                progreso_anterior = ProgresoContenido.objects.get(
-                    usuario=usuario,
-                    contenido=contenido_anterior
-                )
-                if not progreso_anterior.completado:
-                    return False
-            except ProgresoContenido.DoesNotExist:
-                return False
-        else:
-            # ES el primer contenido del tema actual (pero no el primer tema en general)
-            try:
-                indice_tema = temas_ordenados.index(tema_actual)
-            except ValueError:
+                indice_tema = next(i for i, t in enumerate(temas_materia) if t.id == self.tema.id)
+            except StopIteration:
                 return False
             
+            # Si NO es el primer tema de la materia
             if indice_tema > 0:
-                # Hay un tema anterior - verificar que haya aprobado su examen
-                from apps.evaluaciones.models import Examen, IntentoExamen
-                
-                tema_anterior = temas_ordenados[indice_tema - 1]
+                tema_anterior = temas_materia[indice_tema - 1]
                 
                 # Buscar el examen del tema anterior
                 examen_anterior = Examen.objects.filter(
@@ -142,22 +129,24 @@ class Contenido(models.Model):
                     ).exists()
                     
                     if not intento_aprobado:
-                        return False  # No aprobó el examen anterior
+                        return False  # No aprobó el examen del tema anterior
                 else:
-                    # No hay examen del tema anterior, debe completar todos sus contenidos
-                    contenidos_tema_anterior = temas[tema_anterior]
-                    for contenido_ant in contenidos_tema_anterior:
-                        try:
-                            progreso = ProgresoContenido.objects.get(
-                                usuario=usuario,
-                                contenido=contenido_ant
-                            )
-                            if not progreso.completado:
-                                return False
-                        except ProgresoContenido.DoesNotExist:
-                            return False
+                    # Si no hay examen, bloquear (debe existir examen para avanzar)
+                    return False
+            
+            # Es el primer tema O aprobó el examen anterior
+            return True
         
-        return True
+        # NO es el primer contenido del tema: verificar que completó el anterior
+        contenido_anterior = contenidos_lista[indice_contenido - 1]
+        try:
+            progreso_anterior = ProgresoContenido.objects.get(
+                usuario=usuario,
+                contenido=contenido_anterior
+            )
+            return progreso_anterior.completado
+        except ProgresoContenido.DoesNotExist:
+            return False
 
 
 class ProgresoContenido(models.Model):

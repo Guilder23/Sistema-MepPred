@@ -915,3 +915,117 @@
         font-size: 0.7rem;
     }
 }
+/* ============================================
+   INFORMACIÓN DEL EXAMEN
+   ============================================ */
+
+.tema-examen {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.examen-info {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.examen-info h5 {
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.examen-info h5 i {
+    color: var(--primary-color);
+    margin-right: 0.5rem;
+}
+
+.examen-aprobado,
+.examen-disponible,
+.examen-bloqueado {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.examen-aprobado {
+    background: rgba(46, 204, 113, 0.1);
+    color: var(--success-color);
+    border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+.examen-disponible {
+    background: rgba(52, 152, 219, 0.1);
+    color: var(--info-color);
+    border: 1px solid rgba(52, 152, 219, 0.3);
+}
+
+.examen-bloqueado {
+    background: rgba(149, 165, 166, 0.1);
+    color: var(--text-secondary);
+    border: 1px solid rgba(149, 165, 166, 0.3);
+}
+
+.examen-aprobado i,
+.examen-disponible i,
+.examen-bloqueado i {
+    font-size: 1.25rem;
+}
+
+.examen-info .nota {
+    font-weight: 600;
+    margin-left: auto;
+}
+
+.examen-info .intentos {
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+.examen-info small {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+/* ============================================
+   TEMA BLOQUEADO (PREMIUM)
+   ============================================ */
+
+.tema-bloqueado {
+    background: linear-gradient(135deg, #fff3cd 0%, #fff8dc 100%);
+    border: 1px dashed var(--warning-color);
+    border-radius: 8px;
+}
+
+.tema-bloqueado i {
+    color: var(--warning-color);
+}
+
+.tema-bloqueado .btn-warning {
+    background: var(--warning-color);
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s;
+}
+
+.tema-bloqueado .btn-warning:hover {
+    background: var(--warning-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}

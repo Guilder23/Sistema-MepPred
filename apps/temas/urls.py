@@ -17,4 +17,7 @@ urlpatterns = [
     path('api/temas/<int:tema_id>/', views.obtener_tema, name='api_obtener'),
     path('api/temas/<int:tema_id>/actualizar/', views.actualizar_tema, name='api_actualizar'),
     path('api/temas/<int:tema_id>/eliminar/', views.eliminar_tema, name='api_eliminar'),
+    
+    # API Estudiantes
+    path('api/estudiante/temas/<int:tema_id>/', views.obtener_tema_estudiante, name='api_estudiante_obtener_tema'),
 ]

@@ -168,8 +168,11 @@ function crearTarjetaTema(tema) {
     card.dataset.temaId = tema.id;
     card.dataset.temaNombre = tema.nombre.toLowerCase();
     
-    // Buscar contenidos de este tema en datosProgreso
-    const temaProgreso = datosProgreso?.temas?.find(t => t.tema === tema.nombre) || { contenidos: [], completados: 0, total: 0, porcentaje: 0 };
+    // Los contenidos ahora vienen directamente del API
+    const contenidos = tema.contenidos || [];
+    const totalContenidos = tema.total_contenidos || 0;
+    const completados = tema.contenidos_completados || 0;
+    const porcentaje = tema.porcentaje || 0;
     
     const header = document.createElement('div');
     header.className = 'tema-header';
@@ -178,10 +181,11 @@ function crearTarjetaTema(tema) {
         <h4>
             <i class="fas fa-bookmark"></i>
             ${tema.nombre}
+            ${tema.requiere_suscripcion ? '<i class="fas fa-crown" style="color: var(--warning-color); margin-left: 0.5rem;" title="Premium"></i>' : ''}
         </h4>
         <div class="tema-stats">
-            <span class="tema-porcentaje">${temaProgreso.porcentaje}%</span>
-            <span class="tema-detalle">${temaProgreso.completados}/${temaProgreso.total} completados</span>
+            <span class="tema-porcentaje">${porcentaje}%</span>
+            <span class="tema-detalle">${completados}/${totalContenidos} completados</span>
             <i class="fas fa-chevron-down chevron-icon"></i>
         </div>
     `;
@@ -189,18 +193,39 @@ function crearTarjetaTema(tema) {
     const body = document.createElement('div');
     body.className = 'tema-body';
     
-    // Barra de progreso del tema
-    body.innerHTML = `
-        <div class="tema-progreso">
-            <div class="tema-progreso-fill" style="width: ${temaProgreso.porcentaje}%"></div>
-        </div>
-        <div class="contenidos-list">
-            ${temaProgreso.contenidos && temaProgreso.contenidos.length > 0 
-                ? temaProgreso.contenidos.map(contenido => crearItemContenido(contenido)).join('')
-                : '<p class="text-muted text-center" style="padding: 1rem;">No hay contenidos disponibles en este tema</p>'
-            }
-        </div>
-    `;
+    // Verificar si puede ver el tema
+    if (tema.puede_ver_tema === false) {
+        body.innerHTML = `
+            <div class="tema-bloqueado" style="padding: 2rem; text-align: center;">
+                <i class="fas fa-lock" style="font-size: 2rem; color: var(--warning-color);"></i>
+                <p class="text-muted mt-2">${tema.mensaje_bloqueo || 'Este tema requiere suscripción premium'}</p>
+                <a href="/suscripciones/estudiante/" class="btn btn-warning mt-2">
+                    <i class="fas fa-crown"></i> Obtener Premium
+                </a>
+            </div>
+        `;
+    } else {
+        // Barra de progreso del tema
+        body.innerHTML = `
+            <div class="tema-progreso">
+                <div class="tema-progreso-fill" style="width: ${porcentaje}%"></div>
+            </div>
+            <div class="contenidos-list">
+                ${contenidos && contenidos.length > 0 
+                    ? contenidos.map(contenido => crearItemContenido(contenido)).join('')
+                    : '<p class="text-muted text-center" style="padding: 1rem;">No hay contenidos disponibles en este tema</p>'
+                }
+            </div>
+        `;
+        
+        // Agregar información del examen si existe
+        if (tema.examen) {
+            const examenDiv = document.createElement('div');
+            examenDiv.className = 'tema-examen';
+            examenDiv.innerHTML = crearInfoExamen(tema.examen);
+            body.appendChild(examenDiv);
+        }
+    }
     
     card.appendChild(header);
     card.appendChild(body);
@@ -214,6 +239,61 @@ function toggleTemaCard(card) {
     
     body.classList.toggle('active');
     chevron.classList.toggle('rotated');
+}
+
+function crearInfoExamen(examen) {
+    const disponible = examen.disponible;
+    const aprobado = examen.aprobado;
+    const mejorNota = examen.mejor_nota;
+    const totalIntentos = examen.total_intentos || 0;
+    
+    let estadoHTML = '';
+    let botonHTML = '';
+    
+    if (aprobado) {
+        estadoHTML = `
+            <div class="examen-aprobado">
+                <i class="fas fa-check-circle"></i>
+                <span>Examen Aprobado</span>
+                <span class="nota">Nota: ${mejorNota}/20</span>
+            </div>
+        `;
+        botonHTML = `
+            <a href="/examenes/ver-resultados/${examen.id}/" class="btn btn-secondary btn-sm">
+                <i class="fas fa-chart-line"></i> Ver Resultados
+            </a>
+        `;
+    } else if (disponible) {
+        estadoHTML = `
+            <div class="examen-disponible">
+                <i class="fas fa-clipboard-check"></i>
+                <span>Examen Disponible</span>
+                ${mejorNota ? `<span class="nota">Mejor nota: ${mejorNota}/20</span>` : ''}
+                ${totalIntentos > 0 ? `<span class="intentos">${totalIntentos} intento(s)</span>` : ''}
+            </div>
+        `;
+        botonHTML = `
+            <a href="/examenes/resolver/${examen.id}/" class="btn btn-primary btn-sm">
+                <i class="fas fa-pen"></i> ${totalIntentos > 0 ? 'Reintentar' : 'Realizar'} Examen
+            </a>
+        `;
+    } else {
+        estadoHTML = `
+            <div class="examen-bloqueado">
+                <i class="fas fa-lock"></i>
+                <span>Examen Bloqueado</span>
+                <small>Completa todos los contenidos del tema</small>
+            </div>
+        `;
+    }
+    
+    return `
+        <div class="examen-info">
+            <h5><i class="fas fa-graduation-cap"></i> ${examen.titulo}</h5>
+            ${estadoHTML}
+            ${botonHTML}
+        </div>
+    `;
 }
 
 // ============================================
@@ -338,11 +418,13 @@ function mostrarModalContenido(contenido) {
 }
 
 function encontrarContenidoEnProgreso(contenidoId) {
-    if (!datosProgreso) return null;
+    if (!datosProgreso || !datosProgreso.materias) return null;
     
-    for (const tema of datosProgreso.temas) {
-        const contenido = tema.contenidos.find(c => c.id === contenidoId);
-        if (contenido) return contenido;
+    for (const materia of datosProgreso.materias) {
+        for (const tema of materia.temas) {
+            const contenido = tema.contenidos.find(c => c.id === contenidoId);
+            if (contenido) return contenido;
+        }
     }
     return null;
 }

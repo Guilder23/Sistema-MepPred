@@ -66,140 +66,134 @@ def resolver_examen(request, examen_id):
 @require_http_methods(["GET"])
 @login_required
 def obtener_examenes(request):
-    """API: Obtener todos los exámenes según el nivel de suscripción"""
+    """API: Obtener todos los exámenes organizados por materia y tema"""
     try:
         from apps.suscripciones.models import Suscripcion
         from apps.contenido.models import Contenido, ProgresoContenido
         from apps.temas.models import Tema
+        from apps.materias_nueva.models import Materia
         
         # Verificar si es administrador
         es_admin = request.user.is_staff or request.user.is_superuser
         tiene_premium = es_admin or tiene_suscripcion_activa(request.user)
         
-        # Los administradores ven todos los exámenes
+        # Para administradores, devolver lista simple de todos los exámenes
         if es_admin:
-            examenes = Examen.objects.select_related('tema').filter(activo=True)
-        else:
-            # Para estudiantes: determinar qué temas puede ver
-            # Obtener todos los temas ordenados
-            temas_ordenados = list(Tema.objects.all().order_by('id'))
+            examenes = Examen.objects.all().select_related('tema', 'tema__materia').order_by('-created_at')
             
-            # Determinar qué temas puede ver el usuario
-            temas_accesibles = []
+            examenes_data = []
+            for examen in examenes:
+                examenes_data.append({
+                    'id': examen.id,
+                    'titulo': examen.titulo,
+                    'descripcion': examen.descripcion,
+                    'tema_id': examen.tema.id if examen.tema else None,
+                    'tema_nombre': examen.tema.nombre if examen.tema else 'Sin tema',
+                    'materia_nombre': examen.tema.materia.nombre if examen.tema and examen.tema.materia else 'Sin materia',
+                    'materia_requiere_suscripcion': examen.tema.requiere_suscripcion if examen.tema else False,
+                    'duracion_minutos': examen.duracion_minutos,
+                    'total_preguntas': examen.preguntas.count(),
+                    'activo': examen.activo,
+                    'created_at': examen.created_at.strftime('%d/%m/%Y %H:%M'),
+                    'updated_at': examen.updated_at.strftime('%d/%m/%Y %H:%M'),
+                })
             
-            if tiene_premium:
-                # Premium: ve todos los temas según haya aprobado los anteriores
-                if temas_ordenados:
-                    temas_accesibles.append(temas_ordenados[0])
-                    # Verificar cuántos temas ha aprobado
-                    for i, tema in enumerate(temas_ordenados[:-1]):
-                        examen = Examen.objects.filter(tema=tema, activo=True).first()
-                        if examen:
-                            intento_aprobado = IntentoExamen.objects.filter(
-                                estudiante=request.user,
-                                examen=examen,
-                                nota__gte=16
-                            ).exists()
-                            if intento_aprobado:
-                                siguiente_tema = temas_ordenados[i + 1]
-                                if siguiente_tema not in temas_accesibles:
-                                    temas_accesibles.append(siguiente_tema)
-                            else:
-                                break
-                        else:
-                            break
-            else:
-                # No premium: SOLO ve el primer tema (gratis)
-                if temas_ordenados:
-                    temas_accesibles.append(temas_ordenados[0])
-            # Obtener exámenes solo de temas accesibles
-            examenes = Examen.objects.select_related('tema').filter(
-                activo=True,
-                tema__in=temas_accesibles
-            )
+            return JsonResponse({
+                'success': True,
+                'data': examenes_data
+            })
         
-        examenes_list = []
+        # Para estudiantes, devolver lista simple de exámenes accesibles
+        examenes = Examen.objects.filter(activo=True).select_related('tema', 'tema__materia').order_by('tema__materia__id', 'tema__id')
+        
+        examenes_data = []
         for examen in examenes:
+            # Verificar si el estudiante puede ver este examen (si el tema requiere suscripción)
+            if examen.tema and examen.tema.requiere_suscripcion and not tiene_premium:
+                continue  # Saltar exámenes premium sin suscripción
+            
             # Verificar si completó todos los contenidos del tema
             contenidos_tema = Contenido.objects.filter(
                 tema=examen.tema,
                 estado='activo',
                 publicacion='publicado'
             )
+            
             total_contenidos = contenidos_tema.count()
             contenidos_completados = 0
-            if not es_admin:
-                for contenido in contenidos_tema:
-                    try:
-                        progreso = ProgresoContenido.objects.get(
-                            usuario=request.user,
-                            contenido=contenido,
-                            completado=True
-                        )
-                        contenidos_completados += 1
-                    except ProgresoContenido.DoesNotExist:
-                        pass
-            else:
-                contenidos_completados = total_contenidos
             
-            # El examen está bloqueado si no completó todos los contenidos
-            contenido_completado = (contenidos_completados == total_contenidos and total_contenidos > 0) or es_admin
+            for contenido in contenidos_tema:
+                try:
+                    progreso = ProgresoContenido.objects.get(
+                        usuario=request.user,
+                        contenido=contenido,
+                        completado=True
+                    )
+                    contenidos_completados += 1
+                except ProgresoContenido.DoesNotExist:
+                    pass
+            
+            # El examen está disponible si completó todos los contenidos del tema
+            contenido_completado = (contenidos_completados == total_contenidos and total_contenidos > 0)
             
             # Obtener intentos del estudiante para este examen
-            intentos_realizados = 0
-            intentos_restantes = 1
+            intentos = IntentoExamen.objects.filter(
+                estudiante=request.user,
+                examen=examen
+            ).order_by('numero_intento')
+            
+            intentos_realizados = intentos.count()
+            
+            # Solo el primer intento puede entrar al ranking
+            puede_entrar_ranking = intentos_realizados < 1
+            intentos_restantes = 1 if puede_entrar_ranking else 0
+            
+            # Obtener la mejor nota si hay intentos
             mejor_nota = None
-            puede_entrar_ranking = True
+            aprobado = False
+            if intentos.exists():
+                mejor_intento = intentos.order_by('-nota').first()
+                mejor_nota = float(mejor_intento.nota)
+                aprobado = mejor_intento.aprobado
             
-            if not es_admin:
-                intentos = IntentoExamen.objects.filter(
-                    estudiante=request.user,
-                    examen=examen
-                ).order_by('-nota')
-                
-                intentos_realizados = intentos.count()
-                intentos_restantes = max(0, 1 - intentos_realizados)
-                
-                # El primer intento puede entrar al ranking
-                puede_entrar_ranking = intentos_realizados < 1
-                
-                # Obtener la mejor nota si hay intentos
-                if intentos.exists():
-                    mejor_nota = float(intentos.first().nota)
-            
-            examenes_list.append({
+            examenes_data.append({
                 'id': examen.id,
                 'titulo': examen.titulo,
                 'descripcion': examen.descripcion,
-                'materia_id': examen.tema.materia_id if examen.tema and examen.tema.materia else '',
-                'tema_id': examen.tema.id,
-                'tema_nombre': examen.tema.nombre,
-                'tema_requiere_suscripcion': examen.tema.requiere_suscripcion if examen.tema else False,
+                'tema_id': examen.tema.id if examen.tema else None,
+                'tema_nombre': examen.tema.nombre if examen.tema else 'Sin tema',
+                'materia_id': examen.tema.materia.id if examen.tema and examen.tema.materia else None,
+                'materia_nombre': examen.tema.materia.nombre if examen.tema and examen.tema.materia else 'Sin materia',
+                'materia_requiere_suscripcion': examen.tema.requiere_suscripcion if examen.tema else False,
                 'duracion_minutos': examen.duracion_minutos,
-                'bloqueado': False,  # Ya está filtrado por temas accesibles
-                'contenido_completado': contenido_completado,
-                'activo': examen.activo,
                 'total_preguntas': examen.preguntas.count(),
+                'activo': examen.activo,
+                'bloqueado': not contenido_completado,
+                'contenido_completado': contenido_completado,
                 'total_contenidos': total_contenidos,
                 'contenidos_completados': contenidos_completados,
                 'intentos_realizados': intentos_realizados,
-                'intentos_restantes': intentos_restantes,
                 'puede_entrar_ranking': puede_entrar_ranking,
+                'intentos_restantes': intentos_restantes,
                 'mejor_nota': mejor_nota,
+                'aprobado': aprobado,
                 'created_at': examen.created_at.strftime('%d/%m/%Y %H:%M'),
-                'updated_at': examen.updated_at.strftime('%d/%m/%Y %H:%M')
+                'updated_at': examen.updated_at.strftime('%d/%m/%Y %H:%M'),
             })
         
         return JsonResponse({
             'success': True,
-            'data': examenes_list,
+            'data': examenes_data,
             'tiene_premium': tiene_premium
         })
     except Exception as e:
+        import traceback
+        print(f"Error en obtener_examenes: {str(e)}")
+        print(traceback.format_exc())
         return JsonResponse({
             'success': False,
             'error': str(e)
-        })
+        }, status=500)
 
 
 @require_http_methods(["GET"])
