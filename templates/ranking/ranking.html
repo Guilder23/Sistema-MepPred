@@ -46,25 +46,49 @@
     </div>
     {% endif %}
 
-    <!-- Filtros de período y materia -->
+    <!-- Filtros de período, materia, tema y examen -->
     <div class="ranking-filters">
         <div class="filter-group">
             <label class="filter-label">PERÍODO:</label>
             <div class="filter-buttons">
-                <a href="?periodo=dia{% if materia_id %}&materia={{ materia_id }}{% endif %}" class="filter-btn {% if periodo == 'dia' %}active{% endif %}">Día</a>
-                <a href="?periodo=semana{% if materia_id %}&materia={{ materia_id }}{% endif %}" class="filter-btn {% if periodo == 'semana' %}active{% endif %}">Semana</a>
-                <a href="?periodo=mes{% if materia_id %}&materia={{ materia_id }}{% endif %}" class="filter-btn {% if periodo == 'mes' %}active{% endif %}">Mes</a>
-                <a href="?periodo=todo{% if materia_id %}&materia={{ materia_id }}{% endif %}" class="filter-btn {% if periodo == 'todo' %}active{% endif %}">Todo</a>
+                <a href="?periodo=dia{% if materia_id %}&materia={{ materia_id }}{% endif %}{% if tema_id %}&tema={{ tema_id }}{% endif %}{% if examen_id %}&examen={{ examen_id }}{% endif %}" class="filter-btn {% if periodo == 'dia' %}active{% endif %}">Día</a>
+                <a href="?periodo=semana{% if materia_id %}&materia={{ materia_id }}{% endif %}{% if tema_id %}&tema={{ tema_id }}{% endif %}{% if examen_id %}&examen={{ examen_id }}{% endif %}" class="filter-btn {% if periodo == 'semana' %}active{% endif %}">Semana</a>
+                <a href="?periodo=mes{% if materia_id %}&materia={{ materia_id }}{% endif %}{% if tema_id %}&tema={{ tema_id }}{% endif %}{% if examen_id %}&examen={{ examen_id }}{% endif %}" class="filter-btn {% if periodo == 'mes' %}active{% endif %}">Mes</a>
+                <a href="?periodo=todo{% if materia_id %}&materia={{ materia_id }}{% endif %}{% if tema_id %}&tema={{ tema_id }}{% endif %}{% if examen_id %}&examen={{ examen_id }}{% endif %}" class="filter-btn {% if periodo == 'todo' %}active{% endif %}">Todo</a>
             </div>
         </div>
         
         <div class="filter-group">
             <label class="filter-label">MATERIA:</label>
-            <select id="filtroMateria" class="filter-select" onchange="window.location.href='?periodo={{ periodo }}&materia=' + this.value">
+            <select id="filtroMateria" class="filter-select" onchange="cambiarMateria(this.value)">
                 <option value="">Todas</option>
                 {% for materia in materias %}
                 <option value="{{ materia.id }}" {% if materia_id == materia.id|stringformat:"s" %}selected{% endif %}>
                     {{ materia.nombre }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label class="filter-label">TEMA:</label>
+            <select id="filtroTema" class="filter-select" onchange="cambiarTema(this.value)" {% if not materia_id %}disabled{% endif %}>
+                <option value="">Todos</option>
+                {% for tema in temas %}
+                <option value="{{ tema.id }}" {% if tema_id == tema.id|stringformat:"s" %}selected{% endif %}>
+                    {{ tema.nombre }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label class="filter-label">EXAMEN:</label>
+            <select id="filtroExamen" class="filter-select" onchange="cambiarExamen(this.value)" {% if not tema_id %}disabled{% endif %}>
+                <option value="">Todos</option>
+                {% for examen in examenes %}
+                <option value="{{ examen.id }}" {% if examen_id == examen.id|stringformat:"s" %}selected{% endif %}>
+                    {{ examen.titulo }}
                 </option>
                 {% endfor %}
             </select>
