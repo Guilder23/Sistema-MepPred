@@ -54,6 +54,24 @@
   color: var(--color-primario);
   text-decoration: none;
   transition: all var(--transicion-normal);
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-sm);
+}
+
+.navbar__logo {
+  height: 40px;
+  width: auto;
+  transition: all 0.3s ease;
+}
+
+.navbar__brand:hover .navbar__logo {
+  transform: scale(1.05);
+}
+
+.navbar__brand-text {
+  font-weight: var(--fuente-peso-bold);
+  font-size: var(--fuente-tamano-xl);
 }
 
 .navbar__brand:hover {
