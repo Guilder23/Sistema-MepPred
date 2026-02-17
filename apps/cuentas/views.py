@@ -58,7 +58,7 @@ def _generar_email_recuperacion(user: User, url: str) -> str:
             </div>
             <div class="content">
                 <p>Hola <strong>{user.first_name or 'usuario'}</strong>,</p>
-                <p>Recibimos una solicitud para restablecer la contraseña de tu cuenta MeedPred.</p>
+                <p>Recibimos una solicitud para restablecer la contraseña de tu cuenta LevelMed.</p>
                 <div class="button-container">
                     <a href="{url}" class="button">Restablecer Contraseña</a>
                 </div>
@@ -70,7 +70,7 @@ def _generar_email_recuperacion(user: User, url: str) -> str:
                 <p class="warning">Si no realizaste esta solicitud, ignora este correo. Tu cuenta seguirá siendo segura.</p>
             </div>
             <div class="footer">
-                <p>© 2026 MeedPred. Todos los derechos reservados.</p>
+                <p>© 2026 LevelMed. Todos los derechos reservados.</p>
             </div>
         </div>
     </body>
@@ -113,7 +113,7 @@ def _generar_email_confirmacion(user: User) -> str:
                 <p class="warning">Por tu seguridad, no compartas tu contraseña con nadie.</p>
             </div>
             <div class="footer">
-                <p>© 2026 MeedPred. Todos los derechos reservados.</p>
+                <p>© 2026 LevelMed. Todos los derechos reservados.</p>
             </div>
         </div>
     </body>
@@ -149,7 +149,7 @@ def _enviar_correo_verificacion(request, user: User) -> None:
     <body>
         <div class="container">
             <div class="header">
-                <h1>Bienvenido a MeedPred</h1>
+                <h1>Bienvenido a LevelMed</h1>
             </div>
             <div class="content">
                 <p class="welcome-text">Hola <strong>{user.first_name or 'nuevo usuario'}</strong>,</p>
@@ -165,7 +165,7 @@ def _enviar_correo_verificacion(request, user: User) -> None:
                 <p class="welcome-text" style="color: #999999; font-size: 13px;">Si no creaste esta cuenta, ignora este correo. Tu cuenta no será activada sin verificación.</p>
             </div>
             <div class="footer">
-                <p>© 2026 MeedPred. Todos los derechos reservados.</p>
+                <p>© 2026 LevelMed. Todos los derechos reservados.</p>
                 <p style="margin-top: 10px; color: #AAAAAA; font-size: 11px;">Este es un correo automático, por favor no respondas a este mensaje.</p>
             </div>
         </div>
@@ -174,7 +174,7 @@ def _enviar_correo_verificacion(request, user: User) -> None:
     """
     
     send_mail(
-        subject='Verifica tu correo - MeedPred',
+        subject='Verifica tu correo - LevelMed',
         message=f'Verifica tu cuenta entrando a este enlace: {url}',
         from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', None),
         recipient_list=[user.email],
@@ -393,7 +393,7 @@ def solicitar_recuperacion(request):
         
         try:
             send_mail(
-                subject='Recuperación de contraseña - MeedPred',
+                subject='Recuperación de contraseña - LevelMed',
                 message=f'Para restablecer tu contraseña entra aquí: {url}\n\nEste enlace expira en 1 hora.',
                 from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', None),
                 recipient_list=[user.email],
@@ -446,7 +446,7 @@ def confirmar_recuperacion(request, uidb64: str, token: str):
         # Enviar correo de confirmación
         try:
             send_mail(
-                subject='Contraseña actualizada - MeedPred',
+                subject='Contraseña actualizada - LevelMed',
                 message='Tu contraseña ha sido actualizada correctamente.',
                 from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', None),
                 recipient_list=[user.email],
