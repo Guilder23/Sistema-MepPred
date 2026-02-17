@@ -24,6 +24,12 @@ document.addEventListener('DOMContentLoaded', function() {
         filtroMateria.addEventListener('change', filtrarTemas);
     }
 
+    // Event listener para filtro de tipo (gratis/premium)
+    const filtroTipo = document.getElementById('filtroTipo');
+    if (filtroTipo) {
+        filtroTipo.addEventListener('change', filtrarTemas);
+    }
+
     // Event listener para botón nuevo tema
     const btnNuevoTema = document.getElementById('btnNuevoTema');
     if (btnNuevoTema) {
@@ -95,7 +101,7 @@ function mostrarTemas(temas) {
     }
 
     tableBody.innerHTML = temas.map(tema => {
-        const fechaCreacion = new Date(tema.created_at).toLocaleDateString('es-ES');
+        const fechaCreacion = tema.fecha_creacion || tema.created_at || '-';
         const descripcion = tema.descripcion ? 
             (tema.descripcion.length > 50 ? tema.descripcion.substring(0, 50) + '...' : tema.descripcion) : 
             '-';
@@ -136,12 +142,22 @@ function filtrarTemas() {
         document.getElementById('searchInput').value.toLowerCase() : '';
     const materiaId = document.getElementById('filtroMateria') ? 
         document.getElementById('filtroMateria').value : '';
+    const filtroTipo = document.getElementById('filtroTipo') ?
+        document.getElementById('filtroTipo').value : '';
     
     let filtrados = temasData;
 
     // Filtrar por materia
     if (materiaId) {
         filtrados = filtrados.filter(tema => tema.materia_id == materiaId);
+    }
+
+    // Filtrar por tipo
+    if (filtroTipo) {
+        filtrados = filtrados.filter(tema => {
+            const esPremium = !!tema.requiere_suscripcion;
+            return filtroTipo === 'premium' ? esPremium : !esPremium;
+        });
     }
 
     // Filtrar por búsqueda
@@ -197,15 +213,18 @@ function abrirModalVer(id) {
             modal.classList.add('active');
             
             // Cargar detalles
-            document.getElementById('verNombreTema').textContent = escapeHtml(tema.nombre);
-            document.getElementById('verMateriaTema').textContent = escapeHtml(tema.materia_nombre || '-');
-            document.getElementById('verDescripcionTema').textContent = tema.descripcion || 'Sin descripción';
-            document.getElementById('verSuscripcionTema').textContent = tema.requiere_suscripcion ? 
-                'Premium (Requiere Suscripción)' : 'Gratis (Acceso Libre)';
-            document.getElementById('verFechaCreacionTema').textContent = 
-                new Date(tema.created_at).toLocaleDateString('es-ES');
-            document.getElementById('verFechaActualizacionTema').textContent = 
-                new Date(tema.updated_at).toLocaleDateString('es-ES');
+            const setText = (elId, value) => {
+                const el = document.getElementById(elId);
+                if (el) el.textContent = value ?? '-';
+            };
+
+            setText('verId', tema.id);
+            setText('verNombre', tema.nombre);
+            setText('verMateria', tema.materia_nombre || '-');
+            setText('verDescripcion', tema.descripcion || 'Sin descripción');
+            setText('verRequiereSuscripcion', tema.requiere_suscripcion ? 'Premium (Requiere Suscripción)' : 'Gratis (Acceso Libre)');
+            setText('verFechaCreacion', tema.fecha_creacion || tema.created_at || '-');
+            setText('verFechaActualizacion', tema.fecha_actualizacion || tema.updated_at || '-');
         }
     }
 }
