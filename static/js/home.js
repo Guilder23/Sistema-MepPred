@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Detectar errores de login en la URL y mostrar el modal con el error
     const urlParams = new URLSearchParams(window.location.search);
     const loginError = urlParams.get('login_error');
+    const showLogin = urlParams.get('show_login');
     
     if (loginError) {
         const openLoginBtn = document.getElementById('open-login-modal');
@@ -39,6 +40,15 @@ document.addEventListener('DOMContentLoaded', () => {
             // Limpiar la URL sin recargar
             window.history.replaceState({}, document.title, window.location.pathname);
         }
+    }
+
+    if (showLogin === 'true') {
+        const openLoginBtn = document.getElementById('open-login-modal');
+        if (openLoginBtn) {
+            openLoginBtn.click();
+        }
+        // Limpiar la URL sin recargar
+        window.history.replaceState({}, document.title, window.location.pathname);
     }
 
     // ===== ANIMACIONES CON INTERSECTION OBSERVER =====
