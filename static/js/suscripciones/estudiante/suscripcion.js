@@ -32,6 +32,7 @@ async function cargarEstadoSuscripcion() {
 
         cargarQR();
         configurarFormulario();
+        configurarModalQr();
 
     } catch (error) {
         console.error('Error al cargar estado:', error);
@@ -40,6 +41,7 @@ async function cargarEstadoSuscripcion() {
         formContainer.style.display = 'grid';
         cargarQR();
         configurarFormulario();
+        configurarModalQr();
     }
 }
 
@@ -55,7 +57,7 @@ function mostrarEstadoSuscripcion(data) {
 
     switch (data.estado) {
         case 'PENDIENTE':
-            estadoIcon.textContent = '⏳';
+            estadoIcon.innerHTML = '<i class="fas fa-hourglass-half"></i>';
             estadoTitulo.textContent = 'Suscripción Pendiente';
             estadoDescripcion.textContent = 'Tu solicitud está siendo revisada por el administrador. Recibirás una confirmación pronto.';
             estadoFecha.textContent = 'Enviado: ' + formatearFecha(data.fecha_solicitud);
@@ -63,12 +65,12 @@ function mostrarEstadoSuscripcion(data) {
 
         case 'APROBADO':
             if (data.activa) {
-                estadoIcon.textContent = '✓';
+                estadoIcon.innerHTML = '<i class="fas fa-check"></i>';
                 estadoTitulo.textContent = '¡Suscripción Activa!';
                 estadoDescripcion.textContent = `Tu suscripción está activa. Tienes acceso a todo el contenido premium por ${data.dias_restantes} días más.`;
                 estadoFecha.textContent = 'Vence: ' + formatearFecha(data.fecha_vencimiento);
             } else {
-                estadoIcon.textContent = '⏰';
+                estadoIcon.innerHTML = '<i class="fas fa-clock"></i>';
                 estadoTitulo.textContent = 'Suscripción Vencida';
                 estadoDescripcion.textContent = 'Tu suscripción ha expirado. Puedes renovarla para seguir disfrutando del contenido premium.';
                 estadoFecha.textContent = 'Expiró: ' + formatearFecha(data.fecha_vencimiento);
@@ -76,14 +78,14 @@ function mostrarEstadoSuscripcion(data) {
             break;
 
         case 'RECHAZADO':
-            estadoIcon.textContent = '✕';
+            estadoIcon.innerHTML = '<i class="fas fa-times"></i>';
             estadoTitulo.textContent = 'Suscripción Rechazada';
             estadoDescripcion.textContent = data.motivo_rechazo || 'Tu solicitud fue rechazada. Puedes intentar nuevamente.';
             estadoFecha.textContent = 'Fecha de solicitud: ' + formatearFecha(data.fecha_solicitud);
             break;
 
         case 'VENCIDO':
-            estadoIcon.textContent = '⏰';
+            estadoIcon.innerHTML = '<i class="fas fa-clock"></i>';
             estadoTitulo.textContent = 'Suscripción Vencida';
             estadoDescripcion.textContent = 'Tu suscripción ha expirado. Renuévala para seguir accediendo al contenido premium.';
             estadoFecha.textContent = 'Expiró: ' + formatearFecha(data.fecha_vencimiento);
@@ -99,6 +101,12 @@ async function cargarQR() {
         if (response.ok) {
             document.getElementById('qrImagen').src = data.qr_url;
             document.getElementById('qrDescripcion').textContent = data.descripcion || '';
+
+            const btnDescargarInline = document.getElementById('btnDescargarQrInline');
+            if (btnDescargarInline) {
+                btnDescargarInline.setAttribute('href', data.qr_url);
+                btnDescargarInline.setAttribute('download', 'qr-pago');
+            }
         } else {
             document.getElementById('qrContenedor').innerHTML = 
                 '<p style="color: #ef4444; text-align: center;">No hay código QR configurado. Contacta al administrador.</p>';
@@ -106,6 +114,87 @@ async function cargarQR() {
     } catch (error) {
         console.error('Error al cargar QR:', error);
     }
+}
+
+function configurarModalQr() {
+    const modal = document.getElementById('modalQr');
+    const btnCerrar = document.getElementById('btnCerrarModalQr');
+    const qrImagenModal = document.getElementById('qrImagenModal');
+    const qrDescripcion = document.getElementById('qrDescripcion');
+    const qrDescripcionModal = document.getElementById('qrDescripcionModal');
+    const btnDescargar = document.getElementById('btnDescargarQr');
+
+    if (!modal || !qrImagenModal) return;
+
+    if (window.__qrModalConfigured) return;
+    window.__qrModalConfigured = true;
+
+    function abrirModalDesdeImagen(qrImagen) {
+        const src = (qrImagen && qrImagen.getAttribute) ? (qrImagen.getAttribute('src') || '') : '';
+        if (!src) return;
+        qrImagenModal.setAttribute('src', src);
+        if (btnDescargar) {
+            btnDescargar.setAttribute('href', src);
+            btnDescargar.setAttribute('download', 'qr-pago');
+        }
+        if (qrDescripcionModal && qrDescripcion) {
+            qrDescripcionModal.textContent = qrDescripcion.textContent || '';
+        }
+        modal.style.display = 'flex';
+        modal.setAttribute('aria-hidden', 'false');
+    }
+
+    // Fallback explícito para onclick en HTML
+    window.abrirModalQr = function() {
+        const qrImagen = document.getElementById('qrImagen');
+        if (!qrImagen) return;
+        abrirModalDesdeImagen(qrImagen);
+    };
+
+    function cerrarModal() {
+        modal.style.display = 'none';
+        modal.setAttribute('aria-hidden', 'true');
+    }
+
+    // Delegación para soportar QR cargado dinámicamente
+    document.addEventListener('click', function(e) {
+        const target = e.target;
+        if (target && target.id === 'qrImagen') {
+            abrirModalDesdeImagen(target);
+        }
+    });
+
+    document.addEventListener('keydown', function(e) {
+        const target = e.target;
+        if (!target || target.id !== 'qrImagen') return;
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            abrirModalDesdeImagen(target);
+        }
+    });
+
+    // Hacer QR accesible cuando exista
+    const qrImagen = document.getElementById('qrImagen');
+    if (qrImagen) {
+        qrImagen.setAttribute('tabindex', '0');
+        qrImagen.setAttribute('role', 'button');
+    }
+
+    if (btnCerrar) {
+        btnCerrar.addEventListener('click', cerrarModal);
+    }
+
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            cerrarModal();
+        }
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.style.display !== 'none') {
+            cerrarModal();
+        }
+    });
 }
 
 function configurarFormulario() {
@@ -116,16 +205,147 @@ function configurarFormulario() {
     const archivoSeleccionadoDiv = document.getElementById('archivoSeleccionado');
     const archivoNombreSpan = archivoSeleccionadoDiv ? archivoSeleccionadoDiv.querySelector('.archivo-nombre') : null;
 
+    const comprobantePreview = document.getElementById('comprobantePreview');
+    const previewImagen = document.getElementById('previewImagen');
+    const previewPdf = document.getElementById('previewPdf');
+    const previewFallback = document.getElementById('previewFallback');
+    const btnCambiarComprobante = document.getElementById('btnCambiarComprobante');
+    const btnQuitarComprobante = document.getElementById('btnQuitarComprobante');
+    const comprobantePreviewEmpty = document.getElementById('comprobantePreviewEmpty');
+
+    let currentObjectUrl = null;
+
+    function limpiarPreview() {
+        if (currentObjectUrl) {
+            try {
+                URL.revokeObjectURL(currentObjectUrl);
+            } catch (e) {
+                // noop
+            }
+            currentObjectUrl = null;
+        }
+
+        if (previewImagen) {
+            previewImagen.src = '';
+            previewImagen.style.display = 'none';
+        }
+
+        if (previewPdf) {
+            previewPdf.innerHTML = '';
+            previewPdf.style.display = 'none';
+        }
+
+        if (previewFallback) {
+            previewFallback.innerHTML = '';
+            previewFallback.style.display = 'none';
+        }
+
+        if (comprobantePreview) {
+            comprobantePreview.style.display = 'none';
+        }
+
+        if (comprobantePreviewEmpty) {
+            comprobantePreviewEmpty.style.display = 'block';
+        }
+    }
+
+    function mostrarPreview(archivo) {
+        limpiarPreview();
+
+        if (!archivo) return;
+        if (!comprobantePreview) return;
+
+        comprobantePreview.style.display = 'block';
+        if (comprobantePreviewEmpty) {
+            comprobantePreviewEmpty.style.display = 'none';
+        }
+
+        const tipo = (archivo.type || '').toLowerCase();
+        const nombre = (archivo.name || '').toLowerCase();
+        const esPdf = tipo === 'application/pdf' || nombre.endsWith('.pdf');
+        const esImagen = tipo.startsWith('image/');
+
+        if (esImagen && previewImagen) {
+            currentObjectUrl = URL.createObjectURL(archivo);
+            previewImagen.src = currentObjectUrl;
+            previewImagen.style.display = 'block';
+            return;
+        }
+
+        if (esPdf && previewPdf) {
+            currentObjectUrl = URL.createObjectURL(archivo);
+            previewPdf.innerHTML = `<iframe src="${currentObjectUrl}" title="Comprobante PDF"></iframe>`;
+            previewPdf.style.display = 'block';
+            return;
+        }
+
+        if (previewFallback) {
+            previewFallback.textContent = 'No se puede previsualizar este tipo de archivo. Puedes enviarlo igualmente.';
+            previewFallback.style.display = 'block';
+        }
+    }
+
+    function resetearSeleccionArchivo() {
+        limpiarPreview();
+        if (archivoSeleccionadoDiv) {
+            archivoSeleccionadoDiv.style.display = 'none';
+        }
+        if (archivoNombreSpan) {
+            archivoNombreSpan.textContent = '';
+        }
+        if (comprobanteInput) {
+            comprobanteInput.value = '';
+        }
+    }
+
     // Mostrar nombre del archivo cuando se selecciona
     if (comprobanteInput) {
         comprobanteInput.addEventListener('change', function(e) {
             const archivo = e.target.files[0];
-            if (archivo && archivoSeleccionadoDiv) {
-                archivoNombreSpan.textContent = archivo.name;
-                archivoSeleccionadoDiv.style.display = 'flex';
-            } else if (archivoSeleccionadoDiv) {
-                archivoSeleccionadoDiv.style.display = 'none';
+
+            if (!archivo) {
+                resetearSeleccionArchivo();
+                return;
             }
+
+            // Validar tamaño (5MB)
+            if (archivo.size > 5 * 1024 * 1024) {
+                mostrarMensaje('El archivo no debe superar 5MB', 'error');
+                resetearSeleccionArchivo();
+                return;
+            }
+
+            // Validar tipo
+            const tipo = (archivo.type || '').toLowerCase();
+            const nombre = (archivo.name || '').toLowerCase();
+            const esPdf = tipo === 'application/pdf' || nombre.endsWith('.pdf');
+            const esImagen = tipo.startsWith('image/');
+            if (!esPdf && !esImagen) {
+                mostrarMensaje('Formato no permitido. Usa JPG, PNG o PDF.', 'error');
+                resetearSeleccionArchivo();
+                return;
+            }
+
+            if (archivoSeleccionadoDiv) {
+                if (archivoNombreSpan) {
+                    archivoNombreSpan.textContent = archivo.name;
+                }
+                archivoSeleccionadoDiv.style.display = 'flex';
+            }
+
+            mostrarPreview(archivo);
+        });
+    }
+
+    if (btnCambiarComprobante && comprobanteInput) {
+        btnCambiarComprobante.addEventListener('click', function() {
+            comprobanteInput.click();
+        });
+    }
+
+    if (btnQuitarComprobante) {
+        btnQuitarComprobante.addEventListener('click', function() {
+            resetearSeleccionArchivo();
         });
     }
 
@@ -308,35 +528,37 @@ style.textContent = `
         background: white;
         border-radius: 12px;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-        max-width: 500px;
+        max-width: 420px;
         width: 90%;
-        padding: 2rem;
+        padding: 1.25rem;
         text-align: center;
     }
 
     .modal-perfil-icon {
-        font-size: 3rem;
-        margin-bottom: 1rem;
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+        color: #f59e0b;
     }
 
     .modal-perfil h2 {
         color: #1f2937;
-        margin-bottom: 0.5rem;
-        font-size: 1.5rem;
+        margin-bottom: 0.4rem;
+        font-size: 1.2rem;
     }
 
     .modal-perfil p {
         color: #6b7280;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
         line-height: 1.5;
+        font-size: 0.92rem;
     }
 
     .campos-faltantes {
         background: #fef2f2;
         border: 1px solid #fecaca;
         border-radius: 8px;
-        padding: 1rem;
-        margin-bottom: 1.5rem;
+        padding: 0.85rem;
+        margin-bottom: 1rem;
         text-align: left;
     }
 
@@ -374,7 +596,7 @@ style.textContent = `
 
     .btn-perfil-modal {
         flex: 1;
-        padding: 0.75rem 1.5rem;
+        padding: 0.65rem 1rem;
         border: none;
         border-radius: 8px;
         font-weight: 600;
@@ -419,7 +641,7 @@ function mostrarModalPerfilIncompleto(camposFaltantes) {
 
     modalOverlay.innerHTML = `
         <div class="modal-perfil">
-            <div class="modal-perfil-icon">⚠️</div>
+            <div class="modal-perfil-icon"><i class="fas fa-exclamation-triangle"></i></div>
             <h2>Perfil Incompleto</h2>
             <p><strong>Primero debe llenar todos los datos en su perfil</strong> para poder enviar el comprobante de suscripción.</p>
             

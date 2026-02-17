@@ -53,35 +53,73 @@
 
             <!-- Pago -->
             <div class="payment-section">
-                <div class="qr-wrapper" id="qrContenedor">
-                    <div class="qr-box">
-                        <img id="qrImagen" src="" alt="QR">
-                        <p id="qrDescripcion" class="qr-text"></p>
-                    </div>
-                </div>
+                <div class="payment-grid">
+                    <div class="payment-left">
+                        <div class="qr-wrapper" id="qrContenedor">
+                            <div class="qr-box">
+                                <img id="qrImagen" src="" alt="QR" class="qr-clickable" title="Ampliar QR" onclick="window.abrirModalQr && window.abrirModalQr()">
+                                <p id="qrDescripcion" class="qr-text"></p>
+                                <div class="qr-actions">
+                                    <button type="button" class="qr-action-btn" onclick="window.abrirModalQr && window.abrirModalQr()" aria-label="Ampliar QR" title="Ampliar">
+                                        <i class="fas fa-search-plus"></i>
+                                        <span>Ampliar</span>
+                                    </button>
+                                    <a class="qr-action-btn" id="btnDescargarQrInline" href="#" target="_blank" rel="noopener noreferrer" aria-label="Descargar QR" title="Descargar">
+                                        <i class="fas fa-download"></i>
+                                        <span>Descargar</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
 
-                <form id="formSuscripcion" class="upload-form">
-                    <div class="upload-area">
-                        <label>
-                            <input type="file" id="comprobante" accept="image/*,.pdf" required hidden>
-                            <span class="upload-label">
-                                <span>Seleccionar comprobante</span>
-                            </span>
-                        </label>
-                        <span class="upload-hint">JPG, PNG, PDF (máx. 5MB)</span>
-                        <div id="archivoSeleccionado" class="archivo-seleccionado" style="display: none;">
-                            <span class="archivo-icono">✓</span>
-                            <span class="archivo-nombre"></span>
+                        <form id="formSuscripcion" class="upload-form">
+                            <div class="upload-area">
+                                <label>
+                                    <input type="file" id="comprobante" accept="image/*,.pdf" required hidden>
+                                    <span class="upload-label">
+                                        <span>Seleccionar comprobante</span>
+                                    </span>
+                                </label>
+                                <span class="upload-hint">JPG, PNG, PDF (máx. 5MB)</span>
+                                <div id="archivoSeleccionado" class="archivo-seleccionado" style="display: none;">
+                                    <span class="archivo-icono">✓</span>
+                                    <span class="archivo-nombre"></span>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-submit" id="btnEnviar">
+                                <span class="btn-texto">Enviar Solicitud</span>
+                                <span class="btn-spinner" style="display: none;">
+                                    <span class="spinner"></span>Enviando...
+                                </span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="payment-right">
+                        <div id="comprobantePreview" class="comprobante-preview" style="display: none;">
+                            <div class="preview-header">
+                                <div class="preview-titulo">Previsualización</div>
+                                <div class="preview-actions">
+                                    <button type="button" class="btn-preview" id="btnCambiarComprobante">Cambiar</button>
+                                    <button type="button" class="btn-preview btn-danger" id="btnQuitarComprobante" aria-label="Quitar comprobante" title="Quitar">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="preview-body">
+                                <img id="previewImagen" alt="Comprobante" style="display: none;" />
+                                <div id="previewPdf" class="preview-pdf" style="display: none;"></div>
+                                <div id="previewFallback" class="preview-fallback" style="display: none;"></div>
+                            </div>
+                        </div>
+
+                        <div id="comprobantePreviewEmpty" class="comprobante-empty">
+                            <div class="comprobante-empty-icon"><i class="fas fa-file-upload"></i></div>
+                            <div class="comprobante-empty-text">Selecciona un comprobante para ver la previsualización aquí.</div>
                         </div>
                     </div>
-
-                    <button type="submit" class="btn-submit" id="btnEnviar">
-                        <span class="btn-texto">Enviar Solicitud</span>
-                        <span class="btn-spinner" style="display: none;">
-                            <span class="spinner"></span>Enviando...
-                        </span>
-                    </button>
-                </form>
+                </div>
             </div>
         </div>
     </div>
@@ -89,6 +127,26 @@
     <div class="loader" id="mensajeCarga" style="display: none;">
         <div class="spinner-grande"></div>
         <p>Cargando...</p>
+    </div>
+</div>
+
+<div class="modal-overlay-qr" id="modalQr" style="display: none;" aria-hidden="true">
+    <div class="modal-qr" role="dialog" aria-modal="true" aria-label="QR ampliado">
+        <div class="modal-qr-header">
+            <div class="modal-qr-title">QR de Pago</div>
+            <div class="modal-qr-actions">
+                <a class="modal-qr-btn" id="btnDescargarQr" href="#" target="_blank" rel="noopener noreferrer" aria-label="Descargar QR" title="Descargar">
+                    <i class="fas fa-download"></i>
+                </a>
+                <button type="button" class="modal-qr-btn" id="btnCerrarModalQr" aria-label="Cerrar" title="Cerrar">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="modal-qr-body">
+            <img id="qrImagenModal" src="" alt="QR ampliado">
+            <div class="modal-qr-text" id="qrDescripcionModal"></div>
+        </div>
     </div>
 </div>
 {% endblock %}
