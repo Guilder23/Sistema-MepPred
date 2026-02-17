@@ -21,6 +21,12 @@ document.addEventListener('DOMContentLoaded', function() {
     if (btnNuevaMateria) {
         btnNuevaMateria.addEventListener('click', abrirModalCrear);
     }
+
+    // Event listener para filtro de orden
+    const filtroOrden = document.getElementById('filtroOrden');
+    if (filtroOrden) {
+        filtroOrden.addEventListener('change', filtrarMaterias);
+    }
 });
 
 // Cargar materias del servidor
@@ -55,8 +61,9 @@ function mostrarMaterias(materias) {
     }
 
     tableBody.innerHTML = materias.map(materia => {
-        const fechaCreacion = new Date(materia.created_at).toLocaleDateString('es-ES');
-        const descripcion = materia.descripcion ? materia.descripcion.substring(0, 50) + '...' : 'Sin descripción';
+        const fechaCreacion = materia.created_at || '-';
+        const fechaActualizacion = materia.updated_at || '-';
+        const descripcion = materia.descripcion ? (materia.descripcion.length > 50 ? materia.descripcion.substring(0, 50) + '...' : materia.descripcion) : 'Sin descripción';
         
         return `
             <tr>
@@ -64,6 +71,7 @@ function mostrarMaterias(materias) {
                 <td>${escapeHtml(materia.nombre)}</td>
                 <td title="${materia.descripcion || ''}">${escapeHtml(descripcion)}</td>
                 <td>${fechaCreacion}</td>
+                <td>${fechaActualizacion}</td>
                 <td>
                     <div class="acciones-cell">
                         <button class="btn-icon btn-ver" onclick="abrirModalVer(${materia.id})" title="Ver detalles">
@@ -84,17 +92,32 @@ function mostrarMaterias(materias) {
 
 // Filtrar materias por búsqueda
 function filtrarMaterias() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    
-    if (!searchTerm) {
-        mostrarMaterias(materiasData);
-        return;
+    const searchTermEl = document.getElementById('searchInput');
+    const searchTerm = searchTermEl ? searchTermEl.value.toLowerCase() : '';
+    const ordenEl = document.getElementById('filtroOrden');
+    const orden = ordenEl ? ordenEl.value : '';
+
+    let filtradas = materiasData;
+
+    if (searchTerm) {
+        filtradas = filtradas.filter(materia =>
+            materia.nombre.toLowerCase().includes(searchTerm) ||
+            (materia.descripcion && materia.descripcion.toLowerCase().includes(searchTerm))
+        );
     }
 
-    const filtradas = materiasData.filter(materia => 
-        materia.nombre.toLowerCase().includes(searchTerm) ||
-        (materia.descripcion && materia.descripcion.toLowerCase().includes(searchTerm))
-    );
+    if (orden) {
+        const copia = [...filtradas];
+        if (orden === 'az') {
+            filtradas = copia.sort((a, b) => (a.nombre || '').localeCompare((b.nombre || ''), 'es'));
+        } else if (orden === 'za') {
+            filtradas = copia.sort((a, b) => (b.nombre || '').localeCompare((a.nombre || ''), 'es'));
+        } else if (orden === 'recientes') {
+            filtradas = copia.sort((a, b) => (b.id || 0) - (a.id || 0));
+        } else if (orden === 'antiguas') {
+            filtradas = copia.sort((a, b) => (a.id || 0) - (b.id || 0));
+        }
+    }
 
     mostrarMaterias(filtradas);
 }
@@ -122,10 +145,15 @@ function abrirModalVer(id) {
             modal.classList.add('active');
             
             // Cargar detalles
-            document.getElementById('verNombre').textContent = escapeHtml(materia.nombre);
-            document.getElementById('verDescripcion').textContent = materia.descripcion || 'Sin descripción';
-            document.getElementById('verFechaCreacion').textContent = new Date(materia.created_at).toLocaleDateString('es-ES');
-            document.getElementById('verFechaActualizacion').textContent = new Date(materia.updated_at).toLocaleDateString('es-ES');
+            const setText = (elId, value) => {
+                const el = document.getElementById(elId);
+                if (el) el.textContent = value ?? '-';
+            };
+
+            setText('verNombre', materia.nombre);
+            setText('verDescripcion', materia.descripcion || 'Sin descripción');
+            setText('verFechaCreacion', materia.created_at || '-');
+            setText('verFechaActualizacion', materia.updated_at || '-');
         }
     }
 }

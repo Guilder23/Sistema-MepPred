@@ -26,8 +26,19 @@
     </div>
 
     <!-- Búsqueda -->
-    <div class="filtros-container mb-3">
-        <input type="text" class="form-control" id="searchInput" placeholder="Buscar por nombre o descripción...">
+    <div class="row mb-3">
+        <div class="col-md-8">
+            <input type="text" class="form-control" id="searchInput" placeholder="Buscar por nombre o descripción...">
+        </div>
+        <div class="col-md-4">
+            <select id="filtroOrden" class="form-control">
+                <option value="">Orden por defecto</option>
+                <option value="az">Nombre (A-Z)</option>
+                <option value="za">Nombre (Z-A)</option>
+                <option value="recientes">Más recientes</option>
+                <option value="antiguas">Más antiguas</option>
+            </select>
+        </div>
     </div>
 
     <!-- Tabla de materias -->
@@ -40,6 +51,7 @@
                         <th>NOMBRE</th>
                         <th>DESCRIPCIÓN</th>
                         <th>FECHA CREACIÓN</th>
+                        <th>FECHA ACTUALIZACIÓN</th>
                         <th>ACCIONES</th>
                     </tr>
                 </thead>
