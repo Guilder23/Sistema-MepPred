@@ -33,6 +33,7 @@ def listar_usuarios(request):
     
     busqueda = request.GET.get('busqueda', '')
     estado = request.GET.get('estado', '')
+    rol = request.GET.get('rol', '')
     
     usuarios = User.objects.all()
     
@@ -48,6 +49,9 @@ def listar_usuarios(request):
         usuarios = usuarios.filter(is_active=True)
     elif estado == 'inactivo':
         usuarios = usuarios.filter(is_active=False)
+
+    if rol:
+        usuarios = usuarios.filter(role=rol)
     
     usuarios_data = []
     for user in usuarios:

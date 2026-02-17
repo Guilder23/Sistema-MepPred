@@ -25,7 +25,7 @@
     </div>
 
     <!-- Búsqueda y filtros -->
-    <form method="get" class="filtros-container mb-3">
+    <div class="filtros-container mb-3">
         <input type="text" class="form-control" name="busqueda" id="buscar" placeholder="Buscar por nombre o email..." value="{{ busqueda }}">
         <select class="form-select" name="estado" id="filtroEstado">
             <option value="">Todos los estados</option>
@@ -34,14 +34,10 @@
         </select>
         <select class="form-select" name="rol" id="filtroRol">
             <option value="">Todos los roles</option>
-            <option value="administrador" {% if rol == 'administrador' %}selected{% endif %}>Administrador</option>
-            <option value="profesor" {% if rol == 'profesor' %}selected{% endif %}>Profesor</option>
-            <option value="estudiante" {% if rol == 'estudiante' %}selected{% endif %}>Estudiante</option>
+            <option value="admin" {% if rol == 'admin' %}selected{% endif %}>Administrador</option>
+            <option value="student" {% if rol == 'student' %}selected{% endif %}>Estudiante</option>
         </select>
-        <button type="submit" class="btn btn-secondary">
-            <i class="fas fa-search"></i> Buscar
-        </button>
-    </form>
+    </div>
 
     <!-- Tabla de usuarios -->
     <div class="card">
