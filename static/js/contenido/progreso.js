@@ -421,14 +421,37 @@ function mostrarModalContenido(contenido) {
     
     if (contenido.videos && contenido.videos.length > 0) {
         seccionVideos.style.display = 'block';
-        detalleVideos.innerHTML = contenido.videos.map(video => `
-            <div class="video-item">
-                <a href="${video.enlace}" target="_blank">
-                    <i class="fas fa-play-circle"></i>
-                    ${video.enlace}
-                </a>
-            </div>
-        `).join('');
+        detalleVideos.innerHTML = contenido.videos.map(video => {
+            const videoId = extraerVideoIdYoutube(video.enlace);
+            if (videoId) {
+                return `
+                    <div class="video-item-embed">
+                        <div class="video-container">
+                            <iframe 
+                                width="100%" 
+                                height="315" 
+                                src="${construirYoutubeEmbedSrc(videoId)}" 
+                                title="Video de YouTube" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                allowfullscreen
+                                loading="lazy"
+                                referrerpolicy="strict-origin-when-cross-origin">
+                            </iframe>
+                        </div>
+                    </div>
+                `;
+            } else {
+                return `
+                    <div class="video-item">
+                        <a href="${video.enlace}" target="_blank">
+                            <i class="fas fa-play-circle"></i>
+                            Ver en YouTube
+                        </a>
+                    </div>
+                `;
+            }
+        }).join('');
     } else {
         seccionVideos.style.display = 'none';
     }
@@ -441,6 +464,68 @@ function mostrarModalContenido(contenido) {
     
     // Mostrar modal
     document.getElementById('modalDetalleContenido').classList.add('active');
+}
+
+function construirYoutubeEmbedSrc(videoId) {
+    const safeVideoId = (typeof videoId === 'string') ? videoId.trim() : '';
+    if (!/^[a-zA-Z0-9_-]{11}$/.test(safeVideoId)) {
+        return 'about:blank';
+    }
+
+    const params = new URLSearchParams({
+        rel: '0',
+        modestbranding: '1',
+        showinfo: '0',
+        iv_load_policy: '3',
+        fs: '1',
+        cc_load_policy: '0',
+        enablejsapi: '1',
+        controls: '1',
+        autoplay: '0',
+        mute: '0',
+        loop: '0',
+        playlist: safeVideoId,
+        disablekb: '1',
+        playsinline: '1',
+        origin: window.location.origin,
+    });
+
+    return `https://www.youtube.com/embed/${safeVideoId}?${params.toString()}`;
+}
+
+function extraerVideoIdYoutube(url) {
+    if (!url) return null;
+    
+    try {
+        // Formato: https://www.youtube.com/watch?v=VIDEO_ID
+        if (url.includes('youtube.com/watch?v=')) {
+            const urlObj = new URL(url);
+            const v = urlObj.searchParams.get('v');
+            return (v && /^[a-zA-Z0-9_-]{11}$/.test(v)) ? v : null;
+        }
+
+        // Formato: https://www.youtube.com/shorts/VIDEO_ID
+        if (url.includes('youtube.com/shorts/')) {
+            const match = url.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/);
+            if (match && match[1]) return match[1];
+        }
+        
+        // Formato: https://youtu.be/VIDEO_ID
+        if (url.includes('youtu.be/')) {
+            const match = url.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
+            if (match && match[1]) return match[1];
+        }
+        
+        // Formato: https://www.youtube.com/embed/VIDEO_ID
+        if (url.includes('youtube.com/embed/')) {
+            const match = url.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/);
+            if (match && match[1]) return match[1];
+        }
+    } catch (e) {
+        console.error('Error extrayendo video ID:', e);
+    }
+    
+    return null;
 }
 
 function encontrarContenidoEnProgreso(contenidoId) {
