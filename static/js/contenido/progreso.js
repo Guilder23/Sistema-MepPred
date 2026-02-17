@@ -225,7 +225,7 @@ function crearTarjetaTema(tema) {
             <div class="tema-bloqueado" style="padding: 2rem; text-align: center;">
                 <i class="fas fa-lock" style="font-size: 2rem; color: var(--warning-color);"></i>
                 <p class="text-muted mt-2">${tema.mensaje_bloqueo || 'Este tema requiere suscripción premium'}</p>
-                <a href="/suscripciones/estudiante/" class="btn btn-warning mt-2">
+                <a href="/suscripciones/" class="btn btn-warning mt-2">
                     <i class="fas fa-crown"></i> Obtener Premium
                 </a>
             </div>

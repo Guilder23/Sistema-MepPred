@@ -2,6 +2,8 @@
 
 let estadoFiltro = '';
 let suscripciones = [];
+let suscripcionAprobarId = null;
+let botoneAprobarElement = null;
 
 document.addEventListener('DOMContentLoaded', function() {
     configurarFiltros();
@@ -202,6 +204,25 @@ function configurarModales() {
         document.getElementById('modalComprobante').style.display = 'none';
     });
     
+    // Modal confirmación aprobación
+    document.getElementById('cerrarModalConfirmarAprobacion').addEventListener('click', () => {
+        document.getElementById('modalConfirmarAprobacion').style.display = 'none';
+        suscripcionAprobarId = null;
+        botoneAprobarElement = null;
+    });
+    
+    document.getElementById('cancelarAprobacion').addEventListener('click', () => {
+        document.getElementById('modalConfirmarAprobacion').style.display = 'none';
+        suscripcionAprobarId = null;
+        botoneAprobarElement = null;
+    });
+    
+    document.getElementById('confirmarAprobacion').addEventListener('click', async function() {
+        if (suscripcionAprobarId && botoneAprobarElement) {
+            await procesarAprobacionSuscripcion(suscripcionAprobarId, botoneAprobarElement);
+        }
+    });
+    
     // Modal rechazo
     document.getElementById('cerrarModalRechazo').addEventListener('click', () => {
         document.getElementById('modalRechazo').style.display = 'none';
@@ -230,15 +251,21 @@ function configurarModales() {
     });
 }
 
-async function aprobarSuscripcion(id, btnElement) {
-    if (!confirm('¿Estás seguro de aprobar esta suscripción?')) {
-        return;
-    }
+function aprobarSuscripcion(id, btnElement) {
+    // Guardar los datos para usar en la confirmación
+    suscripcionAprobarId = id;
+    botoneAprobarElement = btnElement;
     
+    // Mostrar modal de confirmación
+    document.getElementById('modalConfirmarAprobacion').style.display = 'flex';
+}
+
+async function procesarAprobacionSuscripcion(id, btnElement) {
     // Deshabilitar botón
-    btnElement.disabled = true;
-    btnElement.querySelector('.btn-texto').style.display = 'none';
-    btnElement.querySelector('.btn-spinner').style.display = 'flex';
+    const btnConfirmar = document.getElementById('confirmarAprobacion');
+    btnConfirmar.disabled = true;
+    btnConfirmar.querySelector('.btn-texto').style.display = 'none';
+    btnConfirmar.querySelector('.btn-spinner').style.display = 'flex';
     
     try {
         const response = await fetch(`/suscripciones/api/admin/${id}/aprobar/`, {
@@ -252,6 +279,10 @@ async function aprobarSuscripcion(id, btnElement) {
         
         if (response.ok) {
             mostrarMensaje(data.mensaje, 'success');
+            // Cerrar modal
+            document.getElementById('modalConfirmarAprobacion').style.display = 'none';
+            suscripcionAprobarId = null;
+            botoneAprobarElement = null;
             // Esperar un momento antes de recargar para que se vea el mensaje
             setTimeout(() => {
                 cargarSuscripciones();
@@ -259,18 +290,19 @@ async function aprobarSuscripcion(id, btnElement) {
         } else {
             mostrarMensaje(data.error || 'Error al aprobar', 'error');
             // Restaurar botón
-            btnElement.disabled = false;
-            btnElement.querySelector('.btn-texto').style.display = 'inline';
-            btnElement.querySelector('.btn-spinner').style.display = 'none';
+            btnConfirmar.disabled = false;
+            btnConfirmar.querySelector('.btn-texto').style.display = 'inline';
+            btnConfirmar.querySelector('.btn-spinner').style.display = 'none';
         }
         
     } catch (error) {
         console.error('Error:', error);
         mostrarMensaje('Error al aprobar suscripción', 'error');
         // Restaurar botón
-        btnElement.disabled = false;
-        btnElement.querySelector('.btn-texto').style.display = 'inline';
-        btnElement.querySelector('.btn-spinner').style.display = 'none';
+        const btnConfirmar = document.getElementById('confirmarAprobacion');
+        btnConfirmar.disabled = false;
+        btnConfirmar.querySelector('.btn-texto').style.display = 'inline';
+        btnConfirmar.querySelector('.btn-spinner').style.display = 'none';
     }
 }
 
