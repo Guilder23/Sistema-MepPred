@@ -86,7 +86,7 @@ function mostrarFlashcards(flashcards) {
         
         tr.innerHTML = `
             <td>${flashcard.id}</td>
-            <td><span style="background: #667eea; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.85rem;">${flashcard.mazo_nombre}</span></td>
+            <td><span style="background: #c7d2fe; color: #3730a3; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.85rem; font-weight: 500;">${flashcard.mazo_nombre}</span></td>
             <td><strong>${preguntaCorta}</strong></td>
             <td>${respuestaCorta}</td>
             <td>${flashcard.categoria || '-'}</td>

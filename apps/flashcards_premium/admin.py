@@ -5,9 +5,9 @@ from .models import MazoPremium, FlashcardPremium
 
 @admin.register(MazoPremium)
 class MazoPremiumAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'materia', 'creado_por', 'created_at')
-    search_fields = ('nombre', 'descripcion', 'materia__nombre')
-    list_filter = ('created_at', 'materia')
+    list_display = ('nombre', 'tema', 'creado_por', 'created_at')
+    search_fields = ('nombre', 'descripcion', 'tema__nombre')
+    list_filter = ('created_at', 'tema')
 
 
 @admin.register(FlashcardPremium)

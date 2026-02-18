@@ -11,11 +11,15 @@ def ranking_estudiantes(request):
     """Vista pública del ranking de estudiantes"""
     periodo = request.GET.get('periodo', 'todo')  # dia, semana, mes, todo
     materia_id = request.GET.get('materia', None)  # Filtro por materia
+    tema_id = request.GET.get('tema', None)  # Filtro por tema
+    examen_id = request.GET.get('examen', None)  # Filtro por examen
     
-    # Obtener el ranking según el período y materia
+    # Obtener el ranking según los filtros
     ranking_data = EstadisticaEstudiante.obtener_ranking(
         periodo=periodo, 
         materia_id=materia_id,
+        tema_id=tema_id,
+        examen_id=examen_id,
         limite=100
     )
     
@@ -35,7 +39,7 @@ def ranking_estudiantes(request):
         # Filtrar por la materia seleccionada (si hay)
         filtro_materia = {}
         if materia_id:
-            filtro_materia['examen__materia_id'] = materia_id
+            filtro_materia['examen__tema__materia_id'] = materia_id
         
         # Verificar si tiene intentos aprobados que no cuentan para ranking en esta materia
         intentos_aprobados_fuera = IntentoExamen.objects.filter(
@@ -60,15 +64,32 @@ def ranking_estudiantes(request):
     }.get(periodo, 'Histórico')
     
     # Obtener lista de materias para el filtro
-    from apps.materias.models import Materia
+    from apps.materias_nueva.models import Materia
+    from apps.temas.models import Tema
+    from apps.evaluaciones.models import Examen
+    
     materias = Materia.objects.all().order_by('nombre')
+    
+    # Obtener temas si hay materia seleccionada
+    temas = []
+    if materia_id:
+        temas = Tema.objects.filter(materia_id=materia_id).order_by('nombre')
+    
+    # Obtener exámenes si hay tema seleccionado
+    examenes = []
+    if tema_id:
+        examenes = Examen.objects.filter(tema_id=tema_id, activo=True).order_by('id')
     
     context = {
         'ranking': ranking_list,
         'periodo': periodo,
         'periodo_texto': periodo_texto,
         'materias': materias,
+        'temas': temas,
+        'examenes': examenes,
         'materia_id': materia_id,
+        'tema_id': tema_id,
+        'examen_id': examen_id,
         'fuera_de_ranking': fuera_de_ranking,
     }
     
@@ -102,3 +123,37 @@ def mi_posicion(request):
     }
     
     return render(request, 'ranking/mi_posicion.html', context)
+
+
+def api_filtros_ranking(request):
+    """API: Obtener temas y exámenes para los filtros del ranking"""
+    try:
+        from django.http import JsonResponse
+        from apps.temas.models import Tema
+        from apps.evaluaciones.models import Examen
+        
+        materia_id = request.GET.get('materia_id', None)
+        tema_id = request.GET.get('tema_id', None)
+        
+        response_data = {
+            'success': True,
+            'temas': [],
+            'examenes': []
+        }
+        
+        # Obtener temas si hay materia seleccionada
+        if materia_id:
+            temas = Tema.objects.filter(materia_id=materia_id).values('id', 'nombre').order_by('nombre')
+            response_data['temas'] = list(temas)
+        
+        # Obtener exámenes si hay tema seleccionado
+        if tema_id:
+            examenes = Examen.objects.filter(tema_id=tema_id, activo=True).values('id', 'titulo').order_by('id')
+            response_data['examenes'] = list(examenes)
+        
+        return JsonResponse(response_data)
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)

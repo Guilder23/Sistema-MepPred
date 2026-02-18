@@ -17,7 +17,7 @@ urlpatterns = [
     path('api/examenes/crear/', views.crear_examen, name='crear_examen'),
     path('api/examenes/<int:examen_id>/actualizar/', views.actualizar_examen, name='actualizar_examen'),
     path('api/examenes/<int:examen_id>/eliminar/', views.eliminar_examen, name='eliminar_examen'),
-    path('api/materias/', views.obtener_materias_select, name='obtener_materias_select'),
+    path('api/temas/', views.obtener_temas_select, name='obtener_temas_select'),
     
     # API endpoints (Estudiantes)
     path('api/estudiante/examen/<int:examen_id>/', views.obtener_examen_estudiante, name='obtener_examen_estudiante'),

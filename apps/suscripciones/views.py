@@ -114,6 +114,25 @@ def obtener_estado_suscripcion(request):
 
 @login_required
 @require_http_methods(["GET"])
+def verificar_suscripcion_activa(request):
+    """API: Verificar si el usuario tiene suscripción activa - endpoint simple"""
+    try:
+        tiene_suscripcion = tiene_suscripcion_activa(request.user)
+        
+        return JsonResponse({
+            'tiene_suscripcion': tiene_suscripcion,
+            'es_admin': request.user.is_staff
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'error': str(e),
+            'tiene_suscripcion': False
+        }, status=500)
+
+
+@login_required
+@require_http_methods(["GET"])
 def obtener_qr_pago(request):
     """API: Obtener QR de pago del administrador"""
     try:

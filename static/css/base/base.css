@@ -306,43 +306,78 @@ a {
   display: flex;
   flex-direction: column;
   gap: var(--espacio-sm);
+  animation: slideInDown 0.3s ease-out;
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideOut {
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
 }
 
 .mensaje {
   padding: var(--espacio-md) var(--espacio-lg);
   border-radius: var(--radio-lg);
-  border: 1px solid var(--borde-normal);
+  border-left: 4px solid;
   background: var(--fondo-panel);
   color: var(--texto-principal);
   font-size: var(--fuente-tamano-sm);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--espacio-sm);
   transition: all var(--transicion-normal);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
 }
 
 .mensaje-error {
-  border-color: var(--color-error-borde);
-  background: var(--color-error-fondo);
-  color: var(--color-error);
+  border-left-color: #E74C3C;
+  background: #FCE4E1;
+  color: #C0392B;
 }
 
 .mensaje-success {
-  border-color: var(--color-exito-borde);
-  background: var(--color-exito-fondo);
-  color: var(--color-exito);
+  border-left-color: #27AE60;
+  background: #E8F8F5;
+  color: #1E5631;
 }
 
 .mensaje-info {
-  border-color: var(--color-informacion-borde);
-  background: var(--color-informacion-fondo);
-  color: var(--color-informacion);
+  border-left-color: #0052A3;
+  background: #EBF5FB;
+  color: #003D7A;
 }
 
 .mensaje-warning {
-  border-color: var(--color-advertencia-borde);
-  background: var(--color-advertencia-fondo);
-  color: var(--color-advertencia);
+  border-left-color: #F39C12;
+  background: #FEF5E7;
+  color: #B8860B;
+}
+
+.mensaje:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transform: translateX(2px);
+}
+
+@media (max-width: 768px) {
+  .mensaje {
+    padding: var(--espacio-md) var(--espacio-md);
+    font-size: var(--fuente-tamano-xs);
+    border-radius: var(--radio-md);
+  }
 }
 
 /* ===== SCROLLBAR PERSONALIZADA ===== */

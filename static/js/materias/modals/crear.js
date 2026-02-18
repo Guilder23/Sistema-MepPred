@@ -104,7 +104,6 @@ function limpiarErrorMensaje(elemento) {
 function guardarMateria() {
     const nombre = document.getElementById('crearNombre').value.trim();
     const descripcion = document.getElementById('crearDescripcion').value.trim();
-    const requiereSuscripcion = document.getElementById('crearRequiereSuscripcion').checked;
 
     // Validación
     if (!nombre) {
@@ -139,8 +138,7 @@ function guardarMateria() {
         },
         body: JSON.stringify({
             nombre: nombre,
-            descripcion: descripcion,
-            requiere_suscripcion: requiereSuscripcion
+            descripcion: descripcion
         })
     })
     .then(response => response.json())

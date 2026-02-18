@@ -195,22 +195,25 @@ body {
 
 /* Celda de acciones */
 .acciones-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     white-space: nowrap;
 }
 
 .acciones-cell .btn-accion {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.3rem;
-    padding: 0.5rem 1rem;
-    font-size: 0.85rem;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    font-size: 0.9rem;
     font-weight: 500;
     border: none;
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
-    margin-right: 0.5rem;
 }
 
 .acciones-cell .btn-accion:last-child {

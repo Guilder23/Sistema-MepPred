@@ -31,14 +31,17 @@ function cargarExamenes() {
             return response.json();
         })
         .then(data => {
+            console.log('Datos recibidos:', data);
             if (data.success) {
                 examenesData = data.data || [];
+                console.log('Exámenes cargados:', examenesData);
                 mostrarExamenes(examenesData);
             } else {
                 mostrarMensaje(data.error || 'Error desconocido', 'error');
             }
         })
         .catch(error => {
+            console.error('Error al cargar exámenes:', error);
             mostrarMensaje('No se pudieron cargar los exámenes', 'error');
         });
 }
@@ -50,7 +53,7 @@ function mostrarExamenes(examenes) {
     if (!tableBody) return;
 
     if (examenes.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="8" class="text-center">No hay exámenes registrados</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="9" class="text-center">No hay exámenes registrados</td></tr>';
         return;
     }
 
@@ -67,7 +70,8 @@ function mostrarExamenes(examenes) {
             <tr>
                 <td>${examen.id}</td>
                 <td>${escapeHtml(examen.titulo)}</td>
-                <td>${escapeHtml(examen.materia_nombre)}</td>
+                <td>${escapeHtml(examen.materia_nombre || 'Sin materia')}</td>
+                <td>${escapeHtml(examen.tema_nombre)}</td>
                 <td>${tipoBadge}</td>
                 <td>${examen.duracion_minutos} min</td>
                 <td>${examen.total_preguntas}</td>
@@ -104,7 +108,8 @@ function filtrarExamenes() {
 
     const filtrados = examenesData.filter(examen => 
         examen.titulo.toLowerCase().includes(searchTerm) ||
-        examen.materia_nombre.toLowerCase().includes(searchTerm) ||
+        examen.tema_nombre.toLowerCase().includes(searchTerm) ||
+        (examen.materia_nombre && examen.materia_nombre.toLowerCase().includes(searchTerm)) ||
         (examen.descripcion && examen.descripcion.toLowerCase().includes(searchTerm))
     );
 
@@ -119,7 +124,7 @@ function abrirModalCrear() {
         // Limpiar formulario
         const form = document.getElementById('formCrearExamen');
         if (form) form.reset();
-        // Cargar materias en el select
+        // Cargar materias
         cargarMateriasSelect('crearMateria');
     }
 }
@@ -135,7 +140,8 @@ function abrirModalVer(id) {
             
             // Cargar detalles
             document.getElementById('verTitulo').textContent = escapeHtml(examen.titulo);
-            document.getElementById('verMateria').textContent = escapeHtml(examen.materia_nombre);
+            document.getElementById('verMateria').textContent = escapeHtml(examen.tema_nombre || 'N/A');
+            document.getElementById('verTema').textContent = escapeHtml(examen.tema_nombre);
             document.getElementById('verDescripcion').textContent = examen.descripcion || 'Sin descripción';
             document.getElementById('verDuracion').textContent = `${examen.duracion_minutos} minutos`;
             document.getElementById('verTotalPreguntas').textContent = examen.total_preguntas;
@@ -150,21 +156,38 @@ function abrirModalVer(id) {
 // Abrir modal para editar
 function abrirModalEditar(id) {
     const examen = examenesData.find(e => e.id === id);
+    console.log('Editar examen:', examen);
+    
     if (examen) {
         const modal = document.getElementById('modalEditarOverlay');
         if (modal) {
             window.examenEditar = examen;
             modal.classList.add('active');
             
-            // Cargar materias
-            cargarMateriasSelect('editarMateria', examen.materia_id);
-            
-            // Llenar formulario
-            document.getElementById('editarId').value = examen.id;
-            document.getElementById('editarTitulo').value = examen.titulo;
+            // Llenar campos básicos primero
+            document.getElementById('editarId').value = examen.id || '';
+            document.getElementById('editarTitulo').value = examen.titulo || '';
             document.getElementById('editarDescripcion').value = examen.descripcion || '';
-            document.getElementById('editarDuracion').value = examen.duracion_minutos;
-            document.getElementById('editarActivo').checked = examen.activo;
+            document.getElementById('editarDuracion').value = examen.duracion_minutos || 60;
+            document.getElementById('editarActivo').checked = examen.activo !== false;
+            
+            // Cargar materias y temas
+            cargarMateriasSelect('editarMateria', () => {
+                // Seleccionar la materia del examen
+                if (examen.materia_id) {
+                    document.getElementById('editarMateria').value = examen.materia_id;
+                    // Después cargar temas de esa materia
+                    setTimeout(() => {
+                        cargarTemasEditarExamen();
+                        // Seleccionar el tema del examen
+                        setTimeout(() => {
+                            if (examen.tema_id) {
+                                document.getElementById('editarTema').value = examen.tema_id;
+                            }
+                        }, 150);
+                    }, 100);
+                }
+            });
         }
     }
 }
@@ -205,19 +228,98 @@ function abrirModalEliminar(id) {
 }
 
 // Cargar materias en select
-function cargarMateriasSelect(selectId, selectedId = null) {
-    fetch('/examenes/api/materias/')
+function cargarMateriasSelect(selectId, callback) {
+    fetch('/temas/api/materias/')
         .then(response => response.json())
         .then(data => {
             if (data.success) {
                 const select = document.getElementById(selectId);
                 if (select) {
                     select.innerHTML = '<option value="">Seleccione una materia</option>';
-                    data.data.forEach(materia => {
+                    (data.materias || []).forEach(materia => {
                         const option = document.createElement('option');
                         option.value = materia.id;
                         option.textContent = materia.nombre;
-                        if (selectedId && materia.id === selectedId) {
+                        select.appendChild(option);
+                    });
+                }
+            }
+            if (callback) callback();
+        })
+        .catch(error => {
+            mostrarMensaje('No se pudieron cargar las materias', 'error');
+        });
+}
+
+// Cargar temas filtrados por materia para crear
+function cargarTemasCrearExamen() {
+    const materiaSelect = document.getElementById('crearMateria');
+    const temaSelect = document.getElementById('crearTema');
+    
+    if (!materiaSelect || !temaSelect || !materiaSelect.value) {
+        temaSelect.innerHTML = '<option value="">Seleccione un tema</option>';
+        return;
+    }
+    
+    fetch(`/temas/api/temas/por-materia/${materiaSelect.value}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                temaSelect.innerHTML = '<option value="">Seleccione un tema</option>';
+                data.temas.forEach(tema => {
+                    const option = document.createElement('option');
+                    option.value = tema.id;
+                    option.textContent = tema.nombre;
+                    temaSelect.appendChild(option);
+                });
+            }
+        })
+        .catch(error => console.error('Error al cargar temas:', error));
+}
+
+// Cargar temas filtrados por materia para editar
+function cargarTemasEditarExamen() {
+    const materiaSelect = document.getElementById('editarMateria');
+    const temaSelect = document.getElementById('editarTema');
+    
+    if (!materiaSelect || !temaSelect || !materiaSelect.value) {
+        temaSelect.innerHTML = '<option value="">Seleccione un tema</option>';
+        return;
+    }
+    
+    const temaActual = temaSelect.value;
+    
+    fetch(`/temas/api/temas/por-materia/${materiaSelect.value}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                temaSelect.innerHTML = '<option value="">Seleccione un tema</option>';
+                data.temas.forEach(tema => {
+                    const option = document.createElement('option');
+                    option.value = tema.id;
+                    option.textContent = tema.nombre;
+                    temaSelect.appendChild(option);
+                });
+                temaSelect.value = temaActual;
+            }
+        })
+        .catch(error => console.error('Error al cargar temas:', error));
+}
+
+// Cargar temas en select (usado anterior)
+function cargarTemasSelect(selectId, selectedId = null) {
+    fetch('/temas/api/temas/')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const select = document.getElementById(selectId);
+                if (select) {
+                    select.innerHTML = '<option value="">Seleccione un tema</option>';
+                    (data.temas || []).forEach(tema => {
+                        const option = document.createElement('option');
+                        option.value = tema.id;
+                        option.textContent = tema.nombre;
+                        if (selectedId && tema.id === selectedId) {
                             option.selected = true;
                         }
                         select.appendChild(option);
@@ -226,7 +328,7 @@ function cargarMateriasSelect(selectId, selectedId = null) {
             }
         })
         .catch(error => {
-            mostrarMensaje('No se pudieron cargar las materias', 'error');
+            mostrarMensaje('No se pudieron cargar los temas', 'error');
         });
 }
 

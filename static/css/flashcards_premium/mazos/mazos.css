@@ -198,37 +198,33 @@ body {
     white-space: nowrap;
 }
 
-.acciones-cell .btn-accion {
-    display: inline-flex;
+.acciones-cell {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.btn-accion {
+    padding: 0.5rem;
+    width: 36px;
+    height: 36px;
+    display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.3rem;
-    padding: 0.5rem 1rem;
-    font-size: 0.85rem;
-    font-weight: 500;
-    border: none;
     border-radius: 6px;
+    border: none;
     cursor: pointer;
     transition: all 0.2s ease;
-    margin-right: 0.5rem;
+    color: white;
+    font-size: 1rem;
 }
 
-.acciones-cell .btn-accion:last-child {
-    margin-right: 0;
-}
-
-.acciones-cell .btn-accion:hover {
+.btn-accion:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-
-.acciones-cell .btn-accion:active {
-    transform: translateY(0);
 }
 
 .btn-ver {
     background-color: #3498db;
-    color: white;
 }
 
 .btn-ver:hover {
@@ -237,7 +233,6 @@ body {
 
 .btn-editar {
     background-color: #f39c12;
-    color: white;
 }
 
 .btn-editar:hover {
@@ -246,7 +241,6 @@ body {
 
 .btn-eliminar {
     background-color: #e74c3c;
-    color: white;
 }
 
 .btn-eliminar:hover {

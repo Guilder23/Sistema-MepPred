@@ -23,8 +23,8 @@ class PreguntaInline(admin.StackedInline):
 
 @admin.register(Examen)
 class ExamenAdmin(admin.ModelAdmin):
-    list_display = ('titulo', 'materia', 'duracion_minutos', 'es_premium', 'activo', 'created_at')
-    list_filter = ('materia', 'es_premium', 'activo', 'created_at')
+    list_display = ('titulo', 'tema', 'duracion_minutos', 'activo', 'created_at')
+    list_filter = ('tema', 'es_premium', 'activo', 'created_at')
     search_fields = ('titulo', 'descripcion')
     inlines = [PreguntaInline]
     readonly_fields = ('created_at', 'updated_at')

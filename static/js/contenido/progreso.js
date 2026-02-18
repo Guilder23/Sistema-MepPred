@@ -22,15 +22,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function cargarProgreso() {
     try {
-        const response = await fetch('/contenido/api/progreso/');
+        // Cargar progreso del usuario
+        const responseProgreso = await fetch('/contenido/api/progreso/');
         
-        if (!response.ok) {
+        if (!responseProgreso.ok) {
             throw new Error('Error al cargar progreso');
         }
         
-        datosProgreso = await response.json();
+        datosProgreso = await responseProgreso.json();
         
         mostrarEstadisticas(datosProgreso.estadisticas);
+        
+        // Mostrar materias con datos de progreso
         mostrarMaterias(datosProgreso.materias);
         
         document.getElementById('loadingMessage').style.display = 'none';
@@ -42,21 +45,6 @@ async function cargarProgreso() {
             <p class="text-muted mt-3">Error al cargar el progreso</p>
         `;
     }
-}
-
-// ============================================
-// MOSTRAR ESTADÍSTICAS
-// ============================================
-
-function mostrarEstadisticas(stats) {
-    document.getElementById('totalContenidos').textContent = stats.total_contenidos;
-    document.getElementById('completados').textContent = stats.completados;
-    document.getElementById('pendientes').textContent = stats.pendientes;
-    document.getElementById('porcentajeGeneral').textContent = stats.porcentaje_general + '%';
-    
-    // Actualizar barra de progreso
-    document.getElementById('progresoTexto').textContent = stats.porcentaje_general + '%';
-    document.getElementById('progresoFill').style.width = stats.porcentaje_general + '%';
 }
 
 // ============================================
@@ -82,39 +70,276 @@ function mostrarMaterias(materias) {
 function crearTarjetaMateria(materia) {
     const card = document.createElement('div');
     card.className = 'materia-card';
-    card.dataset.materia = materia.materia.toLowerCase();
+    card.dataset.materiaId = materia.id;
+    card.dataset.materiaNombre = materia.nombre.toLowerCase();
+    
+    const porcentaje = materia.porcentaje || 0;
+    const temasCompletados = materia.temas_completados || 0;
+    const totalTemas = materia.total_temas || 0;
     
     const header = document.createElement('div');
     header.className = 'materia-header';
-    header.onclick = () => toggleMateria(card);
+    header.onclick = () => toggleMateriaCard(card, materia.id);
     header.innerHTML = `
-        <h3>
-            <i class="fas fa-book"></i>
-            ${materia.materia}
-        </h3>
+        <div class="materia-header-content">
+            <h3>
+                <i class="fas fa-book"></i>
+                ${materia.nombre}
+            </h3>
+            <div class="materia-progreso-info">
+                <span class="materia-porcentaje">${porcentaje}%</span>
+                <span class="materia-detalle">${temasCompletados}/${totalTemas} temas completados</span>
+            </div>
+        </div>
         <div class="materia-stats">
-            <span class="materia-porcentaje">${materia.porcentaje}%</span>
-            <span class="materia-detalle">${materia.completados}/${materia.total} completados</span>
+            <span class="materia-loading" style="display: none;">
+                <i class="fas fa-spinner fa-spin"></i>
+            </span>
+            <i class="fas fa-chevron-down chevron-icon"></i>
+        </div>
+    `;
+    
+    // Barra de progreso de la materia
+    const progressBar = document.createElement('div');
+    progressBar.className = 'materia-progreso';
+    progressBar.innerHTML = `<div class="materia-progreso-fill" style="width: ${porcentaje}%"></div>`;
+    
+    const body = document.createElement('div');
+    body.className = 'materia-body';
+    body.innerHTML = '<div class="temas-loading" style="padding: 2rem; text-align: center; color: var(--text-secondary);">Haz clic para cargar los temas</div>';
+    
+    card.appendChild(header);
+    card.appendChild(progressBar);
+    card.appendChild(body);
+    
+    return card;
+}
+
+async function toggleMateriaCard(card, materiaId) {
+    const body = card.querySelector('.materia-body');
+    const chevron = card.querySelector('.chevron-icon');
+    const loading = card.querySelector('.materia-loading');
+    
+    // Si ya está activo, cerrar
+    if (body.classList.contains('active')) {
+        body.classList.remove('active');
+        chevron.classList.remove('rotated');
+        return;
+    }
+    
+    // Cerrar todas las demás materias (comportamiento de acordeón)
+    document.querySelectorAll('.materia-card').forEach(otherCard => {
+        if (otherCard !== card) {
+            const otherBody = otherCard.querySelector('.materia-body');
+            const otherChevron = otherCard.querySelector('.chevron-icon');
+            if (otherBody) otherBody.classList.remove('active');
+            if (otherChevron) otherChevron.classList.remove('rotated');
+        }
+    });
+    
+    // Activar esta materia
+    body.classList.add('active');
+    chevron.classList.add('rotated');
+    
+    // Si ya se cargaron los temas, no volver a cargar
+    if (card.dataset.temasLoaded === 'true') {
+        return;
+    }
+    
+    // Mostrar loading
+    loading.style.display = 'inline-block';
+    
+    try {
+        const response = await fetch(`/temas/api/temas/por-materia/${materiaId}/`);
+        if (!response.ok) throw new Error('Error al cargar temas');
+        
+        const data = await response.json();
+        mostrarTemasEnMateria(body, data.temas, materiaId);
+        card.dataset.temasLoaded = 'true';
+    } catch (error) {
+        console.error('Error al cargar temas:', error);
+        body.innerHTML = '<p class="text-muted text-center" style="padding: 2rem;">Error al cargar los temas</p>';
+    } finally {
+        loading.style.display = 'none';
+    }
+}
+
+function mostrarTemasEnMateria(bodyElement, temas, materiaId) {
+    if (!temas || temas.length === 0) {
+        bodyElement.innerHTML = '<p class="text-muted text-center" style="padding: 2rem;">No hay temas disponibles</p>';
+        return;
+    }
+    
+    const temasContainer = document.createElement('div');
+    temasContainer.className = 'temas-container';
+    
+    temas.forEach(tema => {
+        const temaCard = crearTarjetaTema(tema);
+        temasContainer.appendChild(temaCard);
+    });
+    
+    bodyElement.innerHTML = '';
+    bodyElement.appendChild(temasContainer);
+}
+
+function crearTarjetaTema(tema) {
+    const card = document.createElement('div');
+    card.className = 'tema-card';
+    card.dataset.temaId = tema.id;
+    card.dataset.temaNombre = tema.nombre.toLowerCase();
+    
+    // Los contenidos ahora vienen directamente del API
+    const contenidos = tema.contenidos || [];
+    const totalContenidos = tema.total_contenidos || 0;
+    const completados = tema.contenidos_completados || 0;
+    const porcentaje = tema.porcentaje || 0;
+    const temaCompletado = tema.completado || false;
+    
+    // Si el tema está completado, agregar clase especial
+    if (temaCompletado) {
+        card.classList.add('tema-completado');
+    }
+    
+    const header = document.createElement('div');
+    header.className = 'tema-header';
+    header.onclick = () => toggleTemaCard(card);
+    header.innerHTML = `
+        <h4>
+            ${temaCompletado ? '<i class="fas fa-check-circle" style="color: var(--success-color); margin-right: 0.5rem;" title="Tema Completado"></i>' : '<i class="fas fa-bookmark"></i>'}
+            ${tema.nombre}
+            ${tema.requiere_suscripcion ? '<i class="fas fa-crown" style="color: var(--warning-color); margin-left: 0.5rem;" title="Premium"></i>' : ''}
+        </h4>
+        <div class="tema-stats">
+            <span class="tema-porcentaje" style="color: ${temaCompletado ? 'var(--success-color)' : 'inherit'}">${porcentaje}%</span>
+            <span class="tema-detalle">${completados}/${totalContenidos} completados</span>
             <i class="fas fa-chevron-down chevron-icon"></i>
         </div>
     `;
     
     const body = document.createElement('div');
-    body.className = 'materia-body';
-    body.innerHTML = `
-        <div class="materia-progreso">
-            <div class="materia-progreso-fill" style="width: ${materia.porcentaje}%"></div>
-        </div>
-        <div class="contenidos-list" id="contenidos-${materia.materia.replace(/\s+/g, '-')}">
-            ${materia.contenidos.map(contenido => crearItemContenido(contenido)).join('')}
-        </div>
-    `;
+    body.className = 'tema-body';
+    
+    // Verificar si puede ver el tema
+    if (tema.puede_ver_tema === false) {
+        body.innerHTML = `
+            <div class="tema-bloqueado" style="padding: 2rem; text-align: center;">
+                <i class="fas fa-lock" style="font-size: 2rem; color: var(--warning-color);"></i>
+                <p class="text-muted mt-2">${tema.mensaje_bloqueo || 'Este tema requiere suscripción premium'}</p>
+                <a href="/suscripciones/" class="btn btn-warning mt-2">
+                    <i class="fas fa-crown"></i> Obtener Premium
+                </a>
+            </div>
+        `;
+    } else {
+        // Barra de progreso del tema
+        body.innerHTML = `
+            <div class="tema-progreso">
+                <div class="tema-progreso-fill" style="width: ${porcentaje}%"></div>
+            </div>
+            <div class="contenidos-list">
+                ${contenidos && contenidos.length > 0 
+                    ? contenidos.map(contenido => crearItemContenido(contenido)).join('')
+                    : '<p class="text-muted text-center" style="padding: 1rem;">No hay contenidos disponibles en este tema</p>'
+                }
+            </div>
+        `;
+        
+        // Agregar información del examen si existe
+        if (tema.examen) {
+            const examenDiv = document.createElement('div');
+            examenDiv.className = 'tema-examen';
+            examenDiv.innerHTML = crearInfoExamen(tema.examen);
+            body.appendChild(examenDiv);
+        }
+    }
     
     card.appendChild(header);
     card.appendChild(body);
     
     return card;
 }
+
+function toggleTemaCard(card) {
+    const body = card.querySelector('.tema-body');
+    const chevron = card.querySelector('.chevron-icon');
+    
+    body.classList.toggle('active');
+    chevron.classList.toggle('rotated');
+}
+
+function crearInfoExamen(examen) {
+    const disponible = examen.disponible;
+    const aprobado = examen.aprobado;
+    const mejorNota = examen.mejor_nota;
+    const totalIntentos = examen.total_intentos || 0;
+    
+    let estadoHTML = '';
+    let botonHTML = '';
+    
+    if (aprobado) {
+        estadoHTML = `
+            <div class="examen-aprobado">
+                <i class="fas fa-check-circle"></i>
+                <span>Examen Aprobado</span>
+                <span class="nota">Nota: ${mejorNota}/20</span>
+            </div>
+        `;
+        botonHTML = `
+            <a href="/examenes/ver-resultados/${examen.id}/" class="btn btn-secondary btn-sm">
+                <i class="fas fa-chart-line"></i> Ver Resultados
+            </a>
+        `;
+    } else if (disponible) {
+        estadoHTML = `
+            <div class="examen-disponible">
+                <i class="fas fa-clipboard-check"></i>
+                <span>Examen Disponible</span>
+                ${mejorNota ? `<span class="nota">Mejor nota: ${mejorNota}/20</span>` : ''}
+                ${totalIntentos > 0 ? `<span class="intentos">${totalIntentos} intento(s)</span>` : ''}
+            </div>
+        `;
+        botonHTML = `
+            <a href="/examenes/resolver/${examen.id}/" class="btn btn-primary btn-sm">
+                <i class="fas fa-pen"></i> ${totalIntentos > 0 ? 'Reintentar' : 'Realizar'} Examen
+            </a>
+        `;
+    } else {
+        estadoHTML = `
+            <div class="examen-bloqueado">
+                <i class="fas fa-lock"></i>
+                <span>Examen Bloqueado</span>
+                <small>Completa todos los contenidos del tema</small>
+            </div>
+        `;
+    }
+    
+    return `
+        <div class="examen-info">
+            <h5><i class="fas fa-graduation-cap"></i> ${examen.titulo}</h5>
+            ${estadoHTML}
+            ${botonHTML}
+        </div>
+    `;
+}
+
+// ============================================
+// MOSTRAR ESTADÍSTICAS
+// ============================================
+
+function mostrarEstadisticas(stats) {
+    document.getElementById('totalContenidos').textContent = stats.total_contenidos;
+    document.getElementById('completados').textContent = stats.completados;
+    document.getElementById('pendientes').textContent = stats.pendientes;
+    document.getElementById('porcentajeGeneral').textContent = stats.porcentaje_general + '%';
+    
+    // Actualizar barra de progreso
+    document.getElementById('progresoTexto').textContent = stats.porcentaje_general + '%';
+    document.getElementById('progresoFill').style.width = stats.porcentaje_general + '%';
+}
+
+// ============================================
+// MOSTRAR TEMAS
+// ============================================
 
 function crearItemContenido(contenido) {
     const estado = contenido.completado ? 'completado' : (contenido.esta_disponible ? 'pendiente' : 'bloqueado');
@@ -147,14 +372,6 @@ function crearItemContenido(contenido) {
             </div>
         </div>
     `;
-}
-
-function toggleMateria(card) {
-    const body = card.querySelector('.materia-body');
-    const chevron = card.querySelector('.chevron-icon');
-    
-    body.classList.toggle('active');
-    chevron.classList.toggle('rotated');
 }
 
 // ============================================
@@ -204,14 +421,37 @@ function mostrarModalContenido(contenido) {
     
     if (contenido.videos && contenido.videos.length > 0) {
         seccionVideos.style.display = 'block';
-        detalleVideos.innerHTML = contenido.videos.map(video => `
-            <div class="video-item">
-                <a href="${video.enlace}" target="_blank">
-                    <i class="fas fa-play-circle"></i>
-                    ${video.enlace}
-                </a>
-            </div>
-        `).join('');
+        detalleVideos.innerHTML = contenido.videos.map(video => {
+            const videoId = extraerVideoIdYoutube(video.enlace);
+            if (videoId) {
+                return `
+                    <div class="video-item-embed">
+                        <div class="video-container">
+                            <iframe 
+                                width="100%" 
+                                height="315" 
+                                src="${construirYoutubeEmbedSrc(videoId)}" 
+                                title="Video de YouTube" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                allowfullscreen
+                                loading="lazy"
+                                referrerpolicy="strict-origin-when-cross-origin">
+                            </iframe>
+                        </div>
+                    </div>
+                `;
+            } else {
+                return `
+                    <div class="video-item">
+                        <a href="${video.enlace}" target="_blank">
+                            <i class="fas fa-play-circle"></i>
+                            Ver en YouTube
+                        </a>
+                    </div>
+                `;
+            }
+        }).join('');
     } else {
         seccionVideos.style.display = 'none';
     }
@@ -226,12 +466,76 @@ function mostrarModalContenido(contenido) {
     document.getElementById('modalDetalleContenido').classList.add('active');
 }
 
+function construirYoutubeEmbedSrc(videoId) {
+    const safeVideoId = (typeof videoId === 'string') ? videoId.trim() : '';
+    if (!/^[a-zA-Z0-9_-]{11}$/.test(safeVideoId)) {
+        return 'about:blank';
+    }
+
+    const params = new URLSearchParams({
+        rel: '0',
+        modestbranding: '1',
+        showinfo: '0',
+        iv_load_policy: '3',
+        fs: '1',
+        cc_load_policy: '0',
+        enablejsapi: '1',
+        controls: '1',
+        autoplay: '0',
+        mute: '0',
+        loop: '0',
+        playlist: safeVideoId,
+        disablekb: '1',
+        playsinline: '1',
+        origin: window.location.origin,
+    });
+
+    return `https://www.youtube.com/embed/${safeVideoId}?${params.toString()}`;
+}
+
+function extraerVideoIdYoutube(url) {
+    if (!url) return null;
+    
+    try {
+        // Formato: https://www.youtube.com/watch?v=VIDEO_ID
+        if (url.includes('youtube.com/watch?v=')) {
+            const urlObj = new URL(url);
+            const v = urlObj.searchParams.get('v');
+            return (v && /^[a-zA-Z0-9_-]{11}$/.test(v)) ? v : null;
+        }
+
+        // Formato: https://www.youtube.com/shorts/VIDEO_ID
+        if (url.includes('youtube.com/shorts/')) {
+            const match = url.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/);
+            if (match && match[1]) return match[1];
+        }
+        
+        // Formato: https://youtu.be/VIDEO_ID
+        if (url.includes('youtu.be/')) {
+            const match = url.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
+            if (match && match[1]) return match[1];
+        }
+        
+        // Formato: https://www.youtube.com/embed/VIDEO_ID
+        if (url.includes('youtube.com/embed/')) {
+            const match = url.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/);
+            if (match && match[1]) return match[1];
+        }
+    } catch (e) {
+        console.error('Error extrayendo video ID:', e);
+    }
+    
+    return null;
+}
+
 function encontrarContenidoEnProgreso(contenidoId) {
-    if (!datosProgreso) return null;
+    if (!datosProgreso || !datosProgreso.materias) return null;
     
     for (const materia of datosProgreso.materias) {
-        const contenido = materia.contenidos.find(c => c.id === contenidoId);
-        if (contenido) return contenido;
+        for (const tema of materia.temas) {
+            const contenido = tema.contenidos.find(c => c.id === contenidoId);
+            if (contenido) return contenido;
+        }
     }
     return null;
 }
@@ -327,28 +631,40 @@ function aplicarFiltros() {
     const materias = document.querySelectorAll('.materia-card');
     
     materias.forEach(materia => {
-        const nombreMateria = materia.dataset.materia;
-        const cumpleBusqueda = nombreMateria.includes(textoBusqueda);
+        const nombreMateria = materia.dataset.materiaNombre || '';
+        let mostrarMateria = false;
         
-        if (cumpleBusqueda) {
-            materia.style.display = 'block';
+        // Buscar en temas dentro de la materia
+        const temas = materia.querySelectorAll('.tema-card');
+        
+        temas.forEach(tema => {
+            const nombreTema = tema.dataset.temaNombre || '';
+            const cumpleBusqueda = nombreMateria.includes(textoBusqueda) || nombreTema.includes(textoBusqueda);
             
-            // Filtrar contenidos dentro de la materia
-            if (estadoFiltro) {
-                const contenidos = materia.querySelectorAll('.contenido-item');
-                contenidos.forEach(contenido => {
-                    const estado = contenido.dataset.estado;
-                    contenido.style.display = estado === estadoFiltro ? 'flex' : 'none';
-                });
+            if (cumpleBusqueda) {
+                tema.style.display = 'block';
+                mostrarMateria = true;
+                
+                // Filtrar contenidos dentro del tema
+                if (estadoFiltro) {
+                    const contenidos = tema.querySelectorAll('.contenido-item');
+                    contenidos.forEach(contenido => {
+                        const estado = contenido.dataset.estado;
+                        contenido.style.display = estado === estadoFiltro ? 'flex' : 'none';
+                    });
+                } else {
+                    const contenidos = tema.querySelectorAll('.contenido-item');
+                    contenidos.forEach(contenido => {
+                        contenido.style.display = 'flex';
+                    });
+                }
             } else {
-                const contenidos = materia.querySelectorAll('.contenido-item');
-                contenidos.forEach(contenido => {
-                    contenido.style.display = 'flex';
-                });
+                tema.style.display = 'none';
             }
-        } else {
-            materia.style.display = 'none';
-        }
+        });
+        
+        // Mostrar materia si algún tema coincide con la búsqueda
+        materia.style.display = mostrarMateria ? 'block' : 'none';
     });
 }
 

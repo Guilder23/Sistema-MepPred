@@ -105,7 +105,6 @@ function actualizarMateria() {
     const id = document.getElementById('editarId').value;
     const nombre = document.getElementById('editarNombre').value.trim();
     const descripcion = document.getElementById('editarDescripcion').value.trim();
-    const requiereSuscripcion = document.getElementById('editarRequiereSuscripcion').checked;
 
     // Validación
     if (!nombre) {
@@ -140,8 +139,7 @@ function actualizarMateria() {
         },
         body: JSON.stringify({
             nombre: nombre,
-            descripcion: descripcion,
-            requiere_suscripcion: requiereSuscripcion
+            descripcion: descripcion
         })
     })
     .then(response => response.json())

@@ -53,8 +53,10 @@ def api_listar_mazos(request):
                 'id': mazo.id,
                 'nombre': mazo.nombre,
                 'descripcion': mazo.descripcion,
-                'materia_id': mazo.materia_id,
-                'materia_nombre': mazo.materia.nombre if mazo.materia else 'Sin materia',
+                'materia_id': mazo.tema.materia_id if mazo.tema and mazo.tema.materia else '',
+                'materia_nombre': mazo.tema.materia.nombre if mazo.tema and mazo.tema.materia else 'Sin materia',
+                'tema_id': mazo.tema_id,
+                'tema_nombre': mazo.tema.nombre if mazo.tema else 'Sin tema',
                 'tarjetas_count': mazo.contar_tarjetas(),
                 'tarjetas': tarjetas,
                 'created_at': mazo.created_at.strftime('%d/%m/%Y %H:%M'),
@@ -67,18 +69,18 @@ def api_listar_mazos(request):
 @login_required
 @require_http_methods(["GET"])
 def api_mazos_estudiante(request):
-    """API para estudiantes premium que devuelve todos los mazos con sus flashcards filtrados por materia."""
+    """API para estudiantes premium que devuelve todos los mazos con sus flashcards filtrados por tema."""
     # Verificar que el usuario tenga suscripción activa
     if not tiene_suscripcion_activa(request.user):
         return JsonResponse({'error': 'Necesitas una suscripción activa'}, status=403)
     
-    # Obtener el filtro de materia desde los parámetros GET
-    materia_id = request.GET.get('materia_id', None)
+    # Obtener el filtro de tema desde los parámetros GET
+    tema_id = request.GET.get('tema_id', None)
     
     # Obtener mazos
-    if materia_id:
+    if tema_id:
         try:
-            mazos = MazoPremium.objects.filter(materia_id=int(materia_id))
+            mazos = MazoPremium.objects.filter(tema_id=int(tema_id))
         except (ValueError, TypeError):
             mazos = MazoPremium.objects.all()
     else:
@@ -96,8 +98,8 @@ def api_mazos_estudiante(request):
                 'id': mazo.id,
                 'nombre': mazo.nombre,
                 'descripcion': mazo.descripcion,
-                'materia_id': mazo.materia_id,
-                'materia_nombre': mazo.materia.nombre if mazo.materia else 'Sin materia',
+                'tema_id': mazo.tema_id,
+                'tema_nombre': mazo.tema.nombre if mazo.tema else 'Sin tema',
                 'tarjetas_count': mazo.contar_tarjetas(),
                 'tarjetas': tarjetas,
             }
@@ -108,16 +110,19 @@ def api_mazos_estudiante(request):
 
 @login_required
 @require_http_methods(["GET"])
-def api_materias_flashcards(request):
-    """API para obtener las materias que tienen flashcards premium."""
+def api_temas_flashcards(request):
+    """API para obtener los temas que tienen flashcards premium."""
     # Verificar que el usuario tenga suscripción activa
     if not tiene_suscripcion_activa(request.user):
         return JsonResponse({'error': 'Necesitas una suscripción activa'}, status=403)
     
-    # Obtener materias que tengan al menos un mazo premium
-    from apps.materias.models import Materia
-    materias = Materia.objects.filter(mazos_premium__isnull=False).distinct()
+    # Obtener temas que tengan al menos un mazo premium
+    from apps.temas.models import Tema
+    temas = Tema.objects.filter(mazos_premium__isnull=False).distinct()
     
+    # Obtener las materias (ajusta el modelo si es necesario)
+    from apps.materias_nueva.models import Materia
+    materias = Materia.objects.all()
     materias_data = [
         {
             'id': materia.id,
@@ -137,24 +142,25 @@ def api_crear_mazo(request):
 
     nombre = request.POST.get('nombre', '').strip()
     descripcion = request.POST.get('descripcion', '').strip()
-    materia_id = request.POST.get('materia_id', '').strip()
+    tema_id = request.POST.get('tema_id', '').strip()
+    # materia_id es ignorado - el tema ya contiene la referencia a la materia
 
     if not nombre:
         return JsonResponse({'success': False, 'error': 'El nombre es requerido'})
 
-    materia = None
-    if materia_id:
-        from apps.materias.models import Materia
+    tema = None
+    if tema_id:
+        from apps.temas.models import Tema
         try:
-            materia = Materia.objects.get(id=int(materia_id))
-        except (Materia.DoesNotExist, ValueError):
+            tema = Tema.objects.get(id=int(tema_id))
+        except (Tema.DoesNotExist, ValueError):
             pass
 
     mazo = MazoPremium.objects.create(
         creado_por=request.user,
         nombre=nombre,
         descripcion=descripcion,
-        materia=materia,
+        tema=tema,
     )
 
     return JsonResponse(
@@ -164,8 +170,9 @@ def api_crear_mazo(request):
                 'id': mazo.id,
                 'nombre': mazo.nombre,
                 'descripcion': mazo.descripcion,
-                'materia_id': mazo.materia_id,
-                'materia_nombre': mazo.materia.nombre if mazo.materia else None,
+                'materia_id': mazo.tema.materia_id if mazo.tema and mazo.tema.materia else '',
+                'tema_id': mazo.tema_id,
+                'tema_nombre': mazo.tema.nombre if mazo.tema else None,
             },
         }
     )
@@ -179,7 +186,7 @@ def api_editar_mazo(request, mazo_id):
 
     nombre = request.POST.get('nombre', '').strip()
     descripcion = request.POST.get('descripcion', '').strip()
-    materia_id = request.POST.get('materia_id', '').strip()
+    tema_id = request.POST.get('tema_id', '').strip()
 
     if not nombre:
         return JsonResponse({'success': False, 'error': 'El nombre es requerido'})
@@ -188,14 +195,14 @@ def api_editar_mazo(request, mazo_id):
     mazo.nombre = nombre
     mazo.descripcion = descripcion
     
-    if materia_id:
-        from apps.materias.models import Materia
+    if tema_id:
+        from apps.temas.models import Tema
         try:
-            mazo.materia = Materia.objects.get(id=int(materia_id))
-        except (Materia.DoesNotExist, ValueError):
-            mazo.materia = None
+            mazo.tema = Tema.objects.get(id=int(tema_id))
+        except (Tema.DoesNotExist, ValueError):
+            mazo.tema = None
     else:
-        mazo.materia = None
+        mazo.tema = None
     
     mazo.save()
 

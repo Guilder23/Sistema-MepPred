@@ -1,0 +1,83 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block titulo %}Gestión de Temas{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/temas/temas.css' %}">
+<link rel="stylesheet" href="{% static 'css/temas/modals/crear.css' %}">
+<link rel="stylesheet" href="{% static 'css/temas/modals/ver.css' %}">
+<link rel="stylesheet" href="{% static 'css/temas/modals/editar.css' %}">
+<link rel="stylesheet" href="{% static 'css/temas/modals/eliminar.css' %}">
+{% endblock %}
+
+{% block contenido %}
+<div class="container-fluid py-4">
+    <!-- Encabezado -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h1>Gestión de Temas</h1>
+        </div>
+        <div class="col-md-6 text-end">
+            <button class="btn btn-primary" id="btnNuevoTema">
+                <i class="fas fa-plus"></i> Nuevo Tema
+            </button>
+        </div>
+    </div>
+
+    <!-- Búsqueda y Filtros -->
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <input type="text" class="form-control" id="searchInput" placeholder="Buscar por nombre, descripción o materia...">
+        </div>
+        <div class="col-md-3">
+            <select id="filtroMateria" class="form-control">
+                <option value="">Todas las materias</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select id="filtroTipo" class="form-control">
+                <option value="">Todos los tipos</option>
+                <option value="gratis">Gratis</option>
+                <option value="premium">Premium</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Tabla de temas -->
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>NOMBRE</th>
+                        <th>MATERIA</th>
+                        <th>DESCRIPCIÓN</th>
+                        <th>TIPO</th>
+                        <th>FECHA CREACIÓN</th>
+                        <th>ACCIONES</th>
+                    </tr>
+                </thead>
+                <tbody id="tableTemas">
+                    <!-- Se llena dinámicamente con JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modales -->
+{% include 'temas/modals/crear.html' %}
+{% include 'temas/modals/ver.html' %}
+{% include 'temas/modals/editar.html' %}
+{% include 'temas/modals/eliminar.html' %}
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/temas/temas.js' %}"></script>
+<script src="{% static 'js/temas/modals/crear.js' %}"></script>
+<script src="{% static 'js/temas/modals/ver.js' %}"></script>
+<script src="{% static 'js/temas/modals/editar.js' %}"></script>
+<script src="{% static 'js/temas/modals/eliminar.js' %}"></script>
+{% endblock %}

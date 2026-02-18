@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('materias', '0001_initial'),
+        ('temas', '0001_initial'),
     ]
 
     operations = [
@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 ('activo', models.BooleanField(default=True, verbose_name='Activo')),
                 ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Creación')),
                 ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Fecha de Actualización')),
-                ('materia', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='examenes', to='materias.materia', verbose_name='Materia')),
+                ('materia', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='examenes', to='temas.tema', verbose_name='Tema')),
             ],
             options={
                 'verbose_name': 'Examen',

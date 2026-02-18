@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (btnAbrirCrear) {
         btnAbrirCrear.addEventListener('click', function() {
             mostrarModal('modalCrearOverlay');
+            cargarMateriasCrear();
             // Resetear el contenedor de videos
             const videosContainer = document.getElementById('videosContainer');
             if (videosContainer) {
@@ -30,6 +31,53 @@ document.addEventListener('DOMContentLoaded', function() {
         formCrear.addEventListener('submit', crearContenido);
     }
 });
+
+// Cargar materias en el modal crear
+function cargarMateriasCrear() {
+    fetch('/temas/api/materias/')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const select = document.getElementById('crearMateria');
+                if (select) {
+                    select.innerHTML = '<option value="">Seleccione una materia</option>';
+                    data.materias.forEach(materia => {
+                        const option = document.createElement('option');
+                        option.value = materia.id;
+                        option.textContent = materia.nombre;
+                        select.appendChild(option);
+                    });
+                }
+            }
+        })
+        .catch(error => console.error('Error al cargar materias:', error));
+}
+
+// Cargar temas filtrados para crear
+function cargarTemasCrear() {
+    const materiaSelect = document.getElementById('crearMateria');
+    const temaSelect = document.getElementById('crearTema');
+    
+    if (!materiaSelect || !temaSelect || !materiaSelect.value) {
+        temaSelect.innerHTML = '<option value="">Seleccione un tema</option>';
+        return;
+    }
+    
+    fetch(`/temas/api/temas/por-materia/${materiaSelect.value}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                temaSelect.innerHTML = '<option value="">Seleccione un tema</option>';
+                data.temas.forEach(tema => {
+                    const option = document.createElement('option');
+                    option.value = tema.nombre;
+                    option.textContent = tema.nombre;
+                    temaSelect.appendChild(option);
+                });
+            }
+        })
+        .catch(error => console.error('Error al cargar temas:', error));
+}
 
 function agregarCampoVideo() {
     const videosContainer = document.getElementById('videosContainer');

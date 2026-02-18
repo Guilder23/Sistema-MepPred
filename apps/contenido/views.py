@@ -23,12 +23,12 @@ def gestion_contenidos(request):
     publicacion = request.GET.get('publicacion', '')
     
     # Filtrar contenidos
-    contenidos = Contenido.objects.all()
+    contenidos = Contenido.objects.select_related('tema__materia').all()
     
     if busqueda:
         contenidos = contenidos.filter(
             Q(titulo__icontains=busqueda) |
-            Q(materia__nombre__icontains=busqueda) |
+            Q(tema__nombre__icontains=busqueda) |
             Q(descripcion__icontains=busqueda)
         )
     
@@ -59,12 +59,12 @@ def listar_contenidos(request):
     estado = request.GET.get('estado', '')
     publicacion = request.GET.get('publicacion', '')
     
-    contenidos = Contenido.objects.all()
+    contenidos = Contenido.objects.select_related('tema__materia').all()
     
     if busqueda:
         contenidos = contenidos.filter(
             Q(titulo__icontains=busqueda) |
-            Q(materia__nombre__icontains=busqueda) |
+            Q(tema__nombre__icontains=busqueda) |
             Q(descripcion__icontains=busqueda)
         )
     
@@ -79,9 +79,9 @@ def listar_contenidos(request):
         contenidos_data.append({
             'id': contenido.id,
             'titulo': contenido.titulo,
-            'materia': contenido.materia.nombre if contenido.materia else '',
-            'materia_id': contenido.materia.id if contenido.materia else None,
-            'materia_requiere_suscripcion': contenido.materia.requiere_suscripcion if contenido.materia else False,
+            'tema': contenido.tema.nombre if contenido.tema else '',
+            'tema_id': contenido.tema.id if contenido.tema else None,
+            'materia_nombre': contenido.tema.materia.nombre if contenido.tema and contenido.tema.materia else '-',
             'nivel_curso': contenido.nivel_curso,
             'estado': contenido.estado,
             'publicacion': contenido.publicacion,
@@ -105,38 +105,45 @@ def obtener_contenido(request, contenido_id):
             if contenido.estado != 'activo' or contenido.publicacion != 'publicado':
                 return JsonResponse({'error': 'No tienes permisos para ver este contenido'}, status=403)
         
+        # Obtener videos
         videos = list(contenido.videos.all().values('id', 'enlace', 'orden'))
+        
+        # Obtener nombre del creador
+        creado_por_nombre = 'N/A'
+        if contenido.creado_por:
+            full_name = contenido.creado_por.get_full_name()
+            creado_por_nombre = full_name if full_name.strip() else contenido.creado_por.username
+        
+        # Obtener nombre del editor
+        editado_por_nombre = 'N/A'
+        if contenido.editado_por:
+            full_name = contenido.editado_por.get_full_name()
+            editado_por_nombre = full_name if full_name.strip() else contenido.editado_por.username
+        
+        return JsonResponse({
+            'id': contenido.id,
+            'titulo': contenido.titulo,
+            'descripcion': contenido.descripcion,
+            'contenido_tema': contenido.contenido_tema,
+            'tema': contenido.tema.nombre if contenido.tema else '',
+            'materia_id': contenido.tema.materia_id if contenido.tema else '',
+            'materia': contenido.tema.materia.nombre if contenido.tema and contenido.tema.materia else '',
+            'nivel_curso': contenido.nivel_curso,
+            'tipo_contenido': contenido.tipo_contenido,
+            'estado': contenido.estado,
+            'publicacion': contenido.publicacion,
+            'fecha_creacion': contenido.fecha_creacion.strftime('%d/%m/%Y %H:%M'),
+            'fecha_edicion': contenido.fecha_edicion.strftime('%d/%m/%Y %H:%M'),
+            'creado_por': creado_por_nombre,
+            'editado_por': editado_por_nombre,
+            'videos': videos,
+        })
+        
     except Contenido.DoesNotExist:
         return JsonResponse({'error': 'Contenido no encontrado'}, status=404)
-    
-    # Obtener nombre del creador
-    creado_por_nombre = 'N/A'
-    if contenido.creado_por:
-        full_name = contenido.creado_por.get_full_name()
-        creado_por_nombre = full_name if full_name.strip() else contenido.creado_por.username
-    
-    # Obtener nombre del editor
-    editado_por_nombre = 'N/A'
-    if contenido.editado_por:
-        full_name = contenido.editado_por.get_full_name()
-        editado_por_nombre = full_name if full_name.strip() else contenido.editado_por.username
-    
-    return JsonResponse({
-        'id': contenido.id,
-        'titulo': contenido.titulo,
-        'descripcion': contenido.descripcion,
-        'contenido_tema': contenido.contenido_tema,
-        'materia': contenido.materia.nombre if contenido.materia else '',
-        'nivel_curso': contenido.nivel_curso,
-        'tipo_contenido': contenido.tipo_contenido,
-        'estado': contenido.estado,
-        'publicacion': contenido.publicacion,
-        'fecha_creacion': contenido.fecha_creacion.strftime('%d/%m/%Y %H:%M'),
-        'fecha_edicion': contenido.fecha_edicion.strftime('%d/%m/%Y %H:%M'),
-        'creado_por': creado_por_nombre,
-        'editado_por': editado_por_nombre,
-        'videos': videos,
-    })
+    except Exception as e:
+        print(f"Error en obtener_contenido: {str(e)}")
+        return JsonResponse({'error': f'Error al obtener contenido: {str(e)}'}, status=500)
 
 
 @login_required
@@ -150,7 +157,7 @@ def crear_contenido(request):
         titulo = request.POST.get('titulo', '').strip()
         descripcion = request.POST.get('descripcion', '').strip()
         contenido_tema = request.POST.get('contenido_tema', '').strip()
-        materia_nombre = request.POST.get('materia', '').strip()
+        tema_nombre = request.POST.get('tema', '').strip()
         nivel_curso = request.POST.get('nivel_curso', '').strip()
         estado = request.POST.get('estado', 'activo')
         publicacion = request.POST.get('publicacion', 'no_publicado')
@@ -160,15 +167,15 @@ def crear_contenido(request):
         videos_enlaces = request.POST.getlist('videos[]')
         
         # Validaciones
-        if not all([titulo, descripcion, contenido_tema, materia_nombre, nivel_curso]):
+        if not all([titulo, descripcion, contenido_tema, tema_nombre, nivel_curso]):
             return JsonResponse({'success': False, 'error': 'Todos los campos son requeridos'})
         
-        # Buscar la materia
-        from apps.materias.models import Materia
+        # Buscar el tema
+        from apps.temas.models import Tema
         try:
-            materia = Materia.objects.get(nombre=materia_nombre)
-        except Materia.DoesNotExist:
-            return JsonResponse({'success': False, 'error': 'Materia no encontrada'})
+            tema = Tema.objects.get(nombre=tema_nombre)
+        except Tema.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Tema no encontrado'})
         
         # Crear contenido con transacción
         with transaction.atomic():
@@ -176,7 +183,7 @@ def crear_contenido(request):
                 titulo=titulo,
                 descripcion=descripcion,
                 contenido_tema=contenido_tema,
-                materia=materia,
+                tema=tema,
                 nivel_curso=nivel_curso,
                 tipo_contenido=tipo_contenido,
                 estado=estado,
@@ -211,7 +218,7 @@ def editar_contenido(request):
         titulo = request.POST.get('titulo', '').strip()
         descripcion = request.POST.get('descripcion', '').strip()
         contenido_tema = request.POST.get('contenido_tema', '').strip()
-        materia_nombre = request.POST.get('materia', '').strip()
+        tema_nombre = request.POST.get('tema', '').strip()
         nivel_curso = request.POST.get('nivel_curso', '').strip()
         estado = request.POST.get('estado', 'activo')
         publicacion = request.POST.get('publicacion', 'no_publicado')
@@ -222,19 +229,19 @@ def editar_contenido(request):
         
         contenido = Contenido.objects.get(id=contenido_id)
         
-        # Buscar la materia
-        from apps.materias.models import Materia
+        # Buscar el tema
+        from apps.temas.models import Tema
         try:
-            materia = Materia.objects.get(nombre=materia_nombre)
-        except Materia.DoesNotExist:
-            return JsonResponse({'success': False, 'error': 'Materia no encontrada'})
+            tema = Tema.objects.get(nombre=tema_nombre)
+        except Tema.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Tema no encontrado'})
         
         # Actualizar contenido con transacción
         with transaction.atomic():
             contenido.titulo = titulo
             contenido.descripcion = descripcion
             contenido.contenido_tema = contenido_tema
-            contenido.materia = materia
+            contenido.tema = tema
             contenido.nivel_curso = nivel_curso
             contenido.tipo_contenido = tipo_contenido
             contenido.estado = estado
@@ -287,103 +294,152 @@ def biblioteca_contenidos(request):
 @login_required
 @require_http_methods(["GET"])
 def listar_contenidos_publicados(request):
-    """API para listar solo contenidos publicados y activos"""
-    from apps.suscripciones.models import Suscripcion
-    from apps.evaluaciones.models import IntentoExamen, Examen
-    
-    # Verificar si es administrador
-    es_admin = request.user.is_superuser or getattr(request.user, 'role', '') == 'admin'
-    
-    # Verificar si el estudiante tiene suscripción premium activa
-    tiene_suscripcion_activa = False
-    if not es_admin:
-        suscripcion = Suscripcion.objects.filter(
-            estudiante=request.user,
-            estado='APROBADO'
-        ).first()
-        tiene_suscripcion_activa = suscripcion and suscripcion.esta_activa()
-    
-    # Obtener todas las materias ordenadas
-    from apps.materias.models import Materia
-    materias_ordenadas = list(Materia.objects.filter(
-        contenido__estado='activo',
-        contenido__publicacion='publicado'
-    ).distinct().order_by('id'))
-    
-    # Determinar qué materias puede ver el usuario
-    materias_accesibles = []
-    
-    if es_admin or tiene_suscripcion_activa:
-        # Premium: ve todas las materias según haya aprobado las anteriores
-        if materias_ordenadas:
-            materias_accesibles.append(materias_ordenadas[0])
+    """API para listar contenidos publicados organizados por materia y tema"""
+    try:
+        from apps.suscripciones.models import Suscripcion
+        from apps.evaluaciones.models import IntentoExamen, Examen
+        from apps.materias_nueva.models import Materia
+        from apps.temas.models import Tema
+        
+        # Verificar si es administrador
+        es_admin = request.user.is_superuser or getattr(request.user, 'role', '') == 'admin'
+        
+        # Verificar si el estudiante tiene suscripción premium activa
+        tiene_suscripcion_activa = False
+        if not es_admin:
+            suscripcion = Suscripcion.objects.filter(
+                estudiante=request.user,
+                estado='APROBADO'
+            ).first()
+            tiene_suscripcion_activa = suscripcion and suscripcion.esta_activa()
+        
+        # Obtener todas las materias con sus temas y contenidos
+        materias = Materia.objects.all().order_by('id')
+        
+        materias_data = []
+        for materia in materias:
+            # Obtener todos los temas de esta materia
+            temas = Tema.objects.filter(materia=materia).order_by('id')
             
-            # Verificar cuántas materias ha aprobado
-            for i, materia in enumerate(materias_ordenadas[:-1]):
-                # Buscar el examen de esta materia
-                examen = Examen.objects.filter(materia=materia, activo=True).first()
+            temas_data = []
+            for tema in temas:
+                # Verificar si el estudiante puede ver este tema
+                puede_ver_tema = True
+                mensaje_bloqueo = None
+                
+                # Si el tema es premium y no tiene suscripción
+                if tema.requiere_suscripcion and not es_admin and not tiene_suscripcion_activa:
+                    puede_ver_tema = False
+                    mensaje_bloqueo = "Este tema requiere suscripción premium"
+                
+                # Obtener contenidos del tema
+                contenidos = Contenido.objects.filter(
+                    tema=tema,
+                    estado='activo',
+                    publicacion='publicado'
+                ).order_by('orden', 'id')
+                
+                contenidos_lista = list(contenidos)  # Convertir a lista para reutilizar
+                total_contenidos = len(contenidos_lista)
+                
+                contenidos_data = []
+                contenidos_completados_count = 0
+                
+                for contenido in contenidos_lista:
+                    # Verificar si está disponible
+                    esta_disponible = contenido.esta_disponible_para(request.user)
+                    
+                    # Obtener progreso
+                    try:
+                        progreso = ProgresoContenido.objects.get(usuario=request.user, contenido=contenido)
+                        completado = progreso.completado
+                        porcentaje = progreso.porcentaje_avance
+                        if completado:
+                            contenidos_completados_count += 1
+                    except ProgresoContenido.DoesNotExist:
+                        completado = False
+                        porcentaje = 0
+                    
+                    contenidos_data.append({
+                        'id': contenido.id,
+                        'titulo': contenido.titulo,
+                        'descripcion': contenido.descripcion,
+                        'orden': contenido.orden,
+                        'nivel_curso': contenido.nivel_curso,
+                        'fecha_creacion': contenido.fecha_creacion.strftime('%Y-%m-%d %H:%M:%S'),
+                        'esta_disponible': esta_disponible,
+                        'completado': completado,
+                        'porcentaje_avance': porcentaje,
+                    })
+                
+                # Verificar si el examen del tema está disponible
+                examen = Examen.objects.filter(tema=tema, activo=True).first()
+                examen_disponible = False
+                examen_aprobado = False
+                mejor_nota = None
+                
                 if examen:
-                    # Verificar si aprobó (nota >= 16/20 = 80%)
+                    # El examen está disponible si completó todos los contenidos del tema
+                    todos_completados = (contenidos_completados_count == total_contenidos and total_contenidos > 0) or es_admin
+                    examen_disponible = todos_completados
+                    
+                    # Verificar si ya aprobó
                     intento_aprobado = IntentoExamen.objects.filter(
                         estudiante=request.user,
                         examen=examen,
-                        nota__gte=16  # 80% de 20
-                    ).exists()
+                        aprobado=True
+                    ).first()
                     
                     if intento_aprobado:
-                        # Aprobó, puede ver la siguiente materia
-                        siguiente_materia = materias_ordenadas[i + 1]
-                        if siguiente_materia not in materias_accesibles:
-                            materias_accesibles.append(siguiente_materia)
+                        examen_aprobado = True
+                        mejor_nota = float(intento_aprobado.nota)
                     else:
-                        # No aprobó, no puede ver las siguientes
-                        break
-                else:
-                    # No hay examen, no puede avanzar
-                    break
-    else:
-        # No premium: SOLO ve la primera materia (gratis)
-        if materias_ordenadas:
-            materias_accesibles.append(materias_ordenadas[0])
-    
-    # Filtrar contenidos solo de materias accesibles
-    contenidos = Contenido.objects.filter(
-        estado='activo',
-        publicacion='publicado',
-        materia__in=materias_accesibles
-    ).select_related('materia').order_by('materia__id', 'orden')
-    
-    contenidos_data = []
-    for contenido in contenidos:
-        # Verificar si está disponible para el estudiante
-        esta_disponible = contenido.esta_disponible_para(request.user)
+                        # Obtener la mejor nota aunque no haya aprobado
+                        mejor_intento = IntentoExamen.objects.filter(
+                            estudiante=request.user,
+                            examen=examen
+                        ).order_by('-nota').first()
+                        
+                        if mejor_intento:
+                            mejor_nota = float(mejor_intento.nota)
+                
+                temas_data.append({
+                    'id': tema.id,
+                    'nombre': tema.nombre,
+                    'descripcion': tema.descripcion,
+                    'requiere_suscripcion': tema.requiere_suscripcion,
+                    'puede_ver_tema': puede_ver_tema,
+                    'mensaje_bloqueo': mensaje_bloqueo,
+                    'contenidos': contenidos_data,
+                    'examen': {
+                        'id': examen.id if examen else None,
+                        'titulo': examen.titulo if examen else None,
+                        'disponible': examen_disponible,
+                        'aprobado': examen_aprobado,
+                        'mejor_nota': mejor_nota,
+                    } if examen else None,
+                })
+            
+            materias_data.append({
+                'id': materia.id,
+                'nombre': materia.nombre,
+                'descripcion': materia.descripcion,
+                'temas': temas_data,
+            })
         
-        # Verificar progreso
-        try:
-            progreso = ProgresoContenido.objects.get(usuario=request.user, contenido=contenido)
-            completado = progreso.completado
-            porcentaje = progreso.porcentaje_avance
-        except ProgresoContenido.DoesNotExist:
-            completado = False
-            porcentaje = 0
-        
-        contenidos_data.append({
-            'id': contenido.id,
-            'titulo': contenido.titulo,
-            'descripcion': contenido.descripcion,
-            'materia': contenido.materia.nombre if contenido.materia else '',
-            'materia_requiere_suscripcion': contenido.materia.requiere_suscripcion if contenido.materia else False,
-            'nivel_curso': contenido.nivel_curso,
-            'fecha_creacion': contenido.fecha_creacion.isoformat(),
-            'orden': contenido.orden,
-            'esta_disponible': esta_disponible,
-            'completado': completado,
-            'porcentaje_avance': porcentaje,
-            'tiene_prerequisito': contenido.prerequisito is not None,
-            'prerequisito_titulo': contenido.prerequisito.titulo if contenido.prerequisito else None,
-        })
+        return JsonResponse({
+            'materias': materias_data,
+            'es_premium': tiene_suscripcion_activa or es_admin,
+        }, safe=False)
     
-    return JsonResponse(contenidos_data, safe=False)
+    except Exception as e:
+        import traceback
+        print(f"Error en listar_contenidos_publicados: {str(e)}")
+        print(traceback.format_exc())
+        return JsonResponse({
+            'error': 'Error al cargar los contenidos',
+            'detalle': str(e)
+        }, status=500)
 
 
 @login_required
@@ -395,95 +451,198 @@ def vista_progreso(request):
 @login_required
 @require_http_methods(["GET"])
 def obtener_progreso_usuario(request):
-    """API para obtener el progreso completo del usuario"""
-    from apps.suscripciones.models import Suscripcion
-    
-    # Verificar si es administrador
-    es_admin = request.user.is_superuser or getattr(request.user, 'role', '') == 'admin'
-    
-    # Verificar si el estudiante tiene suscripción premium activa
-    tiene_suscripcion_activa = False
-    if not es_admin:
-        suscripcion = Suscripcion.objects.filter(
-            estudiante=request.user,
-            estado='APROBADO'
-        ).first()
-        tiene_suscripcion_activa = suscripcion and suscripcion.esta_activa()
-    
-    # Obtener todos los contenidos publicados y activos
-    contenidos = Contenido.objects.filter(
-        estado='activo',
-        publicacion='publicado'
-    ).select_related('materia').order_by('materia', 'orden')
-    
-    # Obtener progresos del usuario
-    progresos = ProgresoContenido.objects.filter(usuario=request.user)
-    progresos_dict = {p.contenido_id: p for p in progresos}
-    
-    # Agrupar por materia
-    materias_data = {}
-    for contenido in contenidos:
-        # Verificar acceso según tipo de materia
-        if contenido.materia:
-            # Si la materia es premium
-            if contenido.materia.requiere_suscripcion:
-                # Solo mostrar si:
-                # 1. Es administrador, O
-                # 2. El estudiante tiene suscripción aprobada y activa
-                if not es_admin and not tiene_suscripcion_activa:
-                    continue  # Saltar este contenido
+    """API para obtener el progreso completo del usuario organizado por materia"""
+    try:
+        from apps.suscripciones.models import Suscripcion
+        from apps.materias_nueva.models import Materia
+        from apps.temas.models import Tema
+        from apps.evaluaciones.models import Examen, IntentoExamen
         
-        materia_nombre = contenido.materia.nombre if contenido.materia else 'Sin materia'
+        # Verificar si es administrador
+        es_admin = request.user.is_superuser or getattr(request.user, 'role', '') == 'admin'
         
-        if materia_nombre not in materias_data:
-            materias_data[materia_nombre] = {
-                'materia': materia_nombre,
-                'contenidos': [],
-                'total': 0,
-                'completados': 0,
-                'porcentaje': 0
-            }
+        # Verificar si el estudiante tiene suscripción premium activa
+        tiene_suscripcion_activa = False
+        if not es_admin:
+            suscripcion = Suscripcion.objects.filter(
+                estudiante=request.user,
+                estado='APROBADO'
+            ).first()
+            tiene_suscripcion_activa = suscripcion and suscripcion.esta_activa()
         
-        progreso = progresos_dict.get(contenido.id)
-        completado = progreso.completado if progreso else False
-        porcentaje_avance = progreso.porcentaje_avance if progreso else 0
-        esta_disponible = contenido.esta_disponible_para(request.user)
+        # Obtener todas las materias
+        materias = Materia.objects.all().order_by('id')
         
-        materias_data[materia_nombre]['contenidos'].append({
-            'id': contenido.id,
-            'titulo': contenido.titulo,
-            'descripcion': contenido.descripcion,
-            'orden': contenido.orden,
-            'completado': completado,
-            'porcentaje_avance': porcentaje_avance,
-            'esta_disponible': esta_disponible,
-            'tiene_prerequisito': contenido.prerequisito is not None,
-            'prerequisito_titulo': contenido.prerequisito.titulo if contenido.prerequisito else None,
+        # Obtener todos los progresos del usuario
+        progresos = ProgresoContenido.objects.filter(usuario=request.user)
+        progresos_dict = {p.contenido_id: p for p in progresos}
+        
+        materias_data = []
+        total_contenidos_general = 0
+        total_completados_general = 0
+        suma_porcentajes_materias = 0
+        total_materias_con_temas = 0
+        
+        for materia in materias:
+            # Obtener temas de esta materia
+            temas = Tema.objects.filter(materia=materia).order_by('id')
+            
+            temas_data = []
+            total_contenidos_materia = 0
+            total_completados_materia = 0
+            total_temas_materia = 0
+            temas_completados_materia = 0
+            
+            for tema in temas:
+                # Verificar si el estudiante puede ver este tema
+                puede_ver_tema = True
+                if tema.requiere_suscripcion and not es_admin and not tiene_suscripcion_activa:
+                    puede_ver_tema = False
+                
+                if not puede_ver_tema:
+                    continue  # Saltar temas premium sin suscripción
+                
+                # Obtener contenidos del tema
+                contenidos = Contenido.objects.filter(
+                    tema=tema,
+                    estado='activo',
+                    publicacion='publicado'
+                ).order_by('orden', 'id')
+                
+                contenidos_data = []
+                tema_total = 0
+                tema_completados = 0
+                
+                for contenido in contenidos:
+                    progreso = progresos_dict.get(contenido.id)
+                    completado = progreso.completado if progreso else False
+                    porcentaje_avance = progreso.porcentaje_avance if progreso else 0
+                    esta_disponible = contenido.esta_disponible_para(request.user)
+                    
+                    contenidos_data.append({
+                        'id': contenido.id,
+                        'titulo': contenido.titulo,
+                        'descripcion': contenido.descripcion,
+                        'orden': contenido.orden,
+                        'completado': completado,
+                        'porcentaje_avance': porcentaje_avance,
+                        'esta_disponible': esta_disponible,
+                    })
+                    
+                    tema_total += 1
+                    if completado:
+                        tema_completados += 1
+                
+                # Verificar estado del examen
+                examen = Examen.objects.filter(tema=tema, activo=True).first()
+                examen_info = None
+                
+                if examen:
+                    # Verificar si todos los contenidos están completados
+                    todos_completados = tema_completados == tema_total and tema_total > 0
+                    examen_disponible = todos_completados or es_admin
+                    
+                    # Verificar intentos
+                    intentos = IntentoExamen.objects.filter(
+                        estudiante=request.user,
+                        examen=examen
+                    ).order_by('numero_intento')
+                    
+                    mejor_nota = None
+                    aprobado = False
+                    primer_intento_aprobado = False
+                    
+                    if intentos.exists():
+                        mejor_intento = intentos.order_by('-nota').first()
+                        mejor_nota = float(mejor_intento.nota)
+                        aprobado = mejor_intento.aprobado
+                        
+                        # Verificar si el primer intento fue aprobado (para ranking)
+                        primer_intento = intentos.first()
+                        primer_intento_aprobado = primer_intento.aprobado
+                    
+                    examen_info = {
+                        'id': examen.id,
+                        'titulo': examen.titulo,
+                        'disponible': examen_disponible,
+                        'aprobado': aprobado,
+                        'mejor_nota': mejor_nota,
+                        'total_intentos': intentos.count(),
+                        'primer_intento_aprobado': primer_intento_aprobado,
+                    }
+                
+                # Calcular porcentaje del tema
+                porcentaje_tema = round((tema_completados / tema_total) * 100) if tema_total > 0 else 0
+                
+                # Un tema está completado cuando todos sus contenidos están completados
+                tema_esta_completado = (tema_completados == tema_total and tema_total > 0)
+                
+                temas_data.append({
+                    'id': tema.id,
+                    'nombre': tema.nombre,
+                    'descripcion': tema.descripcion,
+                    'requiere_suscripcion': tema.requiere_suscripcion,
+                    'contenidos': contenidos_data,
+                    'total_contenidos': tema_total,
+                    'contenidos_completados': tema_completados,
+                    'porcentaje': porcentaje_tema,
+                    'completado': tema_esta_completado,
+                    'examen': examen_info,
+                })
+                
+                # Sumar al total de la materia
+                total_contenidos_materia += tema_total
+                total_completados_materia += tema_completados
+                total_temas_materia += 1
+                if tema_esta_completado:
+                    temas_completados_materia += 1
+            
+            # Calcular porcentaje de la materia basado en TEMAS completados
+            porcentaje_materia = round((temas_completados_materia / total_temas_materia) * 100) if total_temas_materia > 0 else 0
+            
+            # Solo contar materias que tienen temas
+            if total_temas_materia > 0:
+                total_materias_con_temas += 1
+                suma_porcentajes_materias += porcentaje_materia
+            
+            materias_data.append({
+                'id': materia.id,
+                'nombre': materia.nombre,
+                'descripcion': materia.descripcion,
+                'temas': temas_data,
+                'total_contenidos': total_contenidos_materia,
+                'contenidos_completados': total_completados_materia,
+                'total_temas': total_temas_materia,
+                'temas_completados': temas_completados_materia,
+                'porcentaje': porcentaje_materia,
+            })
+            
+            # Sumar al total general (para estadísticas de contenidos)
+            total_contenidos_general += total_contenidos_materia
+            total_completados_general += total_completados_materia
+        
+        # Calcular porcentaje general basado en el PROMEDIO de porcentajes de materias
+        porcentaje_general = round(suma_porcentajes_materias / total_materias_con_temas) if total_materias_con_temas > 0 else 0
+        
+        return JsonResponse({
+            'materias': materias_data,
+            'estadisticas': {
+                'total_contenidos': total_contenidos_general,
+                'completados': total_completados_general,
+                'pendientes': total_contenidos_general - total_completados_general,
+                'porcentaje_general': porcentaje_general,
+            },
+            'es_premium': tiene_suscripcion_activa or es_admin,
         })
-        
-        materias_data[materia_nombre]['total'] += 1
-        if completado:
-            materias_data[materia_nombre]['completados'] += 1
     
-    # Calcular porcentajes
-    for materia_data in materias_data.values():
-        if materia_data['total'] > 0:
-            materia_data['porcentaje'] = round((materia_data['completados'] / materia_data['total']) * 100)
-    
-    # Calcular progreso general
-    total_contenidos = sum(m['total'] for m in materias_data.values())
-    total_completados = sum(m['completados'] for m in materias_data.values())
-    porcentaje_general = round((total_completados / total_contenidos) * 100) if total_contenidos > 0 else 0
-    
-    return JsonResponse({
-        'materias': list(materias_data.values()),
-        'estadisticas': {
-            'total_contenidos': total_contenidos,
-            'completados': total_completados,
-            'pendientes': total_contenidos - total_completados,
-            'porcentaje_general': porcentaje_general
-        }
-    })
+    except Exception as e:
+        import traceback
+        print(f"Error en obtener_progreso_usuario: {str(e)}")
+        print(traceback.format_exc())
+        return JsonResponse({
+            'error': 'Error al cargar el progreso',
+            'detalle': str(e)
+        }, status=500)
 
 
 @login_required
