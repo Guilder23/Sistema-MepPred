@@ -13,8 +13,14 @@
                 </div>
                 <div class="form-group">
                     <label for="materiaMazo">Materia</label>
-                    <select id="materiaMazo" name="materia_id" required>
+                    <select id="materiaMazo" name="materia_id" onchange="cargarTemasCrearMazo()" required>
                         <option value="">Seleccione una materia</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="temaMazo">Tema</label>
+                    <select id="temaMazo" name="tema_id" required>
+                        <option value="">Seleccione un tema</option>
                     </select>
                 </div>
                 <div class="form-group">

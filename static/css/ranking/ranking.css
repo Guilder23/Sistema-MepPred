@@ -522,6 +522,18 @@
     box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
 
+.filter-select:disabled {
+    background: var(--bg-gray);
+    color: var(--text-light);
+    cursor: not-allowed;
+    border-color: var(--border-color);
+}
+
+.filter-select:disabled:hover {
+    border-color: var(--border-color);
+    background: var(--bg-gray);
+}
+
 @media (max-width: 1200px) {
     .ranking-header {
         flex-direction: column;

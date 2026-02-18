@@ -1,5 +1,5 @@
 from django.db import models
-from apps.materias.models import Materia
+from apps.temas.models import Tema
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -17,11 +17,11 @@ class Examen(models.Model):
         null=True,
         verbose_name="Descripción"
     )
-    materia = models.ForeignKey(
-        Materia,
+    tema = models.ForeignKey(
+        Tema,
         on_delete=models.CASCADE,
         related_name='examenes',
-        verbose_name="Materia"
+        verbose_name="Tema"
     )
     duracion_minutos = models.IntegerField(
         default=60,
@@ -51,7 +51,7 @@ class Examen(models.Model):
         ordering = ['-created_at']
     
     def __str__(self):
-        return f"{self.titulo} - {self.materia.nombre}"
+        return f"{self.titulo} - {self.tema.nombre}"
 
 
 class Pregunta(models.Model):

@@ -26,7 +26,7 @@
 
     <!-- Búsqueda y filtros -->
     <form method="get" class="filtros-container mb-3">
-        <input type="text" class="form-control" name="busqueda" id="buscar" placeholder="Buscar por título o materia..." value="{{ busqueda }}">
+        <input type="text" class="form-control" name="busqueda" id="buscar" placeholder="Buscar por título o tema..." value="{{ busqueda }}">
         <select class="form-select" name="estado" id="filtroEstado">
             <option value="">Todos los estados</option>
             <option value="activo" {% if estado == 'activo' %}selected{% endif %}>Activo</option>
@@ -50,9 +50,9 @@
                     <tr>
                         <th>TÍTULO</th>
                         <th>MATERIA</th>
-                        <th>TIPO</th>
+                        <th>TEMA</th>
                         <th>ESTADO</th>
-                        <th>PUBLICADO</th>
+                        <th>PUBLICACIÓN</th>
                         <th>FECHA CREACIÓN</th>
                         <th>ACCIONES</th>
                     </tr>
@@ -62,7 +62,8 @@
                         {% for contenido in contenidos %}
                         <tr>
                             <td>{{ contenido.titulo }}</td>
-                            <td>{{ contenido.materia }}</td>
+                            <td>{{ contenido.tema.materia.nombre }}</td>
+                            <td>{{ contenido.tema.nombre }}</td>
                             <td>
                                 <span class="badge badge-{{ contenido.estado }}">
                                     {% if contenido.estado == 'activo' %}Activo{% else %}Inactivo{% endif %}
@@ -91,7 +92,7 @@
                         {% endfor %}
                     {% else %}
                         <tr>
-                            <td colspan="6" class="text-center">No se encontraron contenidos</td>
+                            <td colspan="7" class="text-center">No se encontraron contenidos</td>
                         </tr>
                     {% endif %}
                 </tbody>

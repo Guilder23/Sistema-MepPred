@@ -21,6 +21,12 @@ document.addEventListener('DOMContentLoaded', function() {
     if (btnNuevaMateria) {
         btnNuevaMateria.addEventListener('click', abrirModalCrear);
     }
+
+    // Event listener para filtro de orden
+    const filtroOrden = document.getElementById('filtroOrden');
+    if (filtroOrden) {
+        filtroOrden.addEventListener('change', filtrarMaterias);
+    }
 });
 
 // Cargar materias del servidor
@@ -32,7 +38,7 @@ function cargarMaterias() {
         })
         .then(data => {
             if (data.success) {
-                materiasData = data.data || [];
+                materiasData = data.materias || [];
                 mostrarMaterias(materiasData);
             } else {
                 mostrarMensaje('Error', data.error || 'Error desconocido', 'error');
@@ -50,24 +56,22 @@ function mostrarMaterias(materias) {
     if (!tableBody) return;
 
     if (materias.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="6" class="text-center">No hay materias registradas</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="5" class="text-center">No hay materias registradas</td></tr>';
         return;
     }
 
     tableBody.innerHTML = materias.map(materia => {
-        const fechaCreacion = new Date(materia.created_at).toLocaleDateString('es-ES');
-        const descripcion = materia.descripcion ? materia.descripcion.substring(0, 50) + '...' : 'Sin descripción';
-        const tipoAcceso = materia.requiere_suscripcion ? 
-            '<span class="badge-premium">Premium</span>' : 
-            '<span class="badge-gratis">Gratis</span>';
+        const fechaCreacion = materia.created_at || '-';
+        const fechaActualizacion = materia.updated_at || '-';
+        const descripcion = materia.descripcion ? (materia.descripcion.length > 50 ? materia.descripcion.substring(0, 50) + '...' : materia.descripcion) : 'Sin descripción';
         
         return `
             <tr>
                 <td>${materia.id}</td>
                 <td>${escapeHtml(materia.nombre)}</td>
                 <td title="${materia.descripcion || ''}">${escapeHtml(descripcion)}</td>
-                <td>${tipoAcceso}</td>
                 <td>${fechaCreacion}</td>
+                <td>${fechaActualizacion}</td>
                 <td>
                     <div class="acciones-cell">
                         <button class="btn-icon btn-ver" onclick="abrirModalVer(${materia.id})" title="Ver detalles">
@@ -88,17 +92,32 @@ function mostrarMaterias(materias) {
 
 // Filtrar materias por búsqueda
 function filtrarMaterias() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    
-    if (!searchTerm) {
-        mostrarMaterias(materiasData);
-        return;
+    const searchTermEl = document.getElementById('searchInput');
+    const searchTerm = searchTermEl ? searchTermEl.value.toLowerCase() : '';
+    const ordenEl = document.getElementById('filtroOrden');
+    const orden = ordenEl ? ordenEl.value : '';
+
+    let filtradas = materiasData;
+
+    if (searchTerm) {
+        filtradas = filtradas.filter(materia =>
+            materia.nombre.toLowerCase().includes(searchTerm) ||
+            (materia.descripcion && materia.descripcion.toLowerCase().includes(searchTerm))
+        );
     }
 
-    const filtradas = materiasData.filter(materia => 
-        materia.nombre.toLowerCase().includes(searchTerm) ||
-        (materia.descripcion && materia.descripcion.toLowerCase().includes(searchTerm))
-    );
+    if (orden) {
+        const copia = [...filtradas];
+        if (orden === 'az') {
+            filtradas = copia.sort((a, b) => (a.nombre || '').localeCompare((b.nombre || ''), 'es'));
+        } else if (orden === 'za') {
+            filtradas = copia.sort((a, b) => (b.nombre || '').localeCompare((a.nombre || ''), 'es'));
+        } else if (orden === 'recientes') {
+            filtradas = copia.sort((a, b) => (b.id || 0) - (a.id || 0));
+        } else if (orden === 'antiguas') {
+            filtradas = copia.sort((a, b) => (a.id || 0) - (b.id || 0));
+        }
+    }
 
     mostrarMaterias(filtradas);
 }
@@ -126,11 +145,15 @@ function abrirModalVer(id) {
             modal.classList.add('active');
             
             // Cargar detalles
-            document.getElementById('verNombre').textContent = escapeHtml(materia.nombre);
-            document.getElementById('verDescripcion').textContent = materia.descripcion || 'Sin descripción';
-            document.getElementById('verRequiereSuscripcion').textContent = materia.requiere_suscripcion ? 'Premium (Requiere Suscripción)' : 'Gratis (Acceso Libre)';
-            document.getElementById('verFechaCreacion').textContent = new Date(materia.created_at).toLocaleDateString('es-ES');
-            document.getElementById('verFechaActualizacion').textContent = new Date(materia.updated_at).toLocaleDateString('es-ES');
+            const setText = (elId, value) => {
+                const el = document.getElementById(elId);
+                if (el) el.textContent = value ?? '-';
+            };
+
+            setText('verNombre', materia.nombre);
+            setText('verDescripcion', materia.descripcion || 'Sin descripción');
+            setText('verFechaCreacion', materia.created_at || '-');
+            setText('verFechaActualizacion', materia.updated_at || '-');
         }
     }
 }
@@ -148,7 +171,6 @@ function abrirModalEditar(id) {
             document.getElementById('editarId').value = materia.id;
             document.getElementById('editarNombre').value = materia.nombre;
             document.getElementById('editarDescripcion').value = materia.descripcion || '';
-            document.getElementById('editarRequiereSuscripcion').checked = materia.requiere_suscripcion || false;
         }
     }
 }
@@ -255,4 +277,20 @@ function mostrarMensaje(titulo, mensaje, tipo) {
         toast.classList.remove('show');
         setTimeout(() => toast.remove(), 300);
     }, 5000);
+}
+
+// Función para obtener cookie CSRF
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
 }

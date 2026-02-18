@@ -9,9 +9,9 @@ class VideoContenidoInline(admin.TabularInline):
 
 @admin.register(Contenido)
 class ContenidoAdmin(admin.ModelAdmin):
-    list_display = ['orden', 'titulo', 'materia', 'nivel_curso', 'prerequisito', 'estado', 'publicacion', 'fecha_creacion']
-    list_filter = ['estado', 'publicacion', 'materia', 'es_obligatorio']
-    search_fields = ['titulo', 'descripcion', 'materia']
+    list_display = ['orden', 'titulo', 'tema', 'nivel_curso', 'prerequisito', 'estado', 'publicacion', 'fecha_creacion']
+    list_filter = ['estado', 'publicacion', 'tema', 'es_obligatorio']
+    search_fields = ['titulo', 'descripcion', 'tema']
     inlines = [VideoContenidoInline]
     readonly_fields = ['fecha_creacion', 'fecha_edicion']
     
@@ -20,7 +20,7 @@ class ContenidoAdmin(admin.ModelAdmin):
             'fields': ('titulo', 'descripcion', 'contenido_tema')
         }),
         ('Clasificación', {
-            'fields': ('materia', 'nivel_curso')
+            'fields': ('tema', 'nivel_curso')
         }),
         ('Sistema de Progreso', {
             'fields': ('orden', 'prerequisito', 'es_obligatorio'),

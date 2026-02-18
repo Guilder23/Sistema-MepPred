@@ -390,11 +390,22 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.5);
     z-index: 10000;
     align-items: center;
     justify-content: center;
     padding: 2rem;
+    backdrop-filter: blur(3px);
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 @media (max-width: 768px) {
@@ -405,16 +416,29 @@
 
 .verificacion-modal-contenido {
     background: white;
-    border-radius: 12px;
+    border-radius: 16px;
     max-width: 600px;
     width: 100%;
     max-height: 90vh;
     overflow: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 @media (max-width: 480px) {
     .verificacion-modal-contenido {
-        border-radius: 8px;
+        border-radius: 12px;
     }
 }
 
@@ -422,70 +446,88 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.5rem;
+    padding: 1.2rem 1.5rem;
     border-bottom: 1px solid #e5e7eb;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 @media (max-width: 768px) {
     .verificacion-modal-header {
-        padding: 1rem;
+        padding: 1rem 1.2rem;
     }
 }
 
 .verificacion-modal-header h2 {
     margin: 0;
-    color: #1a1a2e;
-    font-size: 1.3rem;
+    color: white;
+    font-size: 1.15rem;
+    font-weight: 700;
 }
 
 @media (max-width: 480px) {
     .verificacion-modal-header h2 {
-        font-size: 1.1rem;
+        font-size: 1.2rem;
     }
 }
 
 .verificacion-modal-cerrar {
-    background: none;
+    background: rgba(255, 255, 255, 0.2);
     border: none;
     font-size: 1.5rem;
-    color: #6b7280;
+    color: white;
     cursor: pointer;
-    width: 2rem;
-    height: 2rem;
+    width: 2.5rem;
+    height: 2.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 4px;
+    border-radius: 50%;
     transition: all 0.3s ease;
 }
 
 .verificacion-modal-cerrar:hover {
-    background: #f3f4f6;
-    color: #1a1a2e;
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
 }
 
 .verificacion-modal-body {
-    padding: 1.5rem;
+    padding: 1.4rem 1.5rem;
+    color: #333;
+}
+
+.verificacion-modal-body p {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #555;
 }
 
 .verificacion-modal-body img {
     max-width: 100%;
     border-radius: 8px;
+    border: 1px solid #e5e7eb;
 }
 
 .verificacion-modal-acciones {
     display: flex;
     gap: 1rem;
-    margin-top: 1.5rem;
+    padding: 0 1.5rem 1.4rem;
+}
+
+@media (max-width: 480px) {
+    .verificacion-modal-acciones {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
 }
 
 .btn-cancelar {
     flex: 1;
-    padding: 0.75rem 1.5rem;
+    padding: 0.7rem 1.2rem;
     background: #f3f4f6;
-    border: none;
+    border: 2px solid #e5e7eb;
     border-radius: 8px;
-    font-weight: 600;
+    font-weight: 700;
+    font-size: 0.9rem;
     color: #6b7280;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -493,6 +535,72 @@
 
 .btn-cancelar:hover {
     background: #e5e7eb;
+    border-color: #d1d5db;
+    transform: translateY(-2px);
+}
+
+.btn-cancelar:active {
+    transform: translateY(0);
+}
+
+.btn-aprobar-confirmar {
+    flex: 1;
+    padding: 0.7rem 1.2rem;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.btn-aprobar-confirmar:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+.btn-aprobar-confirmar:active {
+    transform: translateY(0);
+}
+
+.btn-aprobar-confirmar:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-rechazar-confirmar {
+    flex: 1;
+    padding: 0.9rem 1.5rem;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+}
+
+.btn-rechazar-confirmar:hover {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+.btn-rechazar-confirmar:active {
+    transform: translateY(0);
+}
+
+.btn-rechazar-confirmar:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
 }
 
 /* Formulario de rechazo */
@@ -502,25 +610,32 @@
 
 .form-grupo label {
     display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-    color: #374151;
+    margin-bottom: 0.7rem;
+    font-weight: 700;
+    color: #333;
+    font-size: 0.95rem;
 }
 
 .form-grupo textarea {
     width: 100%;
-    padding: 0.75rem;
+    padding: 1rem;
     border: 2px solid #e5e7eb;
     border-radius: 8px;
     font-family: inherit;
-    font-size: 1rem;
+    font-size: 0.95rem;
     resize: vertical;
     transition: all 0.3s ease;
+    color: #333;
 }
 
 .form-grupo textarea:focus {
     outline: none;
     border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-grupo textarea::placeholder {
+    color: #999;
 }
 
 /* Spinner */

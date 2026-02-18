@@ -4,17 +4,69 @@
 
 {% block css %}
 <link rel="stylesheet" href="/static/css/cuentas/recuperacion/recuperar.css" />
+<style>
+  .card h1 {
+    background: linear-gradient(90deg, #0052A3 0%, #003D7A 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: #0052A3;
+    margin-bottom: 10px !important;
+  }
+  .subtitle {
+    text-align: center;
+    color: #666666;
+    margin-bottom: 30px;
+    font-size: 14px;
+  }
+  .info-box {
+    background: #EBF5FB;
+    border-left: 4px solid #0052A3;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #003D7A;
+  }
+  .info-box ul {
+    margin: 10px 0 0 20px;
+    padding: 0;
+  }
+  .info-box li {
+    margin: 5px 0;
+  }
+  .info-box a {
+    color: #27AE60;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .info-box a:hover {
+    color: #1E5631;
+  }
+</style>
 {% endblock %}
 
 {% block contenido %}
 <section class="card">
-  <h1>Recuperar contraseña</h1>
+  <h1>Recuperar Contraseña</h1>
+  <p class="subtitle">
+    Ingresa tu correo electrónico y recibirás un enlace para restablecer tu contraseña
+  </p>
   <form method="post" novalidate>
     {% csrf_token %}
     <label>Correo electrónico</label>
-    <input type="email" name="email" required />
-    <button type="submit">Enviar enlace</button>
+    <input type="email" name="email" required placeholder="tu@correo.com" />
+    <button type="submit">Enviar enlace de recuperación</button>
   </form>
+  
+  <div class="info-box">
+    <strong>Información importante:</strong>
+    <ul>
+      <li>Revisa tu carpeta de spam si no ves el correo</li>
+      <li>El enlace expira en 1 hora por seguridad</li>
+      <li>¿No tienes cuenta? <a href="/registro/">Regístrate aquí</a></li>
+    </ul>
+  </div>
 </section>
 {% endblock %}
 

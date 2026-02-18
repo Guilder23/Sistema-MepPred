@@ -101,12 +101,14 @@ window.addEventListener('load', function() {
     try {
         console.log('Inicializando aplicación de usuarios...');
         
-        // Event listeners globales (Búsqueda y Filtro)
+        // Event listeners globales (Búsqueda y Filtros)
         const buscarEl = document.getElementById('buscar');
         const filtroEl = document.getElementById('filtroEstado');
+        const filtroRolEl = document.getElementById('filtroRol');
         
         if (buscarEl) buscarEl.addEventListener('keyup', cargarUsuarios);
         if (filtroEl) filtroEl.addEventListener('change', cargarUsuarios);
+        if (filtroRolEl) filtroRolEl.addEventListener('change', cargarUsuarios);
         
         console.log('Event listeners globales configurados');
         console.log('Llamando cargarUsuarios()...');
@@ -121,11 +123,18 @@ function cargarUsuarios() {
     console.log('cargarUsuarios() llamado');
     const buscarEl = document.getElementById('buscar');
     const filtroEl = document.getElementById('filtroEstado');
+    const filtroRolEl = document.getElementById('filtroRol');
     
     const busqueda = buscarEl ? buscarEl.value : '';
     const filtro = filtroEl ? filtroEl.value : '';
+    const rol = filtroRolEl ? filtroRolEl.value : '';
     
-    const url = `/usuarios/api/listar/?busqueda=${busqueda}&estado=${filtro}`;
+    const params = new URLSearchParams();
+    if (busqueda) params.set('busqueda', busqueda);
+    if (filtro) params.set('estado', filtro);
+    if (rol) params.set('rol', rol);
+
+    const url = `/usuarios/api/listar/?${params.toString()}`;
     console.log('Fetching:', url);
 
     fetch(url)
@@ -135,7 +144,11 @@ function cargarUsuarios() {
         })
         .then(data => {
             console.log('Data recibida:', data);
-            mostrarUsuarios(data);
+            let usuarios = data;
+            if (rol && Array.isArray(usuarios)) {
+                usuarios = usuarios.filter(u => (u.role || '') === rol);
+            }
+            mostrarUsuarios(usuarios);
         })
         .catch(error => console.error('Error en fetch:', error));
 }

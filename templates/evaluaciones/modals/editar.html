@@ -28,8 +28,16 @@
                 <!-- Materia -->
                 <div class="modal-editar-form-group modal-editar-required">
                     <label for="editarMateria">Materia</label>
-                    <select class="modal-editar-form-control" id="editarMateria" required>
+                    <select class="modal-editar-form-control" id="editarMateria" onchange="cargarTemasEditarExamen()" required>
                         <option value="">Seleccione una materia</option>
+                    </select>
+                </div>
+
+                <!-- Tema -->
+                <div class="modal-editar-form-group modal-editar-required">
+                    <label for="editarTema">Tema</label>
+                    <select class="modal-editar-form-control" id="editarTema" required>
+                        <option value="">Seleccione un tema</option>
                     </select>
                 </div>
 

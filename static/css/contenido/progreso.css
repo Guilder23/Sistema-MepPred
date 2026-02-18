@@ -250,20 +250,33 @@
     gap: 0.5rem;
 }
 
+.materia-header-content {
+    flex: 1;
+}
+
+.materia-progreso-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.materia-header .materia-porcentaje {
+    font-weight: 600;
+    color: white;
+    font-size: 1.1rem;
+}
+
+.materia-header .materia-detalle {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.85rem;
+}
+
 .materia-stats {
     display: flex;
     align-items: center;
     gap: 1.5rem;
-}
-
-.materia-porcentaje {
-    font-size: 1.5rem;
-    font-weight: 700;
-}
-
-.materia-detalle {
-    font-size: 0.9rem;
-    opacity: 0.9;
 }
 
 .chevron-icon {
@@ -286,13 +299,136 @@
 .materia-progreso {
     background-color: #e9ecef;
     border-radius: 50px;
-    height: 20px;
+    height: 6px;
     overflow: hidden;
-    margin-bottom: 1.5rem;
+    margin: 0.5rem 1.5rem 1rem 1.5rem;
 }
 
 .materia-progreso-fill {
     background: linear-gradient(90deg, var(--success-color), var(--success-hover));
+    height: 100%;
+    border-radius: 50px;
+    transition: width 0.8s ease;
+}
+
+.materia-header-content {
+    flex: 1;
+}
+
+.materia-progreso-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.materia-porcentaje {
+    font-weight: 600;
+    color: var(--success-color);
+    font-size: 1rem;
+}
+
+.materia-detalle {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+/* ============================================
+   TEMAS (ACORDEÓN DENTRO DE MATERIAS)
+   ============================================ */
+
+.temas-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.tema-card {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.tema-card.tema-completado {
+    border-color: var(--success-color);
+    box-shadow: 0 0 0 1px var(--success-color);
+}
+
+.tema-card.tema-completado .tema-header {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+}
+
+.tema-card.tema-completado .tema-header:hover {
+    background: linear-gradient(135deg, #c3e6cb 0%, #b1dfbb 100%);
+}
+
+.tema-header {
+    background: #f8f9fa;
+    padding: 1rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.tema-header:hover {
+    background: #e9ecef;
+}
+
+.tema-header h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tema-header h4 i {
+    color: var(--info-color);
+    font-size: 0.9rem;
+}
+
+.tema-stats {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.tema-porcentaje {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--success-color);
+}
+
+.tema-detalle {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.tema-body {
+    padding: 1rem 1.25rem;
+    display: none;
+}
+
+.tema-body.active {
+    display: block;
+}
+
+.tema-progreso {
+    background-color: #e9ecef;
+    border-radius: 50px;
+    height: 16px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.tema-progreso-fill {
+    background: linear-gradient(90deg, var(--info-color), #2980b9);
     height: 100%;
     border-radius: 50px;
     transition: width 0.8s ease;
@@ -827,4 +963,118 @@
     .stat-content p {
         font-size: 0.7rem;
     }
+}
+/* ============================================
+   INFORMACIÓN DEL EXAMEN
+   ============================================ */
+
+.tema-examen {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.examen-info {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.examen-info h5 {
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.examen-info h5 i {
+    color: var(--primary-color);
+    margin-right: 0.5rem;
+}
+
+.examen-aprobado,
+.examen-disponible,
+.examen-bloqueado {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.examen-aprobado {
+    background: rgba(46, 204, 113, 0.1);
+    color: var(--success-color);
+    border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+.examen-disponible {
+    background: rgba(52, 152, 219, 0.1);
+    color: var(--info-color);
+    border: 1px solid rgba(52, 152, 219, 0.3);
+}
+
+.examen-bloqueado {
+    background: rgba(149, 165, 166, 0.1);
+    color: var(--text-secondary);
+    border: 1px solid rgba(149, 165, 166, 0.3);
+}
+
+.examen-aprobado i,
+.examen-disponible i,
+.examen-bloqueado i {
+    font-size: 1.25rem;
+}
+
+.examen-info .nota {
+    font-weight: 600;
+    margin-left: auto;
+}
+
+.examen-info .intentos {
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+.examen-info small {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+/* ============================================
+   TEMA BLOQUEADO (PREMIUM)
+   ============================================ */
+
+.tema-bloqueado {
+    background: linear-gradient(135deg, #fff3cd 0%, #fff8dc 100%);
+    border: 1px dashed var(--warning-color);
+    border-radius: 8px;
+}
+
+.tema-bloqueado i {
+    color: var(--warning-color);
+}
+
+.tema-bloqueado .btn-warning {
+    background: var(--warning-color);
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s;
+}
+
+.tema-bloqueado .btn-warning:hover {
+    background: var(--warning-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }

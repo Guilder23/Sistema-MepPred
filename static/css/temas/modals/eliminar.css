@@ -1,0 +1,213 @@
+/* Modal para eliminar materia - Rojo */
+
+.modal-eliminar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+}
+
+.modal-eliminar-overlay.active {
+    display: flex;
+}
+
+.modal-eliminar-container {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    max-width: 450px;
+    animation: modalEliminarSlideUp 0.3s ease-out;
+}
+
+@keyframes modalEliminarSlideUp {
+    from {
+        transform: translateY(15px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-eliminar-header {
+    background: #dc3545;
+    color: white;
+    padding: 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.modal-eliminar-header h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: white;
+    text-align: center;
+    flex: 1;
+}
+
+.modal-eliminar-btn-close {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: none;
+    padding: 0.4rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    font-size: 1.1rem;
+    margin-left: auto;
+}
+
+.modal-eliminar-btn-close:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.modal-eliminar-body {
+    padding: 2rem 1.75rem;
+    text-align: center;
+}
+
+.modal-eliminar-warning-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.modal-eliminar-warning-text {
+    color: #495057;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.modal-eliminar-warning-text strong {
+    display: block;
+    font-weight: 700;
+    color: #dc3545;
+    font-size: 1.05rem;
+    margin: 1rem 0;
+    padding: 0.75rem 1rem;
+    background: #f8d7da;
+    border-radius: 6px;
+    border-left: 4px solid #dc3545;
+}
+
+.modal-eliminar-warning-text span {
+    display: block;
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background: #fff3cd;
+    border-left: 3px solid #ffc107;
+    border-radius: 4px;
+    color: #856404;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.modal-eliminar-footer {
+    padding: 1rem 1.75rem;
+    background: #f8f9fa;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    border-top: 1px solid #dee2e6;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.modal-eliminar-btn {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 100px;
+}
+
+.modal-eliminar-btn-cancelar {
+    background: #6c757d;
+    color: white;
+}
+
+.modal-eliminar-btn-cancelar:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+}
+
+.modal-eliminar-btn-eliminar {
+    background: #dc3545;
+    color: white;
+    box-shadow: 0 2px 6px rgba(220, 53, 69, 0.25);
+}
+
+.modal-eliminar-btn-eliminar:hover {
+    background: #c82333;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(220, 53, 69, 0.35);
+}
+
+.modal-eliminar-btn-eliminar:disabled {
+    background: #95a5a6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .modal-eliminar-container {
+        width: 95%;
+    }
+
+    .modal-eliminar-body {
+        padding: 1.5rem 1.25rem;
+    }
+
+    .modal-eliminar-header h2 {
+        font-size: 1.15rem;
+    }
+
+    .modal-eliminar-footer {
+        padding: 1rem 1.25rem;
+        flex-direction: column-reverse;
+    }
+
+    .modal-eliminar-btn {
+        width: 100%;
+    }
+}
+
+/* Loading spinner */
+.modal-eliminar-loading {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: modal-eliminar-spin 0.6s linear infinite;
+    margin-right: 0.5rem;
+}
+
+@keyframes modal-eliminar-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

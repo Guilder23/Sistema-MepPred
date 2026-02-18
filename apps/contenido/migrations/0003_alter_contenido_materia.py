@@ -8,13 +8,18 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('contenido', '0002_alter_contenido_options_contenido_es_obligatorio_and_more'),
-        ('materias', '0001_initial'),
+        ('temas', '0001_initial'),
     ]
 
     operations = [
+        migrations.RenameField(
+            model_name='contenido',
+            old_name='materia',
+            new_name='tema',
+        ),
         migrations.AlterField(
             model_name='contenido',
-            name='materia',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='materias.materia', verbose_name='Materia'),
+            name='tema',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='temas.tema', verbose_name='Tema'),
         ),
     ]

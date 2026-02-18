@@ -12,6 +12,122 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 /**
+ * Cambiar materia y cargar temas asociados
+ */
+function cambiarMateria(materiaId) {
+    const periodo = new URLSearchParams(window.location.search).get('periodo') || 'todo';
+    
+    if (materiaId === '') {
+        // Ir a ranking general
+        window.location.href = `?periodo=${periodo}`;
+    } else {
+        // Cargar temas para la materia seleccionada
+        cargarTemas(materiaId, periodo);
+    }
+}
+
+/**
+ * Cargar temas según la materia seleccionada
+ */
+async function cargarTemas(materiaId, periodo) {
+    try {
+        const response = await fetch(`/ranking/api/filtros/?materia_id=${materiaId}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            const selectTema = document.getElementById('filtroTema');
+            const selectExamen = document.getElementById('filtroExamen');
+            
+            // Limpiar opciones previas
+            selectTema.innerHTML = '<option value="">Todos</option>';
+            selectExamen.innerHTML = '<option value="">Todos</option>';
+            selectExamen.disabled = true;
+            
+            // Agregar nuevos temas
+            data.temas.forEach(tema => {
+                const option = document.createElement('option');
+                option.value = tema.id;
+                option.textContent = tema.nombre;
+                selectTema.appendChild(option);
+            });
+            
+            // Habilitar select de temas
+            selectTema.disabled = false;
+            
+            // Ir al ranking con materia seleccionada
+            window.location.href = `?periodo=${periodo}&materia=${materiaId}`;
+        }
+    } catch (error) {
+        console.error('Error al cargar temas:', error);
+    }
+}
+
+/**
+ * Cambiar tema y cargar exámenes asociados
+ */
+function cambiarTema(temaId) {
+    const periodo = new URLSearchParams(window.location.search).get('periodo') || 'todo';
+    const materiaId = new URLSearchParams(window.location.search).get('materia') || '';
+    
+    if (temaId === '') {
+        // Ir a ranking de la materia sin tema específico
+        window.location.href = `?periodo=${periodo}&materia=${materiaId}`;
+    } else {
+        // Cargar exámenes para el tema seleccionado
+        cargarExamenes(temaId, materiaId, periodo);
+    }
+}
+
+/**
+ * Cargar exámenes según el tema seleccionado
+ */
+async function cargarExamenes(temaId, materiaId, periodo) {
+    try {
+        const response = await fetch(`/ranking/api/filtros/?tema_id=${temaId}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            const selectExamen = document.getElementById('filtroExamen');
+            
+            // Limpiar opciones previas
+            selectExamen.innerHTML = '<option value="">Todos</option>';
+            
+            // Agregar nuevos exámenes
+            data.examenes.forEach(examen => {
+                const option = document.createElement('option');
+                option.value = examen.id;
+                option.textContent = examen.titulo;
+                selectExamen.appendChild(option);
+            });
+            
+            // Habilitar select de exámenes
+            selectExamen.disabled = false;
+            
+            // Ir al ranking con tema seleccionado
+            window.location.href = `?periodo=${periodo}&materia=${materiaId}&tema=${temaId}`;
+        }
+    } catch (error) {
+        console.error('Error al cargar exámenes:', error);
+    }
+}
+
+/**
+ * Cambiar examen y filtrar ranking
+ */
+function cambiarExamen(examenId) {
+    const periodo = new URLSearchParams(window.location.search).get('periodo') || 'todo';
+    const materiaId = new URLSearchParams(window.location.search).get('materia') || '';
+    const temaId = new URLSearchParams(window.location.search).get('tema') || '';
+    
+    let url = `?periodo=${periodo}`;
+    if (materiaId) url += `&materia=${materiaId}`;
+    if (temaId) url += `&tema=${temaId}`;
+    if (examenId) url += `&examen=${examenId}`;
+    
+    window.location.href = url;
+}
+
+/**
  * Anima las barras de aprobación al cargar la página
  */
 function animarBarrasProgreso() {
@@ -133,6 +249,9 @@ function obtenerColorBarra(porcentaje) {
 // Exportar funciones para uso global
 window.rankingUtils = {
     cambiarPeriodo,
+    cambiarMateria,
+    cambiarTema,
+    cambiarExamen,
     actualizarRanking,
     formatearNumero,
     obtenerColorBarra

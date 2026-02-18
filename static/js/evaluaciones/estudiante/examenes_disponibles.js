@@ -43,22 +43,31 @@ async function cargarExamenes() {
     }
 }
 
-// Agrupar exámenes por materia
+// Agrupar exámenes por materia y luego por tema
 function agruparPorMateria() {
     examenesPorMateria = {};
     
     examenes.forEach(examen => {
         const materiaId = examen.materia_id;
         const materiaNombre = examen.materia_nombre;
+        const temaId = examen.tema_id;
+        const temaNombre = examen.tema_nombre || 'Sin tema';
         
         if (!examenesPorMateria[materiaId]) {
             examenesPorMateria[materiaId] = {
                 nombre: materiaNombre,
+                temas: {}
+            };
+        }
+        
+        if (!examenesPorMateria[materiaId].temas[temaId]) {
+            examenesPorMateria[materiaId].temas[temaId] = {
+                nombre: temaNombre,
                 examenes: []
             };
         }
         
-        examenesPorMateria[materiaId].examenes.push(examen);
+        examenesPorMateria[materiaId].temas[temaId].examenes.push(examen);
     });
 }
 
@@ -74,7 +83,7 @@ function cargarFiltroMaterias() {
     });
 }
 
-// Mostrar exámenes agrupados por materia
+// Mostrar exámenes agrupados por materia y tema
 function mostrarExamenes() {
     const container = document.getElementById('materiasContainer');
     container.innerHTML = '';
@@ -86,13 +95,37 @@ function mostrarExamenes() {
         section.className = 'materia-section';
         section.dataset.materiaId = materiaId;
         
+        // Contar total de exámenes
+        let totalExamenes = 0;
+        Object.keys(materia.temas).forEach(temaId => {
+            totalExamenes += materia.temas[temaId].examenes.length;
+        });
+        
+        let temasHtml = '';
+        
+        Object.keys(materia.temas).forEach(temaId => {
+            const tema = materia.temas[temaId];
+            
+            temasHtml += `
+                <div class="tema-subsection">
+                    <div class="tema-header">
+                        <h3>${tema.nombre}</h3>
+                        <span class="temas-count">${tema.examenes.length} ${tema.examenes.length === 1 ? 'examen' : 'exámenes'}</span>
+                    </div>
+                    <div class="examenes-grid">
+                        ${tema.examenes.map(examen => crearTarjetaExamen(examen, tema.nombre)).join('')}
+                    </div>
+                </div>
+            `;
+        });
+        
         section.innerHTML = `
             <div class="materia-header">
                 <h2>${materia.nombre}</h2>
-                <span class="examenes-count">${materia.examenes.length} exámenes</span>
+                <span class="examenes-count">${totalExamenes} ${totalExamenes === 1 ? 'examen' : 'exámenes'}</span>
             </div>
-            <div class="examenes-grid">
-                ${materia.examenes.map(examen => crearTarjetaExamen(examen)).join('')}
+            <div class="temas-content">
+                ${temasHtml}
             </div>
         `;
         
@@ -104,7 +137,7 @@ function mostrarExamenes() {
 }
 
 // Crear tarjeta de examen
-function crearTarjetaExamen(examen) {
+function crearTarjetaExamen(examen, temaNombre = null) {
     const estadoBadge = examen.activo 
         ? '<span class="badge badge-activo">Activo</span>' 
         : '<span class="badge badge-inactivo">Inactivo</span>';
@@ -125,6 +158,15 @@ function crearTarjetaExamen(examen) {
             </div>
         `;
         botonTexto = '<i class="fas fa-lock"></i> Contenido Incompleto';
+    } else if (examen.bloqueado_secuencial) {
+        botonDeshabilitado = true;
+        mensajeBloqueo = `
+            <div class="bloqueo-info secuencial">
+                <i class="fas fa-link"></i>
+                <span>Aprueba el examen anterior de este tema para desbloquearlo</span>
+            </div>
+        `;
+        botonTexto = '<i class="fas fa-lock"></i> Bloqueado Secuencialmente';
     } else if (examen.bloqueado) {
         botonDeshabilitado = true;
         mensajeBloqueo = `
@@ -170,6 +212,7 @@ function crearTarjetaExamen(examen) {
     
     return `
         <div class="examen-card" data-examen-id="${examen.id}" data-titulo="${examen.titulo.toLowerCase()}">
+            ${temaNombre ? `<div class="examen-tema"><i class="fas fa-bookmark"></i> ${temaNombre}</div>` : ''}
             <div class="examen-titulo">${escapeHtml(examen.titulo)}</div>
             <div class="examen-descripcion">${escapeHtml(examen.descripcion || 'Sin descripción')}</div>
             
@@ -224,23 +267,36 @@ function filtrarExamenes() {
         const section = document.querySelector(`[data-materia-id="${materiaId}"]`);
         if (!section) return;
         
-        // Filtrar exámenes dentro de la materia
-        const tarjetas = section.querySelectorAll('.examen-card');
-        let examenesVisibles = 0;
+        // Filtrar por temas
+        const temasSubsections = section.querySelectorAll('.tema-subsection');
+        let materiaConExamenes = false;
         
-        tarjetas.forEach(tarjeta => {
-            const titulo = tarjeta.dataset.titulo || '';
+        temasSubsections.forEach(temaSection => {
+            const tarjetas = temaSection.querySelectorAll('.examen-card');
+            let examenesVisibles = 0;
             
-            if (!busqueda || titulo.includes(busqueda)) {
-                tarjeta.style.display = 'block';
-                examenesVisibles++;
+            tarjetas.forEach(tarjeta => {
+                const titulo = tarjeta.dataset.titulo || '';
+                
+                if (!busqueda || titulo.includes(busqueda)) {
+                    tarjeta.style.display = 'block';
+                    examenesVisibles++;
+                } else {
+                    tarjeta.style.display = 'none';
+                }
+            });
+            
+            // Mostrar/ocultar sección de tema
+            if (examenesVisibles > 0) {
+                temaSection.style.display = 'block';
+                materiaConExamenes = true;
             } else {
-                tarjeta.style.display = 'none';
+                temaSection.style.display = 'none';
             }
         });
         
-        // Mostrar sección solo si tiene exámenes visibles
-        if (examenesVisibles > 0) {
+        // Mostrar sección de materia solo si tiene temas con exámenes visibles
+        if (materiaConExamenes) {
             section.style.display = 'block';
             hayResultados = true;
         }

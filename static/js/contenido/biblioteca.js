@@ -6,12 +6,32 @@ console.log('biblioteca.js cargado');
 let todosLosContenidos = [];
 let materiasUnicas = new Set();
 let nivelesUnicos = new Set();
+let temaSeleccionado = null;
+let tieneSuscripcion = false;
 
 // Cargar contenidos al iniciar
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM cargado, iniciando biblioteca...');
     
-    // Event listeners para búsqueda
+    // Event listeners para toggle del sidebar
+    const btnToggleSidebar = document.getElementById('btnToggleSidebar');
+    const btnCloseSidebar = document.getElementById('btnCloseSidebar');
+    
+    if (btnToggleSidebar) {
+        btnToggleSidebar.addEventListener('click', toggleSidebar);
+    }
+    
+    if (btnCloseSidebar) {
+        btnCloseSidebar.addEventListener('click', closeSidebar);
+    }
+    
+    // Event listener para búsqueda de materias
+    const buscarMateria = document.getElementById('buscarMateria');
+    if (buscarMateria) {
+        buscarMateria.addEventListener('input', filtrarMaterias);
+    }
+    
+    // Event listeners para búsqueda de contenidos
     const buscarEl = document.getElementById('buscar');
     if (buscarEl) {
         buscarEl.addEventListener('keyup', filtrarContenidos);
@@ -28,9 +48,307 @@ document.addEventListener('DOMContentLoaded', function() {
         filtroNivelEl.addEventListener('change', filtrarContenidos);
     }
     
-    // Cargar contenidos
+    // Event listener para limpiar filtro de tema
+    const btnLimpiarTema = document.getElementById('btnLimpiarTema');
+    if (btnLimpiarTema) {
+        btnLimpiarTema.addEventListener('click', limpiarFiltroTema);
+    }
+    
+    // Cargar materias y contenidos
+    verificarSuscripcion();
+    cargarMaterias();
     cargarContenidos();
 });
+
+// ============================================
+// FUNCIONES DEL SIDEBAR DE MATERIAS/TEMAS
+// ============================================
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('materiasSidebar');
+    const btnToggle = document.getElementById('btnToggleSidebar');
+    
+    if (sidebar && btnToggle) {
+        sidebar.classList.toggle('active');
+        btnToggle.classList.toggle('active');
+    }
+}
+
+function closeSidebar() {
+    const sidebar = document.getElementById('materiasSidebar');
+    const btnToggle = document.getElementById('btnToggleSidebar');
+    
+    if (sidebar && btnToggle) {
+        sidebar.classList.remove('active');
+        btnToggle.classList.remove('active');
+    }
+}
+
+// Verificar si el usuario tiene suscripción activa
+function verificarSuscripcion() {
+    fetch('/suscripciones/api/verificar-suscripcion/')
+        .then(response => response.json())
+        .then(data => {
+            tieneSuscripcion = data.tiene_suscripcion || false;
+            console.log('Usuario tiene suscripción:', tieneSuscripcion);
+        })
+        .catch(error => {
+            console.error('Error al verificar suscripción:', error);
+            tieneSuscripcion = false;
+        });
+}
+
+// Cargar materias desde la API
+function cargarMaterias() {
+    const listaMaterias = document.getElementById('listaMaterias');
+    
+    fetch('/temas/api/materias/')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.materias) {
+                renderizarMaterias(data.materias);
+            } else {
+                listaMaterias.innerHTML = '<p class="text-center text-muted">No hay materias disponibles</p>';
+            }
+        })
+        .catch(error => {
+            console.error('Error al cargar materias:', error);
+            listaMaterias.innerHTML = '<p class="text-center text-danger">Error al cargar materias</p>';
+        });
+}
+
+// Renderizar lista de materias
+function renderizarMaterias(materias) {
+    const listaMaterias = document.getElementById('listaMaterias');
+    listaMaterias.innerHTML = '';
+    
+    if (materias.length === 0) {
+        listaMaterias.innerHTML = '<p class="text-center text-muted">No hay materias disponibles</p>';
+        return;
+    }
+    
+    materias.forEach(materia => {
+        const materiaDiv = document.createElement('div');
+        materiaDiv.className = 'materia-item';
+        materiaDiv.dataset.materiaId = materia.id;
+        materiaDiv.dataset.materiaNombre = materia.nombre.toLowerCase();
+        
+        materiaDiv.innerHTML = `
+            <div class="materia-header" onclick="toggleMateria(${materia.id})">
+                <span class="materia-nombre">${materia.nombre}</span>
+                <i class="fas fa-chevron-right materia-icon"></i>
+            </div>
+            <div class="temas-lista" id="temas-${materia.id}">
+                <div class="loading-materias" style="padding: 1rem;">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+            </div>
+        `;
+        
+        listaMaterias.appendChild(materiaDiv);
+    });
+}
+
+// Toggle expandir/contraer materia
+window.toggleMateria = function(materiaId) {
+    const materiaItem = document.querySelector(`[data-materia-id="${materiaId}"]`);
+    const temasLista = document.getElementById(`temas-${materiaId}`);
+    
+    if (!materiaItem) return;
+    
+    // Si ya está expandida, contraer
+    if (materiaItem.classList.contains('expanded')) {
+        materiaItem.classList.remove('expanded');
+        return;
+    }
+    
+    // Contraer todas las demás materias
+    document.querySelectorAll('.materia-item.expanded').forEach(item => {
+        item.classList.remove('expanded');
+    });
+    
+    // Expandir esta materia
+    materiaItem.classList.add('expanded');
+    
+    // Cargar temas si no se han cargado
+    if (temasLista && temasLista.querySelector('.loading-materias')) {
+        cargarTemasPorMateria(materiaId);
+    }
+};
+
+// Cargar temas de una materia específica
+function cargarTemasPorMateria(materiaId) {
+    const temasLista = document.getElementById(`temas-${materiaId}`);
+    
+    fetch(`/temas/api/temas/por-materia/${materiaId}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.temas) {
+                renderizarTemas(materiaId, data.temas);
+            } else {
+                temasLista.innerHTML = '<p class="text-center text-muted" style="padding: 1rem;">No hay temas disponibles</p>';
+            }
+        })
+        .catch(error => {
+            console.error('Error al cargar temas:', error);
+            temasLista.innerHTML = '<p class="text-center text-danger" style="padding: 1rem;">Error al cargar temas</p>';
+        });
+}
+
+// Renderizar temas de una materia
+function renderizarTemas(materiaId, temas) {
+    const temasLista = document.getElementById(`temas-${materiaId}`);
+    temasLista.innerHTML = '';
+    
+    if (temas.length === 0) {
+        temasLista.innerHTML = '<p class="text-center text-muted" style="padding: 1rem;">No hay temas en esta materia</p>';
+        return;
+    }
+    
+    temas.forEach((tema, index) => {
+        const isPremium = tema.requiere_suscripcion || false;
+        const estaHabilitado = !isPremium || tieneSuscripcion;
+        
+        const temaDiv = document.createElement('div');
+        temaDiv.className = `tema-item ${!estaHabilitado ? 'bloqueado' : ''}`;
+        temaDiv.dataset.temaId = tema.id;
+        temaDiv.dataset.temaNombre = tema.nombre;
+        
+        let badge = '';
+        let icon = '';
+        
+        // Mostrar badge según si es premium o gratis
+        if (isPremium) {
+            if (tieneSuscripcion) {
+                // Usuario tiene suscripción, mostrar badge premium sin bloqueo
+                badge = '<span class="tema-badge premium"><i class="fas fa-crown"></i> Premium</span>';
+            } else {
+                // Usuario no tiene suscripción, mostrar badge premium bloqueado
+                badge = '<span class="tema-badge bloqueado"><i class="fas fa-lock"></i> Premium</span>';
+                icon = '<i class="fas fa-lock tema-icon"></i>';
+            }
+        } else {
+            // Tema gratis
+            badge = '<span class="tema-badge gratis">Gratis</span>';
+        }
+        
+        temaDiv.innerHTML = `
+            <span class="tema-nombre">${tema.nombre}</span>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                ${badge}
+                ${icon}
+            </div>
+        `;
+        
+        if (estaHabilitado) {
+            temaDiv.onclick = () => seleccionarTema(tema.id, tema.nombre);
+        } else {
+            temaDiv.onclick = () => mostrarMensajePremium();
+        }
+        
+        temasLista.appendChild(temaDiv);
+    });
+}
+
+// Seleccionar un tema para filtrar contenidos
+window.seleccionarTema = function(temaId, temaNombre) {
+    temaSeleccionado = temaId;
+    
+    // Actualizar UI - marcar tema como activo
+    document.querySelectorAll('.tema-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    
+    const temaActual = document.querySelector(`[data-tema-id="${temaId}"]`);
+    if (temaActual) {
+        temaActual.classList.add('active');
+    }
+    
+    // Mostrar botón para limpiar filtro
+    const btnLimpiar = document.getElementById('btnLimpiarTema');
+    if (btnLimpiar) {
+        btnLimpiar.style.display = 'flex';
+    }
+    
+    // Limpiar filtros anteriores
+    document.getElementById('buscar').value = '';
+    document.getElementById('filtroMateria').value = '';
+    document.getElementById('filtroNivel').value = '';
+    
+    // Filtrar contenidos por tema
+    filtrarContenidosPorTema(temaId, temaNombre);
+    
+    // Cerrar sidebar en móvil
+    if (window.innerWidth < 768) {
+        closeSidebar();
+    }
+};
+
+// Filtrar contenidos por tema seleccionado
+function filtrarContenidosPorTema(temaId, temaNombre) {
+    console.log('Filtrando contenidos por tema:', temaNombre);
+    
+    const contenidosFiltrados = todosLosContenidos.filter(contenido => {
+        return contenido.tema === temaNombre;
+    });
+    
+    mostrarContenidos(contenidosFiltrados);
+    
+    // Actualizar mensaje si no hay contenidos
+    if (contenidosFiltrados.length === 0) {
+        const noResults = document.getElementById('noResultsMessage');
+        if (noResults) {
+            noResults.innerHTML = `
+                <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                <p class="text-muted">No hay contenidos publicados en "${temaNombre}"</p>
+            `;
+            noResults.style.display = 'block';
+        }
+    }
+}
+
+// Filtrar materias en el sidebar
+function filtrarMaterias() {
+    const busqueda = document.getElementById('buscarMateria').value.toLowerCase();
+    const materiaItems = document.querySelectorAll('.materia-item');
+    
+    materiaItems.forEach(item => {
+        const materiaNombre = item.dataset.materiaNombre || '';
+        if (materiaNombre.includes(busqueda)) {
+            item.style.display = '';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+}
+
+// Limpiar filtro de tema
+function limpiarFiltroTema() {
+    temaSeleccionado = null;
+    
+    // Quitar selección de todos los temas
+    document.querySelectorAll('.tema-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    
+    // Ocultar botón de limpiar
+    const btnLimpiar = document.getElementById('btnLimpiarTema');
+    if (btnLimpiar) {
+        btnLimpiar.style.display = 'none';
+    }
+    
+    // Mostrar todos los contenidos
+    filtrarContenidos();
+}
+
+// Mostrar mensaje para usuarios sin suscripción
+function mostrarMensajePremium() {
+    mostrarMensaje('Este tema requiere una suscripción Premium. ¡Suscríbete para acceder!', 'warning');
+}
+
+// ============================================
+// FUNCIONES ORIGINALES DE CONTENIDOS
+// ============================================
 
 // Función para cargar contenidos desde el servidor
 function cargarContenidos() {
@@ -48,10 +366,36 @@ function cargarContenidos() {
         })
         .then(data => {
             console.log('Contenidos recibidos:', data);
-            todosLosContenidos = data;
             
-            // Extraer materias y niveles únicos
-            data.forEach(contenido => {
+            // Convertir la estructura de materias/temas/contenidos en un array plano
+            const contenidosFlat = [];
+            
+            if (data.materias && Array.isArray(data.materias)) {
+                data.materias.forEach(materia => {
+                    if (materia.temas && Array.isArray(materia.temas)) {
+                        materia.temas.forEach(tema => {
+                            if (tema.contenidos && Array.isArray(tema.contenidos)) {
+                                tema.contenidos.forEach(contenido => {
+                                    // Agregar información adicional al contenido
+                                    contenidosFlat.push({
+                                        ...contenido,
+                                        materia: materia.nombre,
+                                        materia_id: materia.id,
+                                        tema: tema.nombre,
+                                        tema_id: tema.id
+                                    });
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+            
+            todosLosContenidos = contenidosFlat;
+            console.log('Contenidos procesados:', todosLosContenidos.length);
+            
+            // Extraer temas y niveles únicos
+            todosLosContenidos.forEach(contenido => {
                 if (contenido.materia) {
                     materiasUnicas.add(contenido.materia);
                 }
@@ -64,7 +408,7 @@ function cargarContenidos() {
             actualizarFiltros();
             
             // Mostrar contenidos
-            mostrarContenidos(data);
+            mostrarContenidos(todosLosContenidos);
             mostrarCargando(false);
         })
         .catch(error => {
@@ -108,7 +452,7 @@ function filtrarContenidos() {
     const materiaFiltro = document.getElementById('filtroMateria').value;
     const nivelFiltro = document.getElementById('filtroNivel').value;
     
-    const contenidosFiltrados = todosLosContenidos.filter(contenido => {
+    let contenidosFiltrados = todosLosContenidos.filter(contenido => {
         const cumpleBusqueda = !busqueda || 
             contenido.titulo.toLowerCase().includes(busqueda) ||
             contenido.materia.toLowerCase().includes(busqueda) ||
@@ -119,6 +463,18 @@ function filtrarContenidos() {
         
         return cumpleBusqueda && cumpleMateria && cumpleNivel;
     });
+    
+    // Si hay un tema seleccionado, filtrar también por tema
+    if (temaSeleccionado) {
+        const temaActual = document.querySelector(`[data-tema-id="${temaSeleccionado}"]`);
+        const temaNombre = temaActual ? temaActual.dataset.temaNombre : null;
+        
+        if (temaNombre) {
+            contenidosFiltrados = contenidosFiltrados.filter(contenido => {
+                return contenido.tema === temaNombre;
+            });
+        }
+    }
     
     mostrarContenidos(contenidosFiltrados);
 }

@@ -63,8 +63,10 @@ function mostrarModal(overlayId) {
         document.body.style.overflow = 'hidden';
         
         // Cargar materias al abrir modal de crear o editar
-        if (overlayId === 'modalCrearOverlay' || overlayId === 'modalEditarOverlay') {
-            cargarMaterias();
+        if (overlayId === 'modalCrearOverlay') {
+            cargarMateriasCrear();
+        } else if (overlayId === 'modalEditarOverlay') {
+            cargarMateriasEditar();
         }
     }
 }
@@ -77,27 +79,138 @@ function ocultarModal(overlayId) {
     }
 }
 
-// Cargar materias desde la API
-function cargarMaterias() {
-    fetch('/materias/api/materias/')
+// Cargar materias en select de crear
+function cargarMateriasCrear() {
+    fetch('/temas/api/materias/')
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                const selectCrear = document.getElementById('crearMateria');
-                const selectEditar = document.getElementById('editarMateria');
+                const selectMateria = document.getElementById('crearMateria');
+                if (selectMateria) {
+                    const options = (data.materias || []).map(m => 
+                        `<option value="${m.id}">${m.nombre}</option>`
+                    ).join('');
+                    selectMateria.innerHTML = '<option value="">Seleccione una materia</option>' + options;
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error al cargar materias:', error);
+            mostrarAlerta('Error al cargar las materias', 'danger');
+        });
+}
+
+// Cargar materias en select de editar
+function cargarMateriasEditar() {
+    fetch('/temas/api/materias/')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const selectMateria = document.getElementById('editarMateria');
+                if (selectMateria) {
+                    const options = (data.materias || []).map(m => 
+                        `<option value="${m.id}">${m.nombre}</option>`
+                    ).join('');
+                    selectMateria.innerHTML = '<option value="">Seleccione una materia</option>' + options;
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error al cargar materias:', error);
+            mostrarAlerta('Error al cargar las materias', 'danger');
+        });
+}
+
+// Cargar temas filtrados por materia en crear
+function cargarTemasCrear() {
+    const materiaSelect = document.getElementById('crearMateria');
+    const temaSelect = document.getElementById('crearTema');
+    
+    if (!materiaSelect || !temaSelect) {
+        return;
+    }
+    
+    const materiaId = materiaSelect.value;
+    
+    if (!materiaId) {
+        temaSelect.innerHTML = '<option value="">Seleccione un tema</option>';
+        return;
+    }
+    
+    fetch(`/temas/api/temas/por-materia/${materiaId}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const options = (data.temas || []).map(t => 
+                    `<option value="${t.nombre}">${t.nombre}</option>`
+                ).join('');
+                temaSelect.innerHTML = '<option value="">Seleccione un tema</option>' + options;
+            }
+        })
+        .catch(error => {
+            console.error('Error al cargar temas:', error);
+            mostrarAlerta('Error al cargar los temas', 'danger');
+        });
+}
+
+// Cargar temas filtrados por materia en editar
+function cargarTemasEditar() {
+    const materiaSelect = document.getElementById('editarMateria');
+    const temaSelect = document.getElementById('editarTema');
+    
+    if (!materiaSelect || !temaSelect) {
+        return;
+    }
+    
+    const materiaId = materiaSelect.value;
+    const temaActual = temaSelect.value;
+    
+    if (!materiaId) {
+        temaSelect.innerHTML = '<option value="">Seleccione un tema</option>';
+        return;
+    }
+    
+    fetch(`/temas/api/temas/por-materia/${materiaId}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const options = (data.temas || []).map(t => 
+                    `<option value="${t.nombre}">${t.nombre}</option>`
+                ).join('');
+                temaSelect.innerHTML = '<option value="">Seleccione un tema</option>' + options;
+                // Mantener el valor seleccionado si existe
+                if (temaActual) {
+                    temaSelect.value = temaActual;
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error al cargar temas:', error);
+            mostrarAlerta('Error al cargar los temas', 'danger');
+        });
+}
+
+// Cargar temas desde la API (función legacy - mantener para compatibilidad)
+function cargarTemas() {
+    fetch('/temas/api/temas/')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const selectCrear = document.getElementById('crearTema');
+                const selectEditar = document.getElementById('editarTema');
                 
-                const options = data.data.map(m => 
+                const options = (data.temas || []).map(m => 
                     `<option value="${m.nombre}">${m.nombre}</option>`
                 ).join('');
                 
                 if (selectCrear) {
-                    selectCrear.innerHTML = '<option value="">Seleccione una materia</option>' + options;
+                    selectCrear.innerHTML = '<option value="">Seleccione un tema</option>' + options;
                 }
                 
                 if (selectEditar) {
                     // No sobreescribir si ya tiene un valor seleccionado
                     const valorActual = selectEditar.value;
-                    selectEditar.innerHTML = '<option value="">Seleccione una materia</option>' + options;
+                    selectEditar.innerHTML = '<option value="">Seleccione un tema</option>' + options;
                     if (valorActual) {
                         selectEditar.value = valorActual;
                     }
@@ -105,14 +218,14 @@ function cargarMaterias() {
             }
         })
         .catch(error => {
-            console.error('Error al cargar materias:', error);
+            console.error('Error al cargar temas:', error);
         });
 }
 
 // Cerrar modal al hacer click en el overlay
 document.addEventListener('DOMContentLoaded', function() {
-    // Cargar materias al iniciar la página
-    cargarMaterias();
+    // Cargar temas al iniciar la página
+    cargarTemas();
     
     document.querySelectorAll('.modal-overlay').forEach(overlay => {
         overlay.addEventListener('click', function(e) {
@@ -179,15 +292,11 @@ function renderizarContenidos(contenidos) {
     }
     
     tbody.innerHTML = contenidos.map(contenido => {
-        const tipoBadge = contenido.materia_requiere_suscripcion 
-            ? '<span class="badge badge-premium">Premium</span>' 
-            : '<span class="badge badge-gratis">Gratis</span>';
-        
         return `
         <tr>
             <td>${contenido.titulo}</td>
-            <td>${contenido.materia}</td>
-            <td>${tipoBadge}</td>
+            <td>${contenido.materia_nombre || '-'}</td>
+            <td>${contenido.tema}</td>
             <td>
                 <span class="badge badge-${contenido.estado}">
                     ${contenido.estado === 'activo' ? 'Activo' : 'Inactivo'}

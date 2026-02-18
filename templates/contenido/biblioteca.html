@@ -8,6 +8,33 @@
 {% endblock %}
 
 {% block contenido %}
+<!-- Sidebar de Navegación de Materias y Temas -->
+<div class="materias-sidebar" id="materiasSidebar">
+    <div class="materias-sidebar-header">
+        <h3>Navegación</h3>
+        <button class="btn-close-sidebar" id="btnCloseSidebar">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <div class="materias-sidebar-body">
+        <div class="materias-search">
+            <input type="text" class="form-control" id="buscarMateria" placeholder="Buscar materia...">
+        </div>
+        <div id="listaMaterias" class="materias-lista">
+            <!-- Se cargará dinámicamente -->
+            <div class="loading-materias">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Cargando materias...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Botón flotante para abrir sidebar -->
+<button class="btn-toggle-sidebar" id="btnToggleSidebar">
+    <i class="fas fa-bars"></i>
+</button>
+
 <div class="container-fluid py-4">
     <!-- Encabezado -->
     <div class="row mb-4">
@@ -19,6 +46,9 @@
 
     <!-- Búsqueda y filtros -->
     <div class="filtros-container mb-4">
+        <button class="btn btn-secondary btn-limpiar-tema" id="btnLimpiarTema" style="display: none;">
+            <i class="fas fa-times"></i> Limpiar filtro de tema
+        </button>
         <input type="text" class="form-control" id="buscar" placeholder="Buscar por título o materia...">
         <select class="form-select" id="filtroMateria">
             <option value="">Todas las materias</option>

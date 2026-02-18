@@ -4,25 +4,76 @@
 
 {% block css %}
 <link rel="stylesheet" href="/static/css/cuentas/recuperacion/restablecer.css" />
+<style>
+  .error-container {
+    background: #FCE4E1;
+    border: 2px solid #E74C3C;
+    border-radius: 12px;
+    padding: 40px 20px;
+    text-align: center;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  .error-container h1 {
+    color: #C0392B;
+    margin-bottom: 10px;
+  }
+  .error-container p {
+    color: #A93226;
+    margin-bottom: 20px;
+  }
+  .error-container a {
+    display: inline-block;
+    padding: 12px 30px;
+    background: #0052A3;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  .error-container a:hover {
+    background: #003D7A;
+  }
+  .card h1 {
+    background: linear-gradient(90deg, #0052A3 0%, #003D7A 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: #0052A3;
+    margin-bottom: 10px !important;
+  }
+  .subtitle {
+    text-align: center;
+    color: #666666;
+    margin-bottom: 30px;
+    font-size: 14px;
+  }
+</style>
 {% endblock %}
 
 {% block contenido %}
 <section class="card">
   {% if not token_valido %}
-    <h1>Enlace inválido o expirado</h1>
-    <p>Solicita un nuevo enlace de recuperación.</p>
-    <a class="btn" href="/recuperar/">Solicitar enlace</a>
+    <div class="error-container">
+      <h1>Enlace Expirado o Inválido</h1>
+      <p>El enlace de recuperación que usaste ha expirado o es inválido. Para tu seguridad, los enlaces tienen una validez de 1 hora.</p>
+      <a href="/recuperar/">Solicitar un nuevo enlace</a>
+    </div>
   {% else %}
-    <h1>Restablecer contraseña</h1>
+    <h1>Restablecer tu contraseña</h1>
+    <p class="subtitle">
+      Ingresa y confirma tu nueva contraseña
+    </p>
     <form method="post" novalidate>
       {% csrf_token %}
       <label>Nueva contraseña</label>
-      <input type="password" name="password1" required />
+      <input type="password" name="password1" required placeholder="Al menos 8 caracteres" />
 
       <label>Confirmar contraseña</label>
-      <input type="password" name="password2" required />
+      <input type="password" name="password2" required placeholder="Repite tu nueva contraseña" />
 
-      <button type="submit">Guardar</button>
+      <button type="submit">Guardar Contraseña</button>
     </form>
   {% endif %}
 </section>

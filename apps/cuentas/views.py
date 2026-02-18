@@ -28,14 +28,157 @@ else:
 signer = TimestampSigner()
 
 
+def _generar_email_recuperacion(user: User, url: str) -> str:
+    """Genera HTML profesional para email de recuperación de contraseña"""
+    return f"""
+    <html dir="ltr" lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+            body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.6; color: #333333; }}
+            .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+            .header {{ background: #0052A3; color: white; padding: 40px 20px; border-radius: 8px 8px 0 0; text-align: center; }}
+            .header h1 {{ margin: 0; font-size: 28px; font-weight: 600; }}
+            .content {{ background: #F5F5F5; padding: 40px 20px; border-radius: 0 0 8px 8px; }}
+            .content p {{ margin: 15px 0; }}
+            .button-container {{ text-align: center; margin: 30px 0; }}
+            .button {{ display: inline-block; padding: 14px 40px; background: #27AE60; color: white; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px; border: none; cursor: pointer; }}
+            .button:hover {{ background: #229954; }}
+            .info-box {{ background: #E8F8F5; border-left: 4px solid #27AE60; padding: 15px; margin: 20px 0; border-radius: 4px; font-size: 14px; color: #1E5631; }}
+            .url-box {{ background: white; padding: 15px; border-radius: 4px; font-family: monospace; font-size: 12px; word-break: break-all; margin: 15px 0; border: 1px solid #E0E0E0; }}
+            .footer {{ text-align: center; color: #999999; font-size: 12px; margin-top: 20px; padding-top: 20px; border-top: 1px solid #E0E0E0; }}
+            .warning {{ color: #666666; font-size: 13px; }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>Recuperar tu Contraseña</h1>
+            </div>
+            <div class="content">
+                <p>Hola <strong>{user.first_name or 'usuario'}</strong>,</p>
+                <p>Recibimos una solicitud para restablecer la contraseña de tu cuenta LevelMed.</p>
+                <div class="button-container">
+                    <a href="{url}" class="button">Restablecer Contraseña</a>
+                </div>
+                <p>O copia y pega este enlace en tu navegador:</p>
+                <div class="url-box">{url}</div>
+                <div class="info-box">
+                    Este enlace expira en 1 hora por razones de seguridad.
+                </div>
+                <p class="warning">Si no realizaste esta solicitud, ignora este correo. Tu cuenta seguirá siendo segura.</p>
+            </div>
+            <div class="footer">
+                <p>© 2026 LevelMed. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+
+
+def _generar_email_confirmacion(user: User) -> str:
+    """Genera HTML profesional para email de confirmación de cambio de contraseña"""
+    return f"""
+    <html dir="ltr" lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+            body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.6; color: #333333; }}
+            .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+            .header {{ background: #27AE60; color: white; padding: 40px 20px; border-radius: 8px 8px 0 0; text-align: center; }}
+            .header h1 {{ margin: 0; font-size: 28px; font-weight: 600; }}
+            .content {{ background: #F5F5F5; padding: 40px 20px; border-radius: 0 0 8px 8px; }}
+            .content p {{ margin: 15px 0; }}
+            .success-box {{ background: #E8F8F5; border-left: 4px solid #27AE60; padding: 15px; margin: 20px 0; border-radius: 4px; }}
+            .success-box strong {{ color: #1E5631; }}
+            .footer {{ text-align: center; color: #999999; font-size: 12px; margin-top: 20px; padding-top: 20px; border-top: 1px solid #E0E0E0; }}
+            .warning {{ color: #666666; font-size: 13px; }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>Contraseña Actualizada</h1>
+            </div>
+            <div class="content">
+                <p>Hola <strong>{user.first_name or 'usuario'}</strong>,</p>
+                <div class="success-box">
+                    <strong>Tu contraseña ha sido actualizada correctamente.</strong><br>
+                    Ya puedes iniciar sesión con tu nueva contraseña.
+                </div>
+                <p class="warning">Si no realizaste este cambio o tienes sospechas de actividad no autorizada, contacta con nosotros inmediatamente.</p>
+                <p class="warning">Por tu seguridad, no compartas tu contraseña con nadie.</p>
+            </div>
+            <div class="footer">
+                <p>© 2026 LevelMed. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+
+
 def _enviar_correo_verificacion(request, user: User) -> None:
     token = signer.sign(str(user.pk))
     url = request.build_absolute_uri(reverse('cuentas:verificar_email', args=[token]))
+    
+    html_message = f"""
+    <html dir="ltr" lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+            body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.6; color: #333333; }}
+            .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+            .header {{ background: #0052A3; color: white; padding: 40px 20px; border-radius: 8px 8px 0 0; text-align: center; }}
+            .header h1 {{ margin: 0; font-size: 28px; font-weight: 600; }}
+            .content {{ background: #F5F5F5; padding: 40px 20px; border-radius: 0 0 8px 8px; }}
+            .content p {{ margin: 15px 0; }}
+            .button-container {{ text-align: center; margin: 30px 0; }}
+            .button {{ display: inline-block; padding: 14px 40px; background: #27AE60; color: white; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px; border: none; cursor: pointer; }}
+            .button:hover {{ background: #229954; }}
+            .info-box {{ background: #E8F8F5; border-left: 4px solid #27AE60; padding: 15px; margin: 20px 0; border-radius: 4px; font-size: 14px; color: #1E5631; }}
+            .url-box {{ background: white; padding: 15px; border-radius: 4px; font-family: monospace; font-size: 12px; word-break: break-all; margin: 15px 0; border: 1px solid #E0E0E0; }}
+            .footer {{ text-align: center; color: #999999; font-size: 12px; margin-top: 20px; padding-top: 20px; border-top: 1px solid #E0E0E0; }}
+            .welcome-text {{ color: #666666; font-size: 14px; }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>Bienvenido a LevelMed</h1>
+            </div>
+            <div class="content">
+                <p class="welcome-text">Hola <strong>{user.first_name or 'nuevo usuario'}</strong>,</p>
+                <p class="welcome-text">Tu cuenta ha sido creada exitosamente. Para completar tu registro, debes verificar tu correo electrónico.</p>
+                <div class="button-container">
+                    <a href="{url}" class="button">Verificar Mi Correo</a>
+                </div>
+                <p class="welcome-text">O copia y pega este enlace en tu navegador:</p>
+                <div class="url-box">{url}</div>
+                <div class="info-box">
+                    Este enlace expira en 24 horas. Verifica tu correo lo antes posible para activar tu cuenta.
+                </div>
+                <p class="welcome-text" style="color: #999999; font-size: 13px;">Si no creaste esta cuenta, ignora este correo. Tu cuenta no será activada sin verificación.</p>
+            </div>
+            <div class="footer">
+                <p>© 2026 LevelMed. Todos los derechos reservados.</p>
+                <p style="margin-top: 10px; color: #AAAAAA; font-size: 11px;">Este es un correo automático, por favor no respondas a este mensaje.</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
     send_mail(
-        subject='Verifica tu correo',
+        subject='Verifica tu correo - LevelMed',
         message=f'Verifica tu cuenta entrando a este enlace: {url}',
         from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', None),
         recipient_list=[user.email],
+        html_message=html_message,
         fail_silently=True,
     )
     user.verificacion_enviada_en = timezone.now()
@@ -133,6 +276,10 @@ def verificacion_enviada(request):
     return render(request, 'cuentas/verificacion/verificacion_enviada.html')
 
 
+def recuperacion_enviada(request):
+    return render(request, 'cuentas/verificacion/verificacion_enviada.html')
+
+
 def reenviar_verificacion(request):
     if request.method == 'POST':
         email = (request.POST.get('email') or '').strip().lower()
@@ -144,7 +291,7 @@ def reenviar_verificacion(request):
 
         if user.email_verificado:
             messages.info(request, 'Tu correo ya está verificado. Ya puedes iniciar sesión.')
-            return redirect('cuentas:login')
+            return render(request, 'cuentas/verificacion/reenviar_verificacion.html')
 
         ok, msg = _puede_reenviar_verificacion(user)
         if not ok:
@@ -152,7 +299,7 @@ def reenviar_verificacion(request):
             return render(request, 'cuentas/verificacion/reenviar_verificacion.html')
 
         _enviar_correo_verificacion(request, user)
-        messages.success(request, 'Correo de verificación reenviado.')
+        messages.success(request, 'Correo de verificación reenviado. Revisa tu bandeja de entrada.')
         return redirect('cuentas:verificacion_enviada')
 
     return render(request, 'cuentas/verificacion/reenviar_verificacion.html')
@@ -195,7 +342,7 @@ def login_view(request):
             return JsonResponse({'success': True, 'redirect_url': reverse('cuentas:panel')})
         return redirect('cuentas:panel')
 
-    return redirect('cuentas:home')
+    return render(request, 'cuentas/autenticacion/login.html')
 
 
 def logout_view(request):
@@ -229,24 +376,36 @@ def panel(request):
 def solicitar_recuperacion(request):
     if request.method == 'POST':
         email = (request.POST.get('email') or '').strip().lower()
+        
+        if not email:
+            messages.error(request, 'Por favor ingresa tu correo electrónico.')
+            return render(request, 'cuentas/recuperacion/recuperar.html')
+        
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
-            messages.error(request, 'No existe una cuenta con ese correo.')
-            return render(request, 'cuentas/recuperacion/recuperar.html')
+            # Por seguridad, no revelar si el email existe - redirigir a confirmación igual
+            return redirect('cuentas:recuperacion_enviada')
 
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
         url = request.build_absolute_uri(reverse('cuentas:confirmar_recuperacion', args=[uid, token]))
-        send_mail(
-            subject='Recuperación de contraseña',
-            message=f'Para restablecer tu contraseña entra aquí: {url}',
-            from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', None),
-            recipient_list=[user.email],
-            fail_silently=True,
-        )
-        messages.success(request, 'Se envió un correo de recuperación (si el email existe).')
-        return redirect('cuentas:login')
+        
+        try:
+            send_mail(
+                subject='Recuperación de contraseña - LevelMed',
+                message=f'Para restablecer tu contraseña entra aquí: {url}\n\nEste enlace expira en 1 hora.',
+                from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', None),
+                recipient_list=[user.email],
+                html_message=_generar_email_recuperacion(user, url),
+                fail_silently=False,
+            )
+            return redirect('cuentas:recuperacion_enviada')
+        except Exception as e:
+            messages.error(request, 'No pudimos enviar el correo. Por favor intenta más tarde.')
+            if settings.DEBUG:
+                messages.error(request, f'Error técnico: {str(e)}')
+            return render(request, 'cuentas/recuperacion/recuperar.html')
 
     return render(request, 'cuentas/recuperacion/recuperar.html')
 
@@ -259,23 +418,46 @@ def confirmar_recuperacion(request, uidb64: str, token: str):
         user = None
 
     if user is None or not default_token_generator.check_token(user, token):
+        messages.error(request, 'Este enlace de recuperación ha expirado o es inválido. Solicita uno nuevo.')
         return render(request, 'cuentas/recuperacion/restablecer.html', {'token_valido': False})
 
     if request.method == 'POST':
         password1 = request.POST.get('password1') or ''
         password2 = request.POST.get('password2') or ''
-        if password1 != password2:
-            messages.error(request, 'Las contraseñas no coinciden.')
+        
+        if not password1 or not password2:
+            messages.error(request, 'Debes completar ambas contraseñas.')
             return render(request, 'cuentas/recuperacion/restablecer.html', {'token_valido': True})
+        
+        if password1 != password2:
+            messages.error(request, 'Las contraseñas no coinciden. Intenta nuevamente.')
+            return render(request, 'cuentas/recuperacion/restablecer.html', {'token_valido': True})
+        
         try:
             validate_password(password1, user=user)
         except ValidationError as exc:
-            messages.error(request, ' '.join(exc.messages))
+            messages.error(request, 'La contraseña no es segura: ' + ' '.join(exc.messages))
             return render(request, 'cuentas/recuperacion/restablecer.html', {'token_valido': True})
+        
+        # Cambiar contraseña
         user.set_password(password1)
         user.save()
-        messages.success(request, 'Contraseña actualizada. Inicia sesión.')
-        return redirect('cuentas:login')
+        
+        # Enviar correo de confirmación
+        try:
+            send_mail(
+                subject='Contraseña actualizada - LevelMed',
+                message='Tu contraseña ha sido actualizada correctamente.',
+                from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', None),
+                recipient_list=[user.email],
+                html_message=_generar_email_confirmacion(user),
+                fail_silently=False,
+            )
+        except:
+            pass  # Si falla el email de confirmación, no afecta el cambio
+        
+        messages.success(request, 'Contraseña actualizada correctamente. Puedes iniciar sesión con tu nueva contraseña.')
+        return redirect(f"{reverse('cuentas:home')}?show_login=true")
 
     return render(request, 'cuentas/recuperacion/restablecer.html', {'token_valido': True})
 

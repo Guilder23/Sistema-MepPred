@@ -56,11 +56,43 @@
 <div class="verificacion-modal" id="modalComprobante" style="display: none;">
     <div class="verificacion-modal-contenido">
         <div class="verificacion-modal-header">
-            <h2>Comprobante de Pago</h2>
+            <h2>📄 Comprobante de Pago</h2>
             <button class="verificacion-modal-cerrar" id="cerrarModalComprobante">✕</button>
         </div>
         <div class="verificacion-modal-body">
-            <img id="imagenComprobante" src="" alt="Comprobante">
+            <img id="imagenComprobante" src="" alt="Comprobante" style="width: 100%; max-height: 600px; object-fit: contain;">
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmación de aprobación -->
+<div class="verificacion-modal" id="modalConfirmarAprobacion" style="display: none;">
+    <div class="verificacion-modal-contenido" style="max-width: 380px;">
+        <div class="verificacion-modal-header">
+            <h2>✓ Confirmar Aprobación</h2>
+            <button class="verificacion-modal-cerrar" id="cerrarModalConfirmarAprobacion">✕</button>
+        </div>
+        <div class="verificacion-modal-body">
+            <div style="text-align: center; padding: 0.5rem 0;">
+                <div style="font-size: 2.5rem; margin-bottom: 0.8rem; line-height: 1;">✓</div>
+                <p style="color: #333; font-size: 1rem; margin: 0 0 0.8rem 0; font-weight: 500;">
+                    ¿Aprobar esta <strong style="color: #10b981;">suscripción</strong>?
+                </p>
+                <p style="color: #999; font-size: 0.85rem; margin: 0;">
+                    El estudiante recibirá acceso inmediato
+                </p>
+            </div>
+        </div>
+        <div class="verificacion-modal-acciones">
+            <button type="button" class="btn-cancelar" id="cancelarAprobacion">
+                Cancelar
+            </button>
+            <button type="button" class="btn-aprobar-confirmar" id="confirmarAprobacion">
+                <span class="btn-texto">Aprobar</span>
+                <span class="btn-spinner" style="display: none;">
+                    <span class="spinner"></span>
+                </span>
+            </button>
         </div>
     </div>
 </div>
@@ -69,18 +101,18 @@
 <div class="verificacion-modal" id="modalRechazo" style="display: none;">
     <div class="verificacion-modal-contenido">
         <div class="verificacion-modal-header">
-            <h2>Rechazar Suscripción</h2>
+            <h2>✕ Rechazar Suscripción</h2>
             <button class="verificacion-modal-cerrar" id="cerrarModalRechazo">✕</button>
         </div>
         <div class="verificacion-modal-body">
             <form id="formRechazo">
                 <input type="hidden" id="suscripcionRechazarId">
                 <div class="form-grupo">
-                    <label for="motivoRechazo">Motivo del Rechazo</label>
+                    <label for="motivoRechazo">Motivo del Rechazo <span style="color: #ef4444;">*</span></label>
                     <textarea 
                         id="motivoRechazo" 
-                        rows="4" 
-                        placeholder="Explica por qué se rechaza esta suscripción..."
+                        rows="5" 
+                        placeholder="Explica de manera clara y detallada por qué se rechaza esta suscripción..."
                         required
                     ></textarea>
                 </div>

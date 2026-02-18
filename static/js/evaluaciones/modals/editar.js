@@ -125,7 +125,7 @@ function limpiarErrorMensajeExamenEditar(elemento) {
 function actualizarExamen() {
     const id = document.getElementById('editarId').value;
     const titulo = document.getElementById('editarTitulo').value.trim();
-    const materiaId = document.getElementById('editarMateria').value;
+    const materiaId = document.getElementById('editarTema').value;
     const descripcion = document.getElementById('editarDescripcion').value.trim();
     const duracion = parseInt(document.getElementById('editarDuracion').value);
     const activo = document.getElementById('editarActivo').checked;
@@ -143,8 +143,8 @@ function actualizarExamen() {
     }
 
     if (!materiaId) {
-        mostrarMensaje('Debe seleccionar una materia', 'error');
-        document.getElementById('editarMateria').focus();
+        mostrarMensaje('Debe seleccionar un tema', 'error');
+        document.getElementById('editarTema').focus();
         return;
     }
 
@@ -171,7 +171,7 @@ function actualizarExamen() {
         },
         body: JSON.stringify({
             titulo: titulo,
-            materia_id: parseInt(materiaId),
+            tema_id: parseInt(materiaId),
             descripcion: descripcion,
             duracion_minutos: duracion,
             activo: activo

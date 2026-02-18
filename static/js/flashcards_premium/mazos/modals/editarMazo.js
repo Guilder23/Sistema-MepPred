@@ -26,33 +26,61 @@ document.addEventListener('click', function(e) {
     }
 });
 
-// Cargar materias en el select
-async function cargarMateriasEditar() {
+// Cargar materias en el select editar
+async function cargarMateriasEditarMazo(callback) {
     try {
-        const response = await fetch('/materias/api/materias/');
+        const response = await fetch('/temas/api/materias/');
         const data = await response.json();
         
-        const selectMateria = document.getElementById('editMateriaMazo');
-        if (selectMateria && data.success && data.data) {
-            selectMateria.innerHTML = '<option value="">Seleccione una materia</option>';
-            data.data.forEach(materia => {
-                const option = document.createElement('option');
-                option.value = materia.id;
-                option.textContent = materia.nombre;
-                selectMateria.appendChild(option);
-            });
+        if (data.success) {
+            const selectMateria = document.getElementById('editMateriaMazo');
+            if (selectMateria) {
+                selectMateria.innerHTML = '<option value="">Seleccione una materia</option>';
+                data.materias.forEach(materia => {
+                    const option = document.createElement('option');
+                    option.value = materia.id;
+                    option.textContent = materia.nombre;
+                    selectMateria.appendChild(option);
+                });
+            }
+            if (callback) callback();
         }
     } catch (error) {
         console.error('Error al cargar materias:', error);
     }
 }
 
+// Cargar temas filtrados por materia en editar
+async function cargarTemasEditarMazo() {
+    try {
+        const materiaSelect = document.getElementById('editMateriaMazo');
+        const temaSelect = document.getElementById('editTemaMazo');
+        
+        if (!materiaSelect || !temaSelect || !materiaSelect.value) {
+            temaSelect.innerHTML = '<option value="">Seleccione un tema</option>';
+            return;
+        }
+        
+        const response = await fetch(`/temas/api/temas/por-materia/${materiaSelect.value}/`);
+        const data = await response.json();
+        
+        if (data.success) {
+            temaSelect.innerHTML = '<option value="">Seleccione un tema</option>';
+            data.temas.forEach(tema => {
+                const option = document.createElement('option');
+                option.value = tema.id;
+                option.textContent = tema.nombre;
+                temaSelect.appendChild(option);
+            });
+        }
+    } catch (error) {
+        console.error('Error al cargar temas:', error);
+    }
+}
+
 window.editarMazoModal = async function(mazoId) {
     try {
-        // Primero cargar las materias
-        await cargarMateriasEditar();
-        
-        // Luego cargar los datos del mazo
+        // obtener datos del mazo primero
         const response = await fetch('/flashcards-premium/api/mazos/');
         const data = await response.json();
         
@@ -64,11 +92,22 @@ window.editarMazoModal = async function(mazoId) {
                 document.getElementById('editNombreMazo').value = mazo.nombre;
                 document.getElementById('editDescripcionMazo').value = mazo.descripcion || '';
                 
-                // Seleccionar la materia actual
-                const selectMateria = document.getElementById('editMateriaMazo');
-                if (selectMateria && mazo.materia_id) {
-                    selectMateria.value = mazo.materia_id;
-                }
+                // Cargar materias con callback para asignar materia
+                await cargarMateriasEditarMazo(async function() {
+                    const selectMateria = document.getElementById('editMateriaMazo');
+                    if (selectMateria && mazo.materia_id) {
+                        selectMateria.value = mazo.materia_id;
+                    }
+                    
+                    // Cargar temas filtrados por materia
+                    await cargarTemasEditarMazo();
+                    
+                    // Seleccionar el tema actual
+                    const selectTema = document.getElementById('editTemaMazo');
+                    if (selectTema && mazo.tema_id) {
+                        selectTema.value = mazo.tema_id;
+                    }
+                });
                 
                 abrirModal('editarMazoModal');
             }
@@ -89,6 +128,7 @@ document.addEventListener('DOMContentLoaded', function() {
             formData.append('nombre', document.getElementById('editNombreMazo').value);
             formData.append('descripcion', document.getElementById('editDescripcionMazo').value);
             formData.append('materia_id', document.getElementById('editMateriaMazo').value);
+            formData.append('tema_id', document.getElementById('editTemaMazo').value);
             
             try {
                 const response = await fetch(`/flashcards-premium/api/mazos/${id}/editar/`, {
@@ -117,3 +157,18 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}

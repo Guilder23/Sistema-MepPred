@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     'apps.flashcards',
     'apps.flashcards_premium',
     'apps.usuarios',
-    'apps.materias',
+    'apps.temas',
+    'apps.materias_nueva',
 ]
 
 MIDDLEWARE = [
@@ -173,17 +174,23 @@ if IS_PRODUCTION:
     CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',') if os.environ.get('CORS_ALLOWED_ORIGINS') else []
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_HOST_USER = os.environ.get('EMAIL_USER', '')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD', '')
+EMAIL_HOST_USER = os.environ.get('EMAIL_USER', '').strip().strip('"\'')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD', '').strip().strip('"\'')
 
 if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_HOST = 'smtp.gmail.com'
-    EMAIL_PORT = 587
-    EMAIL_USE_TLS = True
+    # Intentar puerto 465 (SSL) si 587 (TLS) falla
+    EMAIL_PORT = 465
+    EMAIL_USE_TLS = False
+    EMAIL_USE_SSL = True
     DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+    # Para debugging
+    if DEBUG:
+        print(f"✓ Email configurado: {EMAIL_HOST_USER}")
 else:
     DEFAULT_FROM_EMAIL = 'no-reply@meetwin.local'
+    print("⚠ Email NO configurado - Usando console backend")
 
 EMAIL_VERIFICACION_MAX_AGE_SECONDS = 60 * 60 * 24
 EMAIL_VERIFICACION_REENVIOS_MAX = 3
