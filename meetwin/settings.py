@@ -179,18 +179,26 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD', '').strip().strip('"\'')
 
 if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = 'smtp.gmail.com'
-    # Intentar puerto 465 (SSL) si 587 (TLS) falla
-    EMAIL_PORT = 465
-    EMAIL_USE_TLS = False
-    EMAIL_USE_SSL = True
+    EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
+    EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
+    
+    # Configurar TLS o SSL según el puerto
+    use_tls = os.environ.get('EMAIL_USE_TLS', 'True').lower() == 'true'
+    if use_tls:
+        EMAIL_USE_TLS = True
+        EMAIL_USE_SSL = False
+    else:
+        EMAIL_USE_TLS = False
+        EMAIL_USE_SSL = True
+    
     DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
     # Para debugging
     if DEBUG:
-        print(f"✓ Email configurado: {EMAIL_HOST_USER}")
+        print(f"✓ Email configurado: {EMAIL_HOST_USER} (Puerto: {EMAIL_PORT}, TLS: {EMAIL_USE_TLS})")
 else:
     DEFAULT_FROM_EMAIL = 'no-reply@meetwin.local'
-    print("⚠ Email NO configurado - Usando console backend")
+    if DEBUG:
+        print("⚠ Email NO configurado - Usando console backend")
 
 EMAIL_VERIFICACION_MAX_AGE_SECONDS = 60 * 60 * 24
 EMAIL_VERIFICACION_REENVIOS_MAX = 3
