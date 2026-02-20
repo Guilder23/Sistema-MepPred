@@ -4,7 +4,7 @@ services:
     env: python
     plan: free
     buildCommand: bash build.sh
-    startCommand: gunicorn meetwin.wsgi
+    startCommand: gunicorn meetwin.wsgi --timeout 120 --workers 2
     envVars:
       - key: DEBUG
         value: "False"

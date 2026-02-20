@@ -9,7 +9,6 @@ from datetime import date
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'meetwin.settings')
 django.setup()
 
-from django.db.models import Q
 from apps.cuentas.models import User, UserRole, StudentStatus, Gender
 
 # Datos de los usuarios
@@ -58,11 +57,10 @@ def crear_usuarios():
     """Crea los usuarios si no existen"""
     for user_data in USERS:
         email = user_data['email']
-        username = user_data['username']
         
-        # Verificar si el usuario ya existe (por email o username)
-        if User.objects.filter(Q(email=email) | Q(username=username)).exists():
-            print(f"✓ Usuario {email} (username: {username}) ya existe")
+        # Verificar si el usuario ya existe
+        if User.objects.filter(email=email).exists():
+            print(f"✓ Usuario {email} ya existe")
             continue
         
         # Crear el usuario

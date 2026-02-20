@@ -391,21 +391,16 @@ def solicitar_recuperacion(request):
         token = default_token_generator.make_token(user)
         url = request.build_absolute_uri(reverse('cuentas:confirmar_recuperacion', args=[uid, token]))
         
-        try:
-            send_mail(
-                subject='Recuperación de contraseña - LevelMed',
-                message=f'Para restablecer tu contraseña entra aquí: {url}\n\nEste enlace expira en 1 hora.',
-                from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', None),
-                recipient_list=[user.email],
-                html_message=_generar_email_recuperacion(user, url),
-                fail_silently=False,
-            )
-            return redirect('cuentas:recuperacion_enviada')
-        except Exception as e:
-            messages.error(request, 'No pudimos enviar el correo. Por favor intenta más tarde.')
-            if settings.DEBUG:
-                messages.error(request, f'Error técnico: {str(e)}')
-            return render(request, 'cuentas/recuperacion/recuperar.html')
+        # Enviar email de recuperación
+        send_mail(
+            subject='Recuperación de contraseña - LevelMed',
+            message=f'Para restablecer tu contraseña entra aquí: {url}\n\nEste enlace expira en 1 hora.',
+            from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', None),
+            recipient_list=[user.email],
+            html_message=_generar_email_recuperacion(user, url),
+            fail_silently=True,  # Evitar timeout en producción
+        )
+        return redirect('cuentas:recuperacion_enviada')
 
     return render(request, 'cuentas/recuperacion/recuperar.html')
 
@@ -444,17 +439,14 @@ def confirmar_recuperacion(request, uidb64: str, token: str):
         user.save()
         
         # Enviar correo de confirmación
-        try:
-            send_mail(
-                subject='Contraseña actualizada - LevelMed',
-                message='Tu contraseña ha sido actualizada correctamente.',
-                from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', None),
-                recipient_list=[user.email],
-                html_message=_generar_email_confirmacion(user),
-                fail_silently=False,
-            )
-        except:
-            pass  # Si falla el email de confirmación, no afecta el cambio
+        send_mail(
+            subject='Contraseña actualizada - LevelMed',
+            message='Tu contraseña ha sido actualizada correctamente.',
+            from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', None),
+            recipient_list=[user.email],
+            html_message=_generar_email_confirmacion(user),
+            fail_silently=True,  # Evitar timeout en producción
+        )
         
         messages.success(request, 'Contraseña actualizada correctamente. Puedes iniciar sesión con tu nueva contraseña.')
         return redirect(f"{reverse('cuentas:home')}?show_login=true")

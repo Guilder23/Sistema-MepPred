@@ -1,1 +1,1 @@
-web: gunicorn meetwin.wsgi
+web: gunicorn meetwin.wsgi --timeout 120 --workers 2
