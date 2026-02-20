@@ -179,7 +179,7 @@ def _enviar_correo_verificacion(request, user: User) -> None:
         from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', None),
         recipient_list=[user.email],
         html_message=html_message,
-        fail_silently=True,
+        fail_silently=False,
     )
     user.verificacion_enviada_en = timezone.now()
     user.save(update_fields=['verificacion_enviada_en'])
@@ -398,7 +398,7 @@ def solicitar_recuperacion(request):
             from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', None),
             recipient_list=[user.email],
             html_message=_generar_email_recuperacion(user, url),
-            fail_silently=True,  # Evitar timeout en producción
+            fail_silently=False,  # Evitar timeout en producción
         )
         return redirect('cuentas:recuperacion_enviada')
 
@@ -445,7 +445,7 @@ def confirmar_recuperacion(request, uidb64: str, token: str):
             from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', None),
             recipient_list=[user.email],
             html_message=_generar_email_confirmacion(user),
-            fail_silently=True,  # Evitar timeout en producción
+            fail_silently=False,  # Evitar timeout en producción
         )
         
         messages.success(request, 'Contraseña actualizada correctamente. Puedes iniciar sesión con tu nueva contraseña.')
@@ -495,7 +495,7 @@ def asignar_administrador(request):
             message='Tu cuenta fue asignada como Administrador.',
             from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', None),
             recipient_list=[objetivo.email],
-            fail_silently=True,
+            fail_silently=False,
         )
         messages.success(request, 'Rol actualizado a Administrador.')
         return redirect('cuentas:panel')
