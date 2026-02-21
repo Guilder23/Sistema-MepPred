@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Cerrar modal al hacer clic en X
-    const btnClose = document.querySelector('.modal-crear-btn-close');
+    const btnClose = document.querySelector('#modalCrearExamen .modal-close-btn');
     if (btnClose) {
         btnClose.addEventListener('click', function() {
             cerrarModal('modalCrearOverlay');
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Cerrar modal al hacer clic fuera del modal
-    const modalOverlay = document.querySelector('.modal-crear-overlay');
+    const modalOverlay = document.getElementById('modalCrearOverlay');
     if (modalOverlay) {
         modalOverlay.addEventListener('click', function(e) {
             if (e.target === modalOverlay) {
@@ -65,13 +65,13 @@ function validarTituloExamen(e) {
     const valor = e.target.value.trim();
     
     if (valor && valor.length < 3) {
-        e.target.classList.add('modal-crear-form-control-error');
+        e.target.classList.add('form-control-error');
         mostrarErrorMensajeExamen(e.target, 'Mínimo 3 caracteres');
     } else if (valor && valor.length > 150) {
-        e.target.classList.add('modal-crear-form-control-error');
+        e.target.classList.add('form-control-error');
         mostrarErrorMensajeExamen(e.target, 'Máximo 150 caracteres');
     } else {
-        e.target.classList.remove('modal-crear-form-control-error');
+        e.target.classList.remove('form-control-error');
         limpiarErrorMensajeExamen(e.target);
     }
 }
@@ -80,10 +80,10 @@ function validarDescripcionExamen(e) {
     const valor = e.target.value.trim();
     
     if (valor && valor.length > 500) {
-        e.target.classList.add('modal-crear-form-control-error');
+        e.target.classList.add('form-control-error');
         mostrarErrorMensajeExamen(e.target, 'Máximo 500 caracteres');
     } else {
-        e.target.classList.remove('modal-crear-form-control-error');
+        e.target.classList.remove('form-control-error');
         limpiarErrorMensajeExamen(e.target);
     }
 }
@@ -92,13 +92,13 @@ function validarDuracionExamen(e) {
     const valor = parseInt(e.target.value);
     
     if (valor < 1) {
-        e.target.classList.add('modal-crear-form-control-error');
+        e.target.classList.add('form-control-error');
         mostrarErrorMensajeExamen(e.target, 'Mínimo 1 minuto');
     } else if (valor > 1440) {
-        e.target.classList.add('modal-crear-form-control-error');
+        e.target.classList.add('form-control-error');
         mostrarErrorMensajeExamen(e.target, 'Máximo 1440 minutos (24 horas)');
     } else {
-        e.target.classList.remove('modal-crear-form-control-error');
+        e.target.classList.remove('form-control-error');
         limpiarErrorMensajeExamen(e.target);
     }
 }
@@ -106,7 +106,7 @@ function validarDuracionExamen(e) {
 function mostrarErrorMensajeExamen(elemento, mensaje) {
     limpiarErrorMensajeExamen(elemento);
     const divError = document.createElement('small');
-    divError.className = 'modal-crear-form-error';
+    divError.className = 'form-error';
     divError.textContent = mensaje;
     divError.style.display = 'block';
     divError.style.marginTop = '0.25rem';
@@ -116,7 +116,7 @@ function mostrarErrorMensajeExamen(elemento, mensaje) {
 }
 
 function limpiarErrorMensajeExamen(elemento) {
-    const error = elemento.parentNode.querySelector('.modal-crear-form-error');
+    const error = elemento.parentNode.querySelector('.form-error');
     if (error) {
         error.remove();
     }
@@ -131,29 +131,29 @@ function guardarExamen() {
 
     // Validación
     if (!titulo) {
-        mostrarMensaje('El título es requerido', 'error');
+        mostrarMensaje('Error', 'El título es requerido', 'error');
         document.getElementById('crearTitulo').focus();
         return;
     }
 
     if (titulo.length < 3 || titulo.length > 150) {
-        mostrarMensaje('El título debe tener entre 3 y 150 caracteres', 'error');
+        mostrarMensaje('Error', 'El título debe tener entre 3 y 150 caracteres', 'error');
         return;
     }
 
     if (!materiaId) {
-        mostrarMensaje('Debe seleccionar un tema', 'error');
+        mostrarMensaje('Error', 'Debe seleccionar un tema', 'error');
         document.getElementById('crearTema').focus();
         return;
     }
 
     if (descripcion && descripcion.length > 500) {
-        mostrarMensaje('La descripción no puede exceder 500 caracteres', 'error');
+        mostrarMensaje('Error', 'La descripción no puede exceder 500 caracteres', 'error');
         return;
     }
 
     if (!duracion || duracion < 1 || duracion > 1440) {
-        mostrarMensaje('La duración debe estar entre 1 y 1440 minutos', 'error');
+        mostrarMensaje('Error', 'La duración debe estar entre 1 y 1440 minutos', 'error');
         document.getElementById('crearDuracion').focus();
         return;
     }
@@ -180,15 +180,15 @@ function guardarExamen() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            mostrarMensaje('Examen creado correctamente', 'success');
+            mostrarMensaje('Éxito', data.message || 'Examen creado correctamente', 'success');
             cerrarModal('modalCrearOverlay');
             cargarExamenes();
         } else {
-            mostrarMensaje(data.error || 'Error al crear el examen', 'error');
+            mostrarMensaje('Error', data.error || 'Error al crear el examen', 'error');
         }
     })
     .catch(error => {
-        mostrarMensaje('Error al crear el examen', 'error');
+        mostrarMensaje('Error', 'Error al crear el examen', 'error');
     })
     .finally(() => {
         if (btnGuardar) btnGuardar.disabled = false;

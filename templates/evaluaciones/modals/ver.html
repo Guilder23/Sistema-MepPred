@@ -1,67 +1,63 @@
 <!-- Modal Ver Examen -->
-<div class="modal-ver-overlay" id="modalVerOverlay">
-    <div class="modal-ver-container">
-        <div class="modal-ver-header">
-            <h2>Detalles del Examen</h2>
-            <button class="modal-ver-btn-close" type="button">
-                <i class="fas fa-times"></i>
-            </button>
+<div class="modal-overlay" id="modalVerOverlay">
+    <div class="modal-content" id="modalVerExamen">
+        <div class="modal-header">
+            <h5 class="modal-header-title">Detalles del Examen</h5>
+            <button type="button" class="modal-close-btn" onclick="ocultarModal('modalVerOverlay')">×</button>
         </div>
-
-        <div class="modal-ver-body">
-            <div class="modal-ver-info-row">
-                <span class="modal-ver-info-label">Título:</span>
-                <span class="modal-ver-info-value" id="verTitulo"></span>
+        <div class="modal-body">
+            <div class="info-row">
+                <label>Título:</label>
+                <span id="verTitulo"></span>
             </div>
 
-            <div class="modal-ver-info-row">
-                <span class="modal-ver-info-label">Materia:</span>
-                <span class="modal-ver-info-value" id="verMateria"></span>
+            <div class="info-row">
+                <label>Materia:</label>
+                <span id="verMateria"></span>
             </div>
 
-            <div class="modal-ver-info-row">
-                <span class="modal-ver-info-label">Tema:</span>
-                <span class="modal-ver-info-value" id="verTema"></span>
+            <div class="info-row">
+                <label>Tema:</label>
+                <span id="verTema"></span>
             </div>
 
-            <div class="modal-ver-info-row">
-                <span class="modal-ver-info-label">Descripción:</span>
-                <span class="modal-ver-info-value" id="verDescripcion"></span>
+            <div class="info-row">
+                <label>Descripción:</label>
+                <span id="verDescripcion"></span>
             </div>
 
-            <div class="modal-ver-info-row">
-                <span class="modal-ver-info-label">Duración:</span>
-                <span class="modal-ver-info-value" id="verDuracion"></span>
+            <div class="info-row">
+                <label>Duración:</label>
+                <span id="verDuracion"></span>
             </div>
 
-            <div class="modal-ver-info-row">
-                <span class="modal-ver-info-label">Total de Preguntas:</span>
-                <span class="modal-ver-info-value" id="verTotalPreguntas"></span>
+            <div class="info-row">
+                <label>Total de Preguntas:</label>
+                <span id="verTotalPreguntas"></span>
             </div>
 
-            <div class="modal-ver-info-row">
-                <span class="modal-ver-info-label">Premium:</span>
-                <span class="modal-ver-info-value" id="verPremium"></span>
+            <div class="info-row">
+                <label>Premium:</label>
+                <span id="verPremium"></span>
             </div>
 
-            <div class="modal-ver-info-row">
-                <span class="modal-ver-info-label">Estado:</span>
-                <span class="modal-ver-info-value" id="verEstado"></span>
+            <div class="info-row">
+                <label>Estado:</label>
+                <span id="verEstado"></span>
             </div>
 
-            <div class="modal-ver-info-row">
-                <span class="modal-ver-info-label">Creado:</span>
-                <span class="modal-ver-info-value" id="verFechaCreacion"></span>
+            <div class="info-row">
+                <label>Creado:</label>
+                <span id="verFechaCreacion"></span>
             </div>
 
-            <div class="modal-ver-info-row">
-                <span class="modal-ver-info-label">Actualizado:</span>
-                <span class="modal-ver-info-value" id="verFechaActualizacion"></span>
+            <div class="info-row">
+                <label>Actualizado:</label>
+                <span id="verFechaActualizacion"></span>
             </div>
         </div>
-
-        <div class="modal-ver-footer">
-            <button type="button" class="modal-ver-btn modal-ver-btn-cerrar" id="btnCerrarVer">
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="cerrarModal('modalVerOverlay')">
                 Cerrar
             </button>
         </div>

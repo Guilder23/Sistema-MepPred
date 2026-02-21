@@ -1,172 +1,194 @@
-/* Modal para ver detalles de materia - Azul */
+/* =========================================
+   ESTILOS BASE PARA MODAL
+   ========================================= */
 
-.modal-ver-overlay {
-    display: none;
+.modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: none;
     justify-content: center;
     align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
-.modal-ver-overlay.active {
+.modal-overlay.active {
     display: flex;
+    opacity: 1;
 }
 
-.modal-ver-container {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+.modal-content {
+    background-color: white;
     width: 90%;
-    max-width: 600px;
+    max-width: 500px;
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transform: translateY(20px);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
     max-height: 90vh;
-    overflow-y: auto;
-    animation: modalVerSlideUp 0.3s ease-out;
+    display: flex;
+    flex-direction: column;
 }
 
-@keyframes modalVerSlideUp {
-    from {
-        transform: translateY(20px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
 }
 
-.modal-ver-header {
-    background: #17a2b8;
-    color: white;
-    padding: 1.5rem;
+.modal-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: none;
+    background-color: white;
 }
 
-.modal-ver-header h2 {
+.modal-header-title {
     margin: 0;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 600;
-    text-align: center;
-    flex: 1;
+    color: #2c3e50;
 }
 
-.modal-ver-btn-close {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
+.modal-close-btn {
+    background: none;
     border: none;
-    padding: 0.5rem;
-    width: 36px;
-    height: 36px;
-    border-radius: 6px;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: #7f8c8d;
     cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 50%;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
-    font-size: 1.2rem;
-    margin-left: auto;
+    width: 32px;
+    height: 32px;
 }
 
-.modal-ver-btn-close:hover {
-    background: rgba(255, 255, 255, 0.3);
+.modal-close-btn:hover {
+    background-color: #f1f1f1;
+    color: #e74c3c;
 }
 
-.modal-ver-body {
-    padding: 2rem;
-    text-align: left;
+.modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
 }
 
-.modal-ver-info-row {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid #e0e0e0;
+.modal-body::-webkit-scrollbar {
+    width: 8px;
 }
 
-.modal-ver-info-row:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
+.modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
 }
 
-.modal-ver-info-label {
-    font-weight: 600;
-    color: #2c3e50;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 0.5rem;
-    text-align: left;
+.modal-body::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
 }
 
-.modal-ver-info-value {
-    color: #34495e;
-    font-size: 0.95rem;
-    word-break: break-word;
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 
-.modal-ver-info-value.empty {
-    color: #95a5a6;
-    font-style: italic;
-}
-
-.modal-ver-footer {
-    padding: 1.25rem 2rem;
-    background: #f8f9fa;
+.modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e0e0e0;
+    background-color: #f8f9fa;
     display: flex;
     justify-content: flex-end;
     gap: 0.75rem;
-    border-top: 1px solid #dee2e6;
 }
 
-.modal-ver-btn {
-    padding: 0.65rem 1.75rem;
-    font-size: 0.95rem;
-    font-weight: 600;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    min-width: 100px;
-}
+/* =========================================
+   ESTILOS ESPECÍFICOS PARA VER
+   ========================================= */
 
-.modal-ver-btn-cerrar {
-    background: #6c757d;
+#modalVerExamen .modal-header {
+    background-color: #17a2b8;
     color: white;
 }
 
-.modal-ver-btn-cerrar:hover {
-    background: #5a6268;
-    transform: translateY(-1px);
+#modalVerExamen .modal-header-title {
+    color: white;
 }
 
+#modalVerExamen .modal-close-btn {
+    color: white;
+}
+
+#modalVerExamen .modal-close-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+#modalVerExamen .modal-body {
+    padding: 1.5rem;
+}
+
+/* Información de examen */
+#modalVerExamen .info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+#modalVerExamen .info-row label {
+    font-weight: 600;
+    color: #2c3e50;
+    width: 30%;
+}
+
+#modalVerExamen .info-row span {
+    color: #495057;
+}
+
+#modalVerExamen .info-row:last-child {
+    border-bottom: none;
+}
+
+#modalVerExamen .badge {
+    display: inline-block;
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+#modalVerExamen .badge-activo {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+#modalVerExamen .badge-inactivo {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-    .modal-ver-container {
-        width: 95%;
-        max-height: 95vh;
-    }
-
-    .modal-ver-header {
-        padding: 1.25rem;
-    }
-
-    .modal-ver-header h2 {
-        font-size: 1.25rem;
-    }
-
-    .modal-ver-body {
-        padding: 1.5rem;
-    }
-
-    .modal-ver-footer {
+    #modalVerExamen .modal-body {
         padding: 1rem;
+    }
+
+    #modalVerExamen .info-row {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    #modalVerExamen .info-row label {
+        width: 100%;
+        margin-bottom: 0.25rem;
     }
 }

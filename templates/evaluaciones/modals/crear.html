@@ -1,21 +1,18 @@
 <!-- Modal Crear Examen -->
-<div class="modal-crear-overlay" id="modalCrearOverlay">
-    <div class="modal-crear-container">
-        <div class="modal-crear-header">
-            <h2>Crear Nuevo Examen</h2>
-            <button class="modal-crear-btn-close" type="button">
-                <i class="fas fa-times"></i>
-            </button>
+<div class="modal-overlay" id="modalCrearOverlay">
+    <div class="modal-content" id="modalCrearExamen">
+        <div class="modal-header">
+            <h5 class="modal-header-title">Crear Nuevo Examen</h5>
+            <button type="button" class="modal-close-btn" onclick="ocultarModal('modalCrearOverlay')">×</button>
         </div>
-
-        <div class="modal-crear-body">
-            <form id="formCrearExamen">
+        <form id="formCrearExamen">
+            <div class="modal-body">
                 <!-- Título -->
-                <div class="modal-crear-form-group modal-crear-required">
-                    <label for="crearTitulo">Título del Examen</label>
+                <div class="form-group">
+                    <label class="form-label">Título del Examen</label>
                     <input 
                         type="text" 
-                        class="modal-crear-form-control" 
+                        class="form-control" 
                         id="crearTitulo" 
                         placeholder="Ej: Examen de Matemáticas"
                         minlength="3"
@@ -24,26 +21,26 @@
                 </div>
 
                 <!-- Materia -->
-                <div class="modal-crear-form-group modal-crear-required">
-                    <label for="crearMateria">Materia</label>
-                    <select class="modal-crear-form-control" id="crearMateria" onchange="cargarTemasCrearExamen()" required>
+                <div class="form-group">
+                    <label class="form-label">Materia</label>
+                    <select class="form-select" id="crearMateria" onchange="cargarTemasCrearExamen()" required>
                         <option value="">Seleccione una materia</option>
                     </select>
                 </div>
 
                 <!-- Tema -->
-                <div class="modal-crear-form-group modal-crear-required">
-                    <label for="crearTema">Tema</label>
-                    <select class="modal-crear-form-control" id="crearTema" required>
+                <div class="form-group">
+                    <label class="form-label">Tema</label>
+                    <select class="form-select" id="crearTema" required>
                         <option value="">Seleccione un tema</option>
                     </select>
                 </div>
 
                 <!-- Descripción -->
-                <div class="modal-crear-form-group">
-                    <label for="crearDescripcion">Descripción</label>
+                <div class="form-group">
+                    <label class="form-label">Descripción</label>
                     <textarea 
-                        class="modal-crear-form-control" 
+                        class="form-control" 
                         id="crearDescripcion" 
                         placeholder="Descripción opcional..."
                         maxlength="500"
@@ -51,11 +48,11 @@
                 </div>
 
                 <!-- Duración -->
-                <div class="modal-crear-form-group modal-crear-required">
-                    <label for="crearDuracion">Duración (minutos)</label>
+                <div class="form-group">
+                    <label class="form-label">Duración (minutos)</label>
                     <input 
                         type="number" 
-                        class="modal-crear-form-control" 
+                        class="form-control" 
                         id="crearDuracion" 
                         value="60" 
                         min="1"
@@ -64,28 +61,24 @@
                 </div>
 
                 <!-- Activo -->
-                <div class="modal-crear-form-group">
-                    <label class="modal-crear-checkbox-label">
-                        <input type="checkbox" id="crearActivo" checked>
-                        <span>Examen activo</span>
-                    </label>
+                <div class="form-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="crearActivo" checked>
+                        <label class="form-check-label" for="crearActivo">
+                            Examen activo
+                        </label>
+                    </div>
                 </div>
-
-                <!-- Nota -->
-                <div class="modal-crear-nota">
-                    <i class="fas fa-info-circle"></i>
-                    <span>Podrás agregar preguntas después de crear el examen</span>
-                </div>
-            </form>
-        </div>
-
-        <div class="modal-crear-footer">
-            <button type="button" class="modal-crear-btn modal-crear-btn-cancelar" id="btnCancelarExamen">
-                Cancelar
-            </button>
-            <button type="button" class="modal-crear-btn modal-crear-btn-guardar" id="btnGuardarExamen">
-                <i class="fas fa-save"></i> Guardar
-            </button>
-        </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="cerrarModal('modalCrearOverlay')">
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-success" id="btnGuardarExamen">
+                    <i class="fas fa-save"></i> Guardar
+                </button>
+            </div>
+        </form>
+</form>
     </div>
 </div>

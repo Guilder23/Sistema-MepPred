@@ -1,233 +1,213 @@
-/* Modal para editar materia - Amarillo */
+/* =========================================
+   ESTILOS BASE PARA MODAL
+   ========================================= */
 
-.modal-editar-overlay {
-    display: none;
+.modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: none;
     justify-content: center;
     align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
-.modal-editar-overlay.active {
+.modal-overlay.active {
     display: flex;
+    opacity: 1;
 }
 
-.modal-editar-container {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+.modal-content {
+    background-color: white;
     width: 90%;
-    max-width: 600px;
+    max-width: 500px;
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transform: translateY(20px);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
     max-height: 90vh;
-    overflow-y: auto;
-    animation: modalEditarSlideUp 0.3s ease-out;
+    display: flex;
+    flex-direction: column;
 }
 
-@keyframes modalEditarSlideUp {
-    from {
-        transform: translateY(20px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
 }
 
-.modal-editar-header {
-    background: #ffc107;
-    color: #2c3e50;
-    padding: 1.5rem;
+.modal-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: none;
+    background-color: white;
 }
 
-.modal-editar-header h2 {
+.modal-header-title {
     margin: 0;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 600;
-    color:white;
-    text-align: center;
-    flex: 1;
+    color: #2c3e50;
 }
 
-.modal-editar-btn-close {
-    background: rgba(0, 0, 0, 0.1);
-    color: white;
+.modal-close-btn {
+    background: none;
     border: none;
-    padding: 0.5rem;
-    width: 36px;
-    height: 36px;
-    border-radius: 6px;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: #7f8c8d;
     cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 50%;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
-    font-size: 1.2rem;
-    margin-left: auto;
+    width: 32px;
+    height: 32px;
 }
 
-.modal-editar-btn-close:hover {
-    background: rgba(0, 0, 0, 0.15);
+.modal-close-btn:hover {
+    background-color: #f1f1f1;
+    color: #e74c3c;
 }
 
-.modal-editar-body {
-    padding: 2rem;
-    text-align: left;
+.modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
 }
 
-.modal-editar-form-group {
-    margin-bottom: 1.5rem;
+.modal-body::-webkit-scrollbar {
+    width: 8px;
 }
 
-.modal-editar-form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-    color: #2c3e50;
-    font-size: 0.9rem;
-    text-align: left;
+.modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
 }
 
-.modal-editar-form-control {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border: 2px solid #e1e8ed;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    font-family: inherit;
-    transition: all 0.3s ease;
-    box-sizing: border-box;
+.modal-body::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e0e0e0;
     background-color: #f8f9fa;
-}
-
-.modal-editar-form-control:focus {
-    outline: none;
-    border-color: #ffc107;
-    background-color: white;
-    box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.15);
-}
-
-textarea.modal-editar-form-control {
-    resize: vertical;
-    min-height: 100px;
-    line-height: 1.5;
-}
-
-.modal-editar-required label::after {
-    content: ' *';
-    color: #dc3545;
-    font-weight: 700;
-}
-
-.modal-editar-error-message {
-    color: #dc3545;
-    font-size: 0.85rem;
-    margin-top: 0.3rem;
-    display: none;
-}
-
-.modal-editar-error-message.show {
-    display: block;
-}
-
-.modal-editar-footer {
-    padding: 1.25rem 2rem;
-    background: #f8f9fa;
     display: flex;
     justify-content: flex-end;
     gap: 0.75rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #2c3e50;
+    font-size: 0.9rem;
+}
+
+/* =========================================
+   ESTILOS ESPECÍFICOS PARA EDITAR
+   ========================================= */
+
+#modalEditarExamen .modal-header {
+    background-color: #f1c40f;
+    color: #212529;
+}
+
+#modalEditarExamen .modal-header-title {
+    color: #212529;
+    font-weight: 600;
+}
+
+#modalEditarExamen .modal-close-btn {
+    color: #212529;
+}
+
+#modalEditarExamen .modal-close-btn:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: #212529;
+}
+
+#modalEditarExamen .form-label {
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+#modalEditarExamen .form-control,
+#modalEditarExamen .form-select {
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+    transition: all 0.3s ease;
+}
+
+#modalEditarExamen .form-control:focus,
+#modalEditarExamen .form-select:focus {
+    border-color: #f1c40f;
+    box-shadow: 0 0 0 0.2rem rgba(241, 196, 15, 0.25);
+}
+
+#modalEditarExamen .form-check-label {
+    color: #333;
+    font-weight: 500;
+    cursor: pointer;
+    margin-left: 0.5rem;
+}
+
+#modalEditarExamen .modal-body {
+    padding: 1.5rem;
+}
+
+#modalEditarExamen .modal-footer {
+    background-color: #f8f9fa;
     border-top: 1px solid #dee2e6;
 }
 
-.modal-editar-btn {
-    padding: 0.65rem 1.75rem;
-    font-size: 0.95rem;
-    font-weight: 600;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    min-width: 100px;
-}
-
-.modal-editar-btn-cancelar {
-    background: #6c757d;
+#modalEditarExamen .btn-warning {
+    background-color: #f1c40f;
     color: white;
 }
 
-.modal-editar-btn-cancelar:hover {
-    background: #5a6268;
-    transform: translateY(-1px);
+#modalEditarExamen .btn-warning:hover:not(:disabled) {
+    background-color: #e0a800;
+    color: white;
 }
 
-.modal-editar-btn-actualizar {
-    background: #ffc107;
-    color:white;
-    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
-    font-weight: 700;
+/* Validaciones */
+#modalEditarExamen .form-control.is-invalid,
+#modalEditarExamen .form-select.is-invalid {
+    border-color: #ef4444;
 }
 
-.modal-editar-btn-actualizar:hover {
-    background: #e0a800;
-    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
-    transform: translateY(-1px);
+#modalEditarExamen .form-control.is-invalid:focus,
+#modalEditarExamen .form-select.is-invalid:focus {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 0.2rem rgba(239, 68, 68, 0.25);
 }
 
-.modal-editar-btn-actualizar:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-}
-
-@media (max-width: 768px) {
-    .modal-editar-container {
-        width: 95%;
-        max-height: 95vh;
-    }
-
-    .modal-editar-header {
-        padding: 1.25rem;
-    }
-
-    .modal-editar-header h2 {
-        font-size: 1.25rem;
-    }
-
-    .modal-editar-body {
-        padding: 1.5rem;
-    }
-
-    .modal-editar-footer {
-        padding: 1rem;
-        flex-direction: column-reverse;
-    }
-
-    .modal-editar-btn {
-        width: 100%;
-    }
-}
-
-/* Validación de formularios */
-.modal-editar-form-control-error {
-    border-color: #ef4444 !important;
-}
-
-.modal-editar-form-error {
-    display: block;
-    margin-top: 0.25rem;
+#modalEditarExamen .form-text.text-danger {
     color: #ef4444;
     font-size: 0.875rem;
-    animation: slideInError 0.2s ease-out;
+    margin-top: 0.25rem;
+    display: block;
+    animation: slideInError 0.3s ease-out;
 }
 
 @keyframes slideInError {
@@ -238,5 +218,32 @@ textarea.modal-editar-form-control {
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+#modalEditarExamen .form-control.form-control-error,
+#modalEditarExamen .form-select.form-control-error {
+    border-color: #ef4444;
+}
+
+#modalEditarExamen .form-error {
+    display: block;
+    margin-top: 0.25rem;
+    color: #ef4444;
+    font-size: 0.875rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #modalEditarExamen .modal-body {
+        padding: 1rem;
+    }
+
+    #modalEditarExamen .form-label {
+        font-size: 0.9rem;
+    }
+
+    #modalEditarExamen .form-switch {
+        padding-left: 2.25rem;
     }
 }

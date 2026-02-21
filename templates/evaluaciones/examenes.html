@@ -28,33 +28,23 @@
 
     <!-- Búsqueda y Filtros -->
     <div class="filtros-container mb-3">
-        <div class="filtro-grupo">
-            <input type="text" class="form-control search-input" id="searchInput" placeholder="Buscar por título, descripción...">
-        </div>
-        <div class="filtro-grupo">
-            <select class="form-control" id="filtroMateria">
-                <option value="">Todas las materias</option>
-            </select>
-        </div>
-        <div class="filtro-grupo">
-            <select class="form-control" id="filtroTema">
-                <option value="">Todos los temas</option>
-            </select>
-        </div>
-        <div class="filtro-grupo">
-            <select class="form-control" id="filtroTipo">
-                <option value="">Todos los tipos</option>
-                <option value="gratis">Gratis</option>
-                <option value="premium">Premium</option>
-            </select>
-        </div>
-        <div class="filtro-grupo">
-            <select class="form-control" id="filtroEstado">
-                <option value="">Todos los estados</option>
-                <option value="activo">Activo</option>
-                <option value="inactivo">Inactivo</option>
-            </select>
-        </div>
+        <input type="text" class="form-control" id="searchInput" placeholder="Buscar por título, descripción...">
+        <select class="form-select" id="filtroMateria">
+            <option value="">Todas las materias</option>
+        </select>
+        <select class="form-select" id="filtroTema">
+            <option value="">Todos los temas</option>
+        </select>
+        <select class="form-select" id="filtroTipo">
+            <option value="">Todos los tipos</option>
+            <option value="gratis">Gratis</option>
+            <option value="premium">Premium</option>
+        </select>
+        <select class="form-select" id="filtroEstado">
+            <option value="">Todos los estados</option>
+            <option value="activo">Activo</option>
+            <option value="inactivo">Inactivo</option>
+        </select>
     </div>
 
     <!-- Tabla de exámenes -->
