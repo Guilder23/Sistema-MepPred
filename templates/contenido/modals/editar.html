@@ -1,11 +1,11 @@
 <!-- Modal Editar Contenido -->
 <div class="modal-overlay" id="modalEditarOverlay">
-    <div class="modal-content modal-lg" id="modalEditar">
+    <div class="modal-content" id="modalEditarContenido">
         <div class="modal-header">
             <h5 class="modal-header-title">Editar Contenido</h5>
-            <button type="button" class="modal-close-btn" onclick="ocultarModal('modalEditarOverlay')">×</button>
+            <button type="button" class="modal-close-btn" onclick="cerrarModal('modalEditarOverlay')">×</button>
         </div>
-        <form id="formEditar" method="POST">
+        <form id="formEditar">
             {% csrf_token %}
             <input type="hidden" name="contenido_id" id="editarContenidoId">
             <div class="modal-body">
@@ -88,7 +88,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="ocultarModal('modalEditarOverlay')">Cancelar</button>
+                <button type="button" class="btn btn-secondary" onclick="cerrarModal('modalEditarOverlay')">Cancelar</button>
                 <button type="submit" class="btn btn-primary">Guardar Cambios</button>
             </div>
         </form>

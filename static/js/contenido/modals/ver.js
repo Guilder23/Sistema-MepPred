@@ -63,6 +63,6 @@ function verContenido(contenidoId) {
         })
         .catch(error => {
             console.error('Error al cargar contenido:', error);
-            mostrarAlerta('Error al cargar el contenido', 'danger');
+            mostrarMensaje('Error', 'Error al cargar el contenido', 'error');
         });
 }

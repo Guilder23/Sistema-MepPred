@@ -1,199 +1,270 @@
-/* Estilos específicos para el modal de editar contenido */
+/* =========================================
+   ESTILOS BASE PARA MODAL
+   ========================================= */
 
-/* Overlay */
-#modalEditarOverlay {
-    display: none;
+.modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 9999;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-}
-
-#modalEditarOverlay.active {
-    display: flex;
-    align-items: center;
+    backdrop-filter: blur(4px);
+    display: none;
     justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
-/* Modal content */
-#modalEditarOverlay .modal-content {
-    background: white;
-    border-radius: 8px;
+.modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-content {
+    background-color: white;
     width: 90%;
-    max-width: 600px;
+    max-width: 500px;
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transform: translateY(20px);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
     max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
 }
 
-/* Header */
-#modalEditarOverlay .modal-header {
-    background-color: #f39c12;
-    color: white;
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
+}
+
+.modal-header {
     padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-radius: 8px 8px 0 0;
+    background-color: white;
 }
 
-#modalEditarOverlay .modal-header-title {
-    color: white;
+.modal-header-title {
     margin: 0;
     font-size: 1.25rem;
     font-weight: 600;
+    color: #2c3e50;
 }
 
-#modalEditarOverlay .modal-close-btn {
+.modal-close-btn {
     background: none;
     border: none;
-    color: white;
     font-size: 1.5rem;
+    line-height: 1;
+    color: #7f8c8d;
     cursor: pointer;
-    padding: 0;
-    width: 30px;
-    height: 30px;
+    padding: 0.25rem;
+    border-radius: 50%;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
-    transition: background-color 0.2s;
+    width: 32px;
+    height: 32px;
 }
 
-#modalEditarOverlay .modal-close-btn:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+.modal-close-btn:hover {
+    background-color: #f1f1f1;
+    color: #e74c3c;
 }
 
-/* Body */
-#modalEditarOverlay .modal-body {
+.modal-body {
     padding: 1.5rem;
+    overflow-y: auto;
 }
 
-#modalEditarOverlay .form-group {
-    margin-bottom: 1.25rem;
+.modal-body::-webkit-scrollbar {
+    width: 8px;
 }
 
-#modalEditarOverlay .form-label {
+.modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e0e0e0;
+    background-color: #f8f9fa;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-label {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 500;
     color: #2c3e50;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
 }
 
-#modalEditarOverlay .form-control,
-#modalEditarOverlay .form-select {
-    width: 100%;
-    padding: 0.6rem 0.9rem;
-    font-size: 0.95rem;
-    border: 1px solid #e0e0e0;
+/* =========================================
+   ESTILOS ESPECÍFICOS PARA EDITAR
+   ========================================= */
+
+#modalEditarContenido .modal-header {
+    background-color: #f1c40f;
+    color: #ffffff;
+}
+
+#modalEditarContenido .modal-header-title {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+#modalEditarContenido .modal-close-btn {
+    color: #ffffff;
+}
+
+#modalEditarContenido .modal-close-btn:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+    color: #ffffff;
+}
+
+#modalEditarContenido .form-control:focus,
+#modalEditarContenido .form-select:focus {
+    border-color: #f1c40f;
+    box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+}
+
+#modalEditarContenido .btn.btn-primary {
+    background-color: #f1c40f !important;
+    color: white !important;
+}
+
+#modalEditarContenido .btn.btn-primary:hover {
+    background-color: #e6b800 !important;
+    color: white !important;
+}
+
+#modalEditarContenido .btn-outline-primary {
+    border: 2px solid #f1c40f;
+    color: #f1c40f;
+    background-color: transparent;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.875rem;
     border-radius: 6px;
-    transition: all 0.2s ease;
-}
-
-#modalEditarOverlay .form-control:focus,
-#modalEditarOverlay .form-select:focus {
-    outline: none;
-    border-color: #f39c12;
-    box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.1);
-}
-
-#modalEditarOverlay textarea.form-control {
-    resize: vertical;
-    min-height: 80px;
-}
-
-/* Videos container */
-#modalEditarOverlay #editarVideosContainer .video-input-group {
-    position: relative;
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    margin-bottom: 0.5rem;
-}
-
-#modalEditarOverlay #editarVideosContainer .video-input-group input {
-    flex: 1;
-}
-
-#modalEditarOverlay #editarVideosContainer .btn-remove-video {
-    background-color: #e74c3c;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 0.6rem 0.8rem;
+    margin-top: 0.5rem;
+    transition: all 0.3s ease;
     cursor: pointer;
-    transition: background-color 0.2s;
+}
+
+#modalEditarContenido .btn-outline-primary:hover {
+    background-color: #f1c40f;
+    color: white;
+    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+}
+
+#modalEditarContenido .btn.btn-secondary {
+    background-color: #95a5a6 !important;
+    color: white !important;
+}
+
+#modalEditarContenido .btn.btn-secondary:hover {
+    background-color: #7f8c8d !important;
+    color: white !important;
+}
+
+/* Validaciones */
+#modalEditarContenido .form-control.is-invalid,
+#modalEditarContenido .form-select.is-invalid {
+    border-color: #ef4444;
+}
+
+#modalEditarContenido .form-control.is-invalid:focus,
+#modalEditarContenido .form-select.is-invalid:focus {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 0.2rem rgba(239, 68, 68, 0.25);
+}
+
+#modalEditarContenido .form-text.text-danger {
+    color: #ef4444;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: block;
+    animation: slideInError 0.3s ease-out;
+}
+
+@keyframes slideInError {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#modalEditarContenido .form-control.form-control-error,
+#modalEditarContenido .form-select.form-control-error {
+    border-color: #ef4444;
+}
+
+#modalEditarContenido .form-error {
+    display: block;
+    margin-top: 0.25rem;
+    color: #ef4444;
     font-size: 0.875rem;
 }
 
-#modalEditarOverlay #editarVideosContainer .btn-remove-video:hover {
-    background-color: #c0392b;
-}
-
-/* Footer */
-#modalEditarOverlay .modal-footer {
-    padding: 1rem 1.5rem;
-    background-color: #f8f9fa;
-    border-top: 1px solid #e0e0e0;
+/* Estilos para videos */
+#modalEditarContenido .video-input-group {
     display: flex;
-    justify-content: flex-end;
     gap: 0.75rem;
-    border-radius: 0 0 8px 8px;
-}
-
-/* Botones */
-#modalEditarOverlay .btn {
-    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    padding: 0.6rem 1.2rem;
-    font-size: 0.95rem;
-    font-weight: 500;
-    border-radius: 6px;
+}
+
+#modalEditarContenido .video-input-group input {
+    flex: 1;
+}
+
+#modalEditarContenido .btn-remove-video {
+    background: none;
     border: none;
+    color: #e74c3c;
     cursor: pointer;
-    transition: all 0.2s ease;
+    font-size: 1.2rem;
+    padding: 0.5rem;
+    transition: all 0.2s;
 }
 
-#modalEditarOverlay .btn-secondary {
-    background-color: #95a5a6;
-    color: white;
-}
-
-#modalEditarOverlay .btn-secondary:hover {
-    background-color: #7f8c8d;
-}
-
-#modalEditarOverlay .btn-primary {
-    background-color: #f39c12;
-    color: white;
-}
-
-#modalEditarOverlay .btn-primary:hover {
-    background-color: #e67e22;
+#modalEditarContenido .btn-remove-video:hover {
+    color: #c0392b;
+    transform: scale(1.2);
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    #modalEditarOverlay .modal-content {
-        width: 95%;
-        margin: 1rem;
-    }
-
-    #modalEditarOverlay .modal-body {
+    #modalEditarContenido .modal-body {
         padding: 1rem;
     }
 
-    #modalEditarOverlay .modal-footer {
-        flex-direction: column;
-    }
-
-    #modalEditarOverlay .modal-footer .btn {
-        width: 100%;
+    #modalEditarContenido .form-label {
+        font-size: 0.9rem;
     }
 }

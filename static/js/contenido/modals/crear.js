@@ -111,17 +111,19 @@ function crearContenido(e) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            mostrarAlerta('¡Contenido creado exitosamente!', 'success');
-            ocultarModal('modalCrearOverlay');
+            mostrarMensaje('Éxito', data.message || '¡Contenido creado exitosamente!', 'success');
+            cerrarModal('modalCrearOverlay');
             this.reset();
             // Recargar la página para mostrar el nuevo contenido
-            window.location.reload();
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
         } else {
-            mostrarAlerta(data.error || 'Error al crear contenido', 'danger');
+            mostrarMensaje('Error', data.message || data.error || 'Error al crear contenido', 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        mostrarAlerta('Error al crear contenido', 'danger');
+        mostrarMensaje('Error', 'Error al crear contenido', 'error');
     });
 }

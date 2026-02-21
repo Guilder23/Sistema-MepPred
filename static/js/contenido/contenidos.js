@@ -79,6 +79,79 @@ function ocultarModal(overlayId) {
     }
 }
 
+// Alias para compatibilidad con evaluaciones
+function cerrarModal(elementId) {
+    const modal = document.getElementById(elementId);
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+}
+
+// Función para escapar HTML
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Mostrar mensaje tipo toast en la esquina inferior derecha
+function mostrarMensaje(titulo, mensaje, tipo) {
+    // Crear contenedor de notificaciones si no existe
+    let container = document.querySelector('.toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+
+    // Crear el toast
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${tipo}`;
+    
+    // Icono según el tipo
+    let icono = '';
+    switch(tipo) {
+        case 'success':
+            icono = '<i class="fas fa-check-circle"></i>';
+            break;
+        case 'error':
+        case 'danger':
+            icono = '<i class="fas fa-exclamation-circle"></i>';
+            break;
+        case 'warning':
+            icono = '<i class="fas fa-exclamation-triangle"></i>';
+            break;
+        case 'info':
+            icono = '<i class="fas fa-info-circle"></i>';
+            break;
+        default:
+            icono = '<i class="fas fa-bell"></i>';
+    }
+
+    toast.innerHTML = `
+        <div class="toast-icon">${icono}</div>
+        <div class="toast-content">
+            <div class="toast-title">${escapeHtml(titulo)}</div>
+            <div class="toast-message">${escapeHtml(mensaje)}</div>
+        </div>
+        <button class="toast-close" onclick="this.parentElement.remove()">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+
+    container.appendChild(toast);
+
+    // Animar entrada
+    setTimeout(() => toast.classList.add('show'), 10);
+
+    // Auto-eliminar después de 5 segundos
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 5000);
+}
+
 // Cargar materias en select de crear
 function cargarMateriasCrear() {
     fetch('/temas/api/materias/')
@@ -234,6 +307,22 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+});
+
+// Cerrar modal al hacer clic en el overlay
+document.addEventListener('click', function(event) {
+    if (event.target.classList.contains('modal-overlay')) {
+        event.target.classList.remove('active');
+    }
+});
+
+// Cerrar modales con ESC
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay.active').forEach(modal => {
+            modal.classList.remove('active');
+        });
+    }
 });
 
 // Cargar contenidos al iniciar
