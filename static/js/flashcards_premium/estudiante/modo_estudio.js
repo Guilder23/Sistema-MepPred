@@ -4,16 +4,30 @@ let flashcardActual = null;
 let indiceFlashcardActual = 0;
 let volteada = false;
 let materiaSeleccionada = null;
+let temaSeleccionado = null;
+let materiasYTemas = [];
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Cargar materias disponibles
-    cargarMaterias();
+    // Cargar materias y temas disponibles
+    cargarMateriasYTemas();
     
-    // Event listener para cambiar el filtro de materia
+    // Event listeners para cambiar los filtros
     const filtroMateria = document.getElementById('filtroMateria');
+    const filtroTema = document.getElementById('filtroTema');
+    
     if (filtroMateria) {
         filtroMateria.addEventListener('change', function() {
             materiaSeleccionada = this.value || null;
+            temaSeleccionado = null; // Resetear tema cuando cambia materia
+            actualizarSelectTemas();
+            indiceFlashcardActual = 0;
+            cargarFlashcards();
+        });
+    }
+    
+    if (filtroTema) {
+        filtroTema.addEventListener('change', function() {
+            temaSeleccionado = this.value || null;
             indiceFlashcardActual = 0;
             cargarFlashcards();
         });
@@ -37,14 +51,17 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Cargar materias disponibles
-async function cargarMaterias() {
+// Cargar materias y temas disponibles
+async function cargarMateriasYTemas() {
     try {
-        const response = await fetch('/flashcards-premium/api/estudiante/materias/');
+        const response = await fetch('/flashcards-premium/api/estudiante/temas/');
         const data = await response.json();
         
         if (data.success && data.materias.length > 0) {
+            materiasYTemas = data.materias;
             const filtroMateria = document.getElementById('filtroMateria');
+            
+            // Poblar select de materias
             data.materias.forEach(materia => {
                 const option = document.createElement('option');
                 option.value = materia.id;
@@ -53,19 +70,60 @@ async function cargarMaterias() {
             });
         }
     } catch (error) {
-        console.error('Error al cargar materias:', error);
+        console.error('Error al cargar materias y temas:', error);
     }
     
     // Cargar flashcards después de cargar las materias
     cargarFlashcards();
 }
 
-// Cargar todas las flashcards de todos los mazos (filtrado por materia si es necesario)
+// Actualizar el select de temas basado en la materia seleccionada
+function actualizarSelectTemas() {
+    const filtroTema = document.getElementById('filtroTema');
+    
+    // Limpiar opciones de tema (excepto la primera)
+    while (filtroTema.options.length > 1) {
+        filtroTema.remove(1);
+    }
+    
+    if (!materiaSeleccionada) {
+        // Si no hay materia seleccionada, mostrar todos los temas
+        materiasYTemas.forEach(materia => {
+            materia.temas.forEach(tema => {
+                const option = document.createElement('option');
+                option.value = tema.id;
+                option.textContent = tema.nombre;
+                filtroTema.appendChild(option);
+            });
+        });
+    } else {
+        // Si hay materia seleccionada, mostrar solo los temas de esa materia
+        const materia = materiasYTemas.find(m => m.id == materiaSeleccionada);
+        if (materia) {
+            materia.temas.forEach(tema => {
+                const option = document.createElement('option');
+                option.value = tema.id;
+                option.textContent = tema.nombre;
+                filtroTema.appendChild(option);
+            });
+        }
+    }
+}
+
+// Cargar todas las flashcards de todos los mazos (filtrado por materia y/o tema)
 async function cargarFlashcards() {
     try {
         let url = '/flashcards-premium/api/estudiante/mazos/';
-        if (materiaSeleccionada) {
-            url += `?materia_id=${materiaSeleccionada}`;
+        const parametros = [];
+        
+        if (temaSeleccionado) {
+            parametros.push(`tema_id=${temaSeleccionado}`);
+        } else if (materiaSeleccionada) {
+            parametros.push(`materia_id=${materiaSeleccionada}`);
+        }
+        
+        if (parametros.length > 0) {
+            url += '?' + parametros.join('&');
         }
         
         const response = await fetch(url);
@@ -80,7 +138,7 @@ async function cargarFlashcards() {
                         flashcards.push({
                             ...tarjeta,
                             mazo_nombre: mazo.nombre,
-                            materia_nombre: mazo.materia_nombre
+                            tema_nombre: mazo.tema_nombre
                         });
                     });
                 }
@@ -200,3 +258,4 @@ function mostrarMensajeSinFlashcards() {
     document.getElementById('porRepasar').textContent = '0';
     document.getElementById('repasadas').textContent = flashcards.length;
 }
+
