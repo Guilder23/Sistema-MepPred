@@ -147,10 +147,33 @@ h1 {
     box-shadow: var(--shadow-md);
     overflow: hidden;
     border: 1px solid var(--border-color);
+    width: 100%;
 }
 
 .table-responsive {
+    width: 100%;
     overflow-x: auto;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+    display: block;
+}
+
+/* Scrollbar styling */
+.table-responsive::-webkit-scrollbar {
+    height: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 
 .table {
@@ -472,37 +495,153 @@ h1 {
 /* Responsive */
 @media (max-width: 768px) {
     .container-fluid {
+        padding: 0;
+        margin: 0;
+        width: 100vw;
+    }
+
+    /* Encabezado y botón crear */
+    .row.mb-4 {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
         padding: 1rem;
+    }
+
+    .row.mb-4 .col-md-6 {
+        width: 100%;
+    }
+
+    .row.mb-4 .col-md-6.text-end {
+        text-align: center;
+    }
+
+    #btnAbrirCrear {
+        width: 100%;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
     }
     
     h1 {
         font-size: 1.5rem;
+        padding: 0 !important;
+        margin: 0;
     }
 
     .filtros-container {
         flex-direction: column;
         gap: 0.75rem;
+        padding: 0 1rem;
     }
 
     .filtros-container .form-control,
     .filtros-container .form-select {
-        min-width: 100%;
+        width: 100%;
     }
 
-    .table thead th,
-    .table tbody td {
-        padding: 0.75rem 0.5rem;
-        font-size: 0.875rem;
+    /* TABLA CON SCROLL HORIZONTAL - MÓVIL */
+    .card {
+        overflow: visible !important;
+        width: 100vw;
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        padding: 1rem;
+        padding-left: 0;
+        padding-right: 0;
+        margin-top: 1rem;
+        border-radius: 0;
+        box-shadow: none;
+        border: none;
+        border-top: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .table-responsive {
+        width: calc(100% - 2rem);
+        max-width: calc(100vw - 2rem);
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch;
+        display: block !important;
+        margin: 0 1rem;
+    }
+
+    .table {
+        width: auto;
+        min-width: 1100px;
+        border-collapse: collapse;
+        display: table;
+        background: white;
+    }
+
+    .table thead {
+        display: table-header-group;
+        background-color: #34495e;
+        color: white;
+    }
+
+    .table tbody {
+        display: table-row-group;
+    }
+
+    .table tr {
+        display: table-row;
+    }
+
+    .table th {
+        display: table-cell;
+        padding: 0.75rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+        width: auto;
+        min-width: 140px;
+    }
+
+    .table td {
+        display: table-cell;
+        padding: 0.75rem;
+        font-size: 0.8rem;
+        border-bottom: 1px solid var(--border-color);
+        text-align: left;
+        white-space: nowrap;
+        width: auto;
+        min-width: 140px;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    .table tbody tr:last-child td {
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .acciones-cell {
+        min-width: 160px;
+    }
+
+    .badge {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.6rem;
     }
 
     .btn-icon {
-        width: 32px;
-        height: 32px;
-        font-size: 0.8rem;
+        width: 30px;
+        height: 30px;
+        font-size: 0.75rem;
+    }
+
+    .acciones-buttons {
+        gap: 0.25rem;
     }
     
     .btn {
-        width: 100%;
         margin-bottom: 0.5rem;
     }
     
@@ -512,5 +651,23 @@ h1 {
     
     .col-md-6 {
         width: 100%;
+    }
+
+    /* Scrollbar styling para móvil */
+    .table-responsive::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .table-responsive::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .table-responsive::-webkit-scrollbar-thumb {
+        background: #999;
+        border-radius: 3px;
+    }
+
+    .table-responsive::-webkit-scrollbar-thumb:active {
+        background: #555;
     }
 }
