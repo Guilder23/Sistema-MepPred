@@ -4,6 +4,7 @@ from django.views.decorators.http import require_http_methods
 from django.contrib.admin.views.decorators import staff_member_required
 import json
 from .models import Materia
+from apps.temas.models import Tema
 
 
 @staff_member_required
@@ -384,6 +385,35 @@ def obtener_materia_estudiante(request, materia_id):
     except Exception as e:
         import traceback
         print(traceback.format_exc())
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=400)
+
+
+@require_http_methods(["GET"])
+def obtener_materias_y_temas(request):
+    """API: Obtener todas las materias y temas para filtros"""
+    try:
+        materias = Materia.objects.all()
+        temas = Tema.objects.all()
+        
+        materias_data = [
+            {'id': m.id, 'nombre': m.nombre}
+            for m in materias
+        ]
+        
+        temas_data = [
+            {'id': t.id, 'nombre': t.nombre, 'materia_id': t.materia_id}
+            for t in temas
+        ]
+        
+        return JsonResponse({
+            'success': True,
+            'materias': materias_data,
+            'temas': temas_data
+        })
+    except Exception as e:
         return JsonResponse({
             'success': False,
             'error': str(e)
