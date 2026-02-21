@@ -2,17 +2,17 @@
 
 #modalEditar .modal-header {
     background-color: #ffc107;
-    color: #2c3e50;
+    color: white;
 }
 
 #modalEditar .modal-header-title {
-    color: #2c3e50;
+    color: white;
     font-weight: 600;
 }
 
 #modalEditar .form-label {
     font-weight: 500;
-    color: #2c3e50;
+    color: #333;
     margin-bottom: 0.5rem;
 }
 
@@ -39,18 +39,19 @@
 }
 
 #modalEditar .modal-body h6 {
-    color: #2c3e50;
+    color: #333;
     font-weight: 600;
     margin-bottom: 1rem;
 }
 
 #modalEditar .btn-warning {
     background-color: #ffc107;
-    color: #2c3e50;
+    color: white;
 }
 
 #modalEditar .btn-warning:hover:not(:disabled) {
     background-color: #e0a800;
+    color: white;
 }
 
 /* Responsive */
@@ -66,7 +67,7 @@
 
 
 #modalEditar .form-check-label {
-    color: #2c3e50;
+    color: #333;
     font-weight: 500;
     cursor: pointer;
     margin-left: 0.5rem;
@@ -80,13 +81,14 @@
 #modalEditar .btn-primary {
     background-color: #ffc107;
     border-color: #e0a800;
-    color: #2c3e50;
+    color: white;
     font-weight: 500;
 }
 
 #modalEditar .btn-primary:hover {
     background-color: #e0a800;
     border-color: #d39e00;
+    color: white;
     box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
     transform: translateY(-2px);
 }
