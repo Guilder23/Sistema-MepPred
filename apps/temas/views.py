@@ -290,7 +290,7 @@ def crear_tema(request):
         
         return JsonResponse({
             'success': True,
-            'mensaje': 'Tema creado exitosamente',
+            'message': 'Tema creado exitosamente',
             'tema': {
                 'id': tema.id,
                 'nombre': tema.nombre,
@@ -354,7 +354,7 @@ def actualizar_tema(request, tema_id):
         
         return JsonResponse({
             'success': True,
-            'mensaje': 'Tema actualizado exitosamente',
+            'message': 'Tema actualizado exitosamente',
             'tema': {
                 'id': tema.id,
                 'nombre': tema.nombre,
@@ -378,11 +378,39 @@ def eliminar_tema(request, tema_id):
     try:
         tema = get_object_or_404(Tema, id=tema_id)
         nombre = tema.nombre
+        
+        # Verificar relaciones antes de eliminar
+        relaciones = []
+        
+        # Verificar si tiene contenidos
+        contenidos_count = tema.contenido_set.count()
+        if contenidos_count > 0:
+            relaciones.append(f"{contenidos_count} contenido(s)")
+        
+        # Verificar si tiene exámenes
+        examenes_count = tema.examenes.count()
+        if examenes_count > 0:
+            relaciones.append(f"{examenes_count} examen(es)")
+        
+        # Verificar si tiene mazos premium
+        mazos_premium_count = tema.mazos_premium.count()
+        if mazos_premium_count > 0:
+            relaciones.append(f"{mazos_premium_count} mazo(s) premium")
+        
+        # Si tiene relaciones, no permitir eliminar
+        if relaciones:
+            mensaje_error = f'No se puede eliminar el tema "{nombre}" porque tiene: {", ".join(relaciones)}. Elimine primero estos elementos.'
+            return JsonResponse({
+                'success': False,
+                'error': mensaje_error
+            }, status=400)
+        
+        # Si no tiene relaciones, proceder con la eliminación
         tema.delete()
         
         return JsonResponse({
             'success': True,
-            'mensaje': f'Tema "{nombre}" eliminado exitosamente'
+            'message': f'Tema "{nombre}" eliminado exitosamente'
         })
     except Exception as e:
         return JsonResponse({

@@ -1,22 +1,18 @@
 <!-- Modal Eliminar Tema -->
-<div class="modal-eliminar-overlay" id="modalEliminarOverlay">
-    <div class="modal-eliminar-container">
-        <div class="modal-eliminar-header">
-            <h2>Eliminar Tema</h2>
-            <button type="button" class="modal-eliminar-btn-close">&times;</button>
+<div class="modal-overlay" id="modalEliminarOverlay">
+    <div class="modal-content" id="modalEliminarTema">
+        <div class="modal-header">
+            <h5 class="modal-header-title">Eliminar Tema</h5>
+            <button type="button" class="modal-close-btn" onclick="cerrarModal('modalEliminarOverlay')">×</button>
         </div>
-        <div class="modal-eliminar-body">
-            <div class="modal-eliminar-warning-icon">⚠️</div>
-            <div class="modal-eliminar-warning-text">
-                ¿Está seguro que desea eliminar este tema?
-                <strong id="nombreTemaEliminar">-</strong>
-                <span>Esta acción no se puede deshacer y eliminará también todo el contenido asociado.</span>
-            </div>
+        <div class="modal-body">
+            <p>¿Estás seguro de que deseas eliminar el tema <strong id="nombreTemaEliminar">-</strong>?</p>
+            <p class="text-danger"><small>Esta acción no se puede deshacer y eliminará también todo el contenido asociado.</small></p>
             <input type="hidden" id="idTemaEliminar">
         </div>
-        <div class="modal-eliminar-footer">
-            <button type="button" class="modal-eliminar-btn modal-eliminar-btn-cancelar" id="btnCancelarEliminarTema">Cancelar</button>
-            <button type="button" class="modal-eliminar-btn modal-eliminar-btn-eliminar" id="btnEliminarTema">Eliminar</button>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="cerrarModal('modalEliminarOverlay')">Cancelar</button>
+            <button type="button" class="btn btn-danger" id="btnEliminarTema">Eliminar Tema</button>
         </div>
     </div>
 </div>
