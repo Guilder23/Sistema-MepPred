@@ -111,17 +111,15 @@ function editarUsuario(e) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            mostrarAlerta('¡Usuario actualizado exitosamente!', 'success');
-            ocultarModal('modalEditarOverlay');
-            if (typeof cargarUsuarios === 'function') {
-                cargarUsuarios();
-            }
+            cargarUsuarios();
+            cerrarModal('modalEditarOverlay');
+            mostrarMensaje('Éxito', data.message || 'Usuario actualizado correctamente', 'success');
         } else {
-            mostrarAlerta(data.error || 'Error al actualizar usuario', 'danger');
+            mostrarMensaje('Error', data.error || 'Error al actualizar el usuario', 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        mostrarAlerta('Error al actualizar usuario', 'danger');
+        mostrarMensaje('Error', 'Error al actualizar el usuario', 'error');
     });
 }
