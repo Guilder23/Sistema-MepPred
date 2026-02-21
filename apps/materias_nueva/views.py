@@ -88,7 +88,7 @@ def crear_materia(request):
         
         return JsonResponse({
             'success': True,
-            'mensaje': 'Materia creada exitosamente',
+            'message': 'Materia creada exitosamente',
             'materia': {
                 'id': materia.id,
                 'nombre': materia.nombre,
@@ -135,7 +135,7 @@ def actualizar_materia(request, materia_id):
         
         return JsonResponse({
             'success': True,
-            'mensaje': 'Materia actualizada exitosamente',
+            'message': 'Materia actualizada exitosamente',
             'materia': {
                 'id': materia.id,
                 'nombre': materia.nombre,
@@ -152,15 +152,24 @@ def actualizar_materia(request, materia_id):
 
 @require_http_methods(["DELETE"])
 def eliminar_materia(request, materia_id):
-    """API: Eliminar materia"""
+    """API: Eliminar materia - Valida que no tenga temas"""
     try:
         materia = get_object_or_404(Materia, id=materia_id)
+        
+        # Verificar si la materia tiene temas
+        temas_count = Tema.objects.filter(materia=materia).count()
+        if temas_count > 0:
+            return JsonResponse({
+                'success': False,
+                'error': f'No puedes eliminar "{materia.nombre}" porque contiene {temas_count} tema{"s" if temas_count > 1 else ""}. Primero debes eliminar los temas asociados.'
+            }, status=400)
+        
         nombre = materia.nombre
         materia.delete()
         
         return JsonResponse({
             'success': True,
-            'mensaje': f'Materia "{nombre}" eliminada exitosamente'
+            'message': f'Materia "{nombre}" eliminada exitosamente'
         })
     except Exception as e:
         return JsonResponse({

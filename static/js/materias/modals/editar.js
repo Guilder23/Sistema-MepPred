@@ -141,7 +141,7 @@ function actualizarMateria() {
             // Recargar tabla
             cargarMaterias();
             cerrarModal('modalEditarOverlay');
-            mostrarMensaje('Éxito', 'Materia actualizada correctamente', 'success');
+            mostrarMensaje('Éxito', data.message || 'Materia actualizada correctamente', 'success');
         } else {
             mostrarMensaje('Error', data.error || 'Error al actualizar la materia', 'error');
         }

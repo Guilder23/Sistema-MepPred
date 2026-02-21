@@ -34,54 +34,33 @@ function eliminarMateria() {
 
     if (btnEliminar) btnEliminar.disabled = true;
 
-    // Verificar si la materia tiene temas
-    fetch(`/temas/api/temas/por-materia/${id}/`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success && data.temas && data.temas.length > 0) {
-                // Si tiene temas, mostrar error y cerrar modal
-                const materia = materiasData.find(m => m.id === parseInt(id));
-                mostrarMensaje(
-                    'No se puede eliminar',
-                    `No puedes eliminar "${escapeHtml(materia.nombre)}" porque contiene ${data.temas.length} tema${data.temas.length > 1 ? 's' : ''}. Primero debes eliminar los temas asociados.`,
-                    'error'
-                );
-                cerrarModal('modalEliminarOverlay');
-                if (btnEliminar) btnEliminar.disabled = false;
-                return;
-            }
-            
-            // Si no tiene temas, proceder con la eliminación
-            fetch(`/materias/api/materias/${id}/eliminar/`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken')
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Recargar tabla
-                    cargarMaterias();
-                    cerrarModal('modalEliminarOverlay');
-                    mostrarMensaje('Éxito', 'Materia eliminada correctamente', 'success');
-                } else {
-                    mostrarMensaje('Error', data.error || 'Error al eliminar la materia', 'error');
-                }
-            })
-            .catch(error => {
-                mostrarMensaje('Error', 'Error al eliminar la materia', 'error');
-            })
-            .finally(() => {
-                if (btnEliminar) btnEliminar.disabled = false;
-            });
-        })
-        .catch(error => {
-            console.error('Error al verificar temas:', error);
-            mostrarMensaje('Error', 'Error al verificar los temas de la materia', 'error');
-            if (btnEliminar) btnEliminar.disabled = false;
-        });
+    // Enviar solicitud de eliminación al backend
+    fetch(`/materias/api/materias/${id}/eliminar/`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Recargar tabla
+            cargarMaterias();
+            cerrarModal('modalEliminarOverlay');
+            mostrarMensaje('Éxito', data.message || 'Materia eliminada correctamente', 'success');
+        } else {
+            // Backend retorna error si tiene temas o cualquier otro problema
+            cerrarModal('modalEliminarOverlay');
+            mostrarMensaje('No se puede eliminar', data.error || 'Error al eliminar la materia', 'error');
+        }
+    })
+    .catch(error => {
+        mostrarMensaje('Error', 'Error al eliminar la materia', 'error');
+    })
+    .finally(() => {
+        if (btnEliminar) btnEliminar.disabled = false;
+    });
 }
 
 function getCookie(name) {

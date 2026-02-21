@@ -140,7 +140,7 @@ function guardarMateria() {
             // Recargar tabla
             cargarMaterias();
             cerrarModal('modalCrearOverlay');
-            mostrarMensaje('Éxito', 'Materia creada correctamente', 'success');
+            mostrarMensaje('Éxito', data.message || 'Materia creada correctamente', 'success');
         } else {
             mostrarMensaje('Error', data.error || 'Error al crear la materia', 'error');
         }
