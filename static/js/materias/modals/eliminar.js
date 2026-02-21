@@ -2,20 +2,13 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     const btnEliminar = document.getElementById('btnEliminarMateria');
-    const btnCancelar = document.getElementById('btnCancelarEliminarMateria');
 
     if (btnEliminar) {
         btnEliminar.addEventListener('click', eliminarMateria);
     }
 
-    if (btnCancelar) {
-        btnCancelar.addEventListener('click', function() {
-            cerrarModal('modalEliminarOverlay');
-        });
-    }
-
     // Cerrar modal al hacer clic en X
-    const btnClose = document.querySelector('.modal-eliminar-btn-close');
+    const btnClose = document.querySelector('#modalEliminarOverlay .modal-close-btn');
     if (btnClose) {
         btnClose.addEventListener('click', function() {
             cerrarModal('modalEliminarOverlay');
@@ -23,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Cerrar modal al hacer clic fuera del modal
-    const modalOverlay = document.querySelector('.modal-eliminar-overlay');
+    const modalOverlay = document.querySelector('#modalEliminarOverlay');
     if (modalOverlay) {
         modalOverlay.addEventListener('click', function(e) {
             if (e.target === modalOverlay) {

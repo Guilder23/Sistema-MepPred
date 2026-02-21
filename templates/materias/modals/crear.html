@@ -1,17 +1,17 @@
 <!-- Modal Crear Materia -->
-<div class="modal-crear-overlay" id="modalCrearOverlay">
-    <div class="modal-crear-container">
-        <div class="modal-crear-header">
-            <h2>Crear Nueva Materia</h2>
-            <button type="button" class="modal-crear-btn-close">&times;</button>
+<div class="modal-overlay" id="modalCrearOverlay">
+    <div class="modal-content" id="modalCrearMateria">
+        <div class="modal-header">
+            <h5 class="modal-header-title">Crear Nueva Materia</h5>
+            <button type="button" class="modal-close-btn" onclick="ocultarModal('modalCrearOverlay')">×</button>
         </div>
         <form id="formCrearMateria">
-            <div class="modal-crear-body">
-                <div class="modal-crear-form-group modal-crear-required">
-                    <label for="crearNombre">Nombre de la Materia</label>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Nombre de la Materia</label>
                     <input 
                         type="text" 
-                        class="modal-crear-form-control" 
+                        class="form-control" 
                         id="crearNombre" 
                         name="nombre" 
                         placeholder="Ej: Matemáticas"
@@ -19,10 +19,10 @@
                         minlength="3"
                         maxlength="150">
                 </div>
-                <div class="modal-crear-form-group">
-                    <label for="crearDescripcion">Descripción</label>
+                <div class="form-group">
+                    <label class="form-label">Descripción</label>
                     <textarea 
-                        class="modal-crear-form-control" 
+                        class="form-control" 
                         id="crearDescripcion" 
                         name="descripcion" 
                         placeholder="Descripción opcional..."
@@ -30,9 +30,9 @@
                         rows="4"></textarea>
                 </div>
             </div>
-            <div class="modal-crear-footer">
-                <button type="button" class="modal-crear-btn modal-crear-btn-cancelar" id="btnCancelarMateria">Cancelar</button>
-                <button type="button" class="modal-crear-btn modal-crear-btn-guardar" id="btnGuardarMateria">Guardar</button>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="ocultarModal('modalCrearOverlay')">Cancelar</button>
+                <button type="submit" class="btn btn-success" id="btnGuardarMateria">Crear Materia</button>
             </div>
         </form>
     </div>
