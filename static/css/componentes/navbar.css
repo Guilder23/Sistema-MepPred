@@ -14,11 +14,11 @@
 .navbar__container {
   max-width: 1080px;
   margin: 0 auto;
-  padding: var(--espacio-md) var(--espacio-lg);
+  padding: 0.5rem var(--espacio-md);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--espacio-md);
+  gap: var(--espacio-sm);
 }
 
 /* Botón Hamburguesa */
@@ -60,7 +60,7 @@
 }
 
 .navbar__logo {
-  height: 40px;
+  height: 32px;
   width: auto;
   transition: all 0.3s ease;
 }
@@ -87,7 +87,7 @@
 .navbar__link {
   color: var(--texto-secundario);
   text-decoration: none;
-  padding: var(--espacio-sm) var(--espacio-md);
+  padding: 0.4rem 0.75rem;
   border-radius: var(--radio-md);
   transition: all var(--transicion-normal);
   font-size: var(--fuente-tamano-sm);
