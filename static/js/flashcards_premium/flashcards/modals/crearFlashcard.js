@@ -1,5 +1,48 @@
 // Script para modal crear flashcard
+
+// Cargar mazos en el select crear
+async function cargarMazosCrearFlashcard() {
+    try {
+        const response = await fetch('/flashcards-premium/api/mazos/');
+        const data = await response.json();
+        
+        if (data.success) {
+            const selectMazo = document.getElementById('mazoFlashcard');
+            if (selectMazo) {
+                selectMazo.innerHTML = '<option value="">Seleccione un mazo</option>';
+                data.mazos.forEach(mazo => {
+                    const option = document.createElement('option');
+                    option.value = mazo.id;
+                    option.textContent = mazo.nombre;
+                    selectMazo.appendChild(option);
+                });
+            }
+        }
+    } catch (error) {
+        console.error('Error al cargar mazos:', error);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+    // Cargar mazos cuando se abre el modal
+    const overlay = document.getElementById('modalCrearFlashcardOverlay');
+    
+    if (overlay) {
+        // Observar cambios en la clase active
+        const observer = new MutationObserver(() => {
+            if (overlay.classList.contains('active')) {
+                // Limpiar formulario
+                const form = document.getElementById('formCrearFlashcard');
+                if (form) {
+                    form.reset();
+                }
+                // Cargar mazos
+                cargarMazosCrearFlashcard();
+            }
+        });
+        observer.observe(overlay, { attributes: true, attributeFilter: ['class'] });
+    }
+    
     const btnGuardar = document.getElementById('btnGuardarFlashcard');
     
     if (btnGuardar) {
@@ -22,94 +65,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await response.json();
                 
                 if (data.success) {
-                    alert('Flashcard creada exitosamente');
-                    cerrarModal('crearFlashcardModal');
+                    mostrarMensaje('Éxito', 'Flashcard creada exitosamente', 'success');
+                    ocultarModal('modalCrearFlashcardOverlay');
                     if (typeof cargarFlashcards === 'function') {
                         cargarFlashcards();
                     }
                 } else {
-                    alert('Error: ' + (data.error || 'No se pudo crear la flashcard'));
+                    mostrarMensaje('Error', 'Error: ' + (data.error || 'No se pudo crear la flashcard'), 'danger');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error al crear la flashcard');
+                mostrarMensaje('Error', 'Error al crear la flashcard', 'danger');
             }
         });
     }
 });
-
-// Funciones para manejar modales
-window.abrirModal = function(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    }
-}
-
-window.cerrarModal = function(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-        const form = modal.querySelector('form');
-        if (form) form.reset();
-    }
-}
-
-// Cerrar modal al hacer clic fuera
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('modal-overlay')) {
-        cerrarModal(e.target.id);
-    }
-});
-
-// Cargar mazos en el select cuando se abre el modal
-async function cargarMazosEnSelect() {
-    try {
-        const response = await fetch('/flashcards-premium/api/mazos/');
-        const data = await response.json();
-        
-        if (data.success) {
-            const select = document.getElementById('mazoFlashcard');
-            const editSelect = document.getElementById('editMazoFlashcard');
-            
-            [select, editSelect].forEach(s => {
-                if (s) {
-                    s.innerHTML = '<option value="">Seleccione un mazo</option>';
-                    data.mazos.forEach(mazo => {
-                        const option = document.createElement('option');
-                        option.value = mazo.id;
-                        option.textContent = mazo.nombre;
-                        s.appendChild(option);
-                    });
-                }
-            });
-        }
-    } catch (error) {
-        console.error('Error al cargar mazos:', error);
-    }
-}
-
-// Conectar carga de mazos con abrirModal para crear flashcard
-const btnCrearFlashcard = document.getElementById('btnCrearFlashcard');
-if (btnCrearFlashcard) {
-    btnCrearFlashcard.addEventListener('click', function() {
-        cargarMazosEnSelect();
-    });
-}
-
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}

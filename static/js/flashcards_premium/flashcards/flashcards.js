@@ -1,4 +1,130 @@
 // JavaScript para Gestión de Flashcards Premium
+
+// ==========================================
+// UTILIDADES
+// ==========================================
+
+// Función para obtener CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Función para escapar HTML y prevenir XSS
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Mostrar mensaje tipo toast en la esquina inferior derecha
+function mostrarMensaje(titulo, mensaje, tipo) {
+    // Crear contenedor de notificaciones si no existe
+    let container = document.querySelector('.toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+
+    // Crear el toast
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${tipo}`;
+    
+    // Icono según el tipo
+    let icono = '';
+    switch(tipo) {
+        case 'success':
+            icono = '<i class="fas fa-check-circle"></i>';
+            break;
+        case 'error':
+        case 'danger':
+            icono = '<i class="fas fa-exclamation-circle"></i>';
+            break;
+        case 'warning':
+            icono = '<i class="fas fa-exclamation-triangle"></i>';
+            break;
+        case 'info':
+            icono = '<i class="fas fa-info-circle"></i>';
+            break;
+        default:
+            icono = '<i class="fas fa-bell"></i>';
+    }
+
+    toast.innerHTML = `
+        <div class="toast-icon">${icono}</div>
+        <div class="toast-content">
+            <div class="toast-title">${escapeHtml(titulo)}</div>
+            <div class="toast-message">${escapeHtml(mensaje)}</div>
+        </div>
+        <button class="toast-close" onclick="this.parentElement.remove()">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+
+    container.appendChild(toast);
+
+    // Animar entrada
+    setTimeout(() => toast.classList.add('show'), 10);
+
+    // Auto-eliminar después de 5 segundos
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 5000);
+}
+
+// Alias para compatibilidad con mostrarAlerta
+function mostrarAlerta(mensaje, tipo) {
+    mostrarMensaje('Notificación', mensaje, tipo);
+}
+
+// Funciones de control de modales
+window.mostrarModal = function(overlayId) {
+    const overlay = document.getElementById(overlayId);
+    if (overlay) {
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+window.ocultarModal = function(overlayId) {
+    const overlay = document.getElementById(overlayId);
+    if (overlay) {
+        overlay.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+}
+
+// Alias para cerrarModal (compatibilidad)
+window.cerrarModal = function(overlayId) {
+    ocultarModal(overlayId);
+}
+
+// Cerrar modales al hacer click fuera
+document.addEventListener('click', function(event) {
+    const modals = document.querySelectorAll('.modal-overlay.active');
+    modals.forEach(modal => {
+        if (event.target === modal) {
+            ocultarModal(modal.id);
+        }
+    });
+});
+
+// ==========================================
+// LÓGICA PRINCIPAL
+// ==========================================
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Flashcards.js cargado');
     cargarFlashcards();
@@ -15,12 +141,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (btnCrear) {
         btnCrear.addEventListener('click', function() {
             console.log('Click en botón crear flashcard');
-            console.log('Función window.abrirModal existe:', typeof window.abrirModal);
-            if (typeof window.abrirModal === 'function') {
-                window.abrirModal('crearFlashcardModal');
-            } else {
-                console.error('window.abrirModal no está definida');
-            }
+            mostrarModal('modalCrearFlashcardOverlay');
         });
     }
 });
@@ -54,7 +175,7 @@ async function cargarFlashcards() {
 
 // Función para mostrar flashcards en la tabla
 function mostrarFlashcards(flashcards) {
-    const tbody = document.getElementById('tablaFlashcards');
+    const tbody = document.querySelector('#tablaFlashcards tbody');
     if (!tbody) return;
     
     tbody.innerHTML = '';
@@ -91,15 +212,15 @@ function mostrarFlashcards(flashcards) {
             <td>${respuestaCorta}</td>
             <td>${flashcard.categoria || '-'}</td>
             <td>-</td>
-            <td>
-                <div class="acciones-cell">
-                    <button class="btn-accion btn-ver" onclick="window.verFlashcard(${flashcard.id})" title="Ver detalles">
+            <td class="acciones-cell">
+                <div class="acciones-buttons">
+                    <button class="btn-icon btn-ver" onclick="window.verFlashcard(${flashcard.id})" title="Ver detalles">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button class="btn-accion btn-editar" onclick="window.editarFlashcard(${flashcard.id})" title="Editar">
+                    <button class="btn-icon btn-editar" onclick="window.editarFlashcard(${flashcard.id})" title="Editar">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button class="btn-accion btn-eliminar" onclick="window.eliminarFlashcard(${flashcard.id})" title="Eliminar">
+                    <button class="btn-icon btn-eliminar" onclick="window.eliminarFlashcard(${flashcard.id})" title="Eliminar">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
@@ -125,30 +246,8 @@ function filtrarFlashcards() {
     });
 }
 
-// Funciones de acciones (se conectan con los modales) - GLOBALES
-window.verFlashcard = function(id) {
-    console.log('Ver flashcard:', id);
-    if (typeof window.verFlashcardModal === 'function') {
-        window.verFlashcardModal(id);
-    } else {
-        console.error('window.verFlashcardModal no está definida');
-    }
-};
-
-window.editarFlashcard = function(id) {
-    console.log('Editar flashcard:', id);
-    if (typeof window.editarFlashcardModal === 'function') {
-        window.editarFlashcardModal(id);
-    } else {
-        console.error('window.editarFlashcardModal no está definida');
-    }
-};
-
-window.eliminarFlashcard = function(id) {
-    console.log('Eliminar flashcard:', id);
-    if (typeof window.eliminarFlashcardModal === 'function') {
-        window.eliminarFlashcardModal(id);
-    } else {
-        console.error('window.eliminarFlashcardModal no está definida');
-    }
-};
+// Las funciones window.verFlashcard, window.editarFlashcard y window.eliminarFlashcard
+// se definen en los archivos de los modales individuales:
+// - verFlashcard.js
+// - editarFlashcard.js
+// - eliminarFlashcard.js

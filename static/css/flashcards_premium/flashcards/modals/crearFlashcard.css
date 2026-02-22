@@ -1,6 +1,7 @@
-/* Estilos base para modal crear flashcard */
+/* =========================================
+   ESTILOS BASE PARA MODAL
+   ========================================= */
 
-/* Modal Overlay */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -17,15 +18,15 @@
     transition: opacity 0.3s ease;
 }
 
-.modal-overlay[style*="display: flex"] {
+.modal-overlay.active {
+    display: flex;
     opacity: 1;
 }
 
-/* Modal Content */
-.modal-container {
+.modal-content {
     background-color: white;
     width: 90%;
-    max-width: 600px;
+    max-width: 500px;
     border-radius: 12px;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     transform: translateY(20px);
@@ -36,34 +37,32 @@
     flex-direction: column;
 }
 
-.modal-overlay[style*="display: flex"] .modal-container {
+.modal-overlay.active .modal-content {
     transform: translateY(0);
 }
 
-/* Modal Header */
 .modal-header {
     padding: 1.25rem 1.5rem;
-    background-color: #28a745;
-    color: white;
+    border-bottom: 1px solid #e0e0e0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: none;
+    background-color: white;
 }
 
-.modal-header h3 {
+.modal-header-title {
     margin: 0;
     font-size: 1.25rem;
     font-weight: 600;
-    color: white;
+    color: #2c3e50;
 }
 
-.btn-cerrar-modal {
+.modal-close-btn {
     background: none;
     border: none;
     font-size: 1.5rem;
     line-height: 1;
-    color: white;
+    color: #7f8c8d;
     cursor: pointer;
     padding: 0.25rem;
     border-radius: 50%;
@@ -73,23 +72,29 @@
     justify-content: center;
     width: 32px;
     height: 32px;
-    opacity: 0.8;
 }
 
-.btn-cerrar-modal:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    opacity: 1;
+.modal-close-btn:hover {
+    background-color: #f1f1f1;
+    color: #e74c3c;
 }
 
-/* Modal Body */
 .modal-body {
     padding: 1.5rem;
     overflow-y: auto;
-    flex: 1;
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e0e0e0;
+    background-color: #f8f9fa;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
 }
 
 .form-group {
-    margin-bottom: 1.25rem;
+    margin-bottom: 1rem;
 }
 
 .form-group label {
@@ -101,105 +106,146 @@
 }
 
 .form-group input,
-.form-group textarea,
-.form-group select {
+.form-group select,
+.form-group textarea {
     width: 100%;
-    padding: 0.6rem 1rem;
-    font-size: 0.95rem;
+    padding: 0.75rem;
+    font-size: 1rem;
     border: 1px solid #e0e0e0;
     border-radius: 6px;
     transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: inherit;
 }
 
 .form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
+.form-group select:focus,
+.form-group textarea:focus {
     outline: none;
     border-color: #28a745;
-    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
 }
 
 .form-group textarea {
     resize: vertical;
-    min-height: 100px;
-    font-family: inherit;
+    min-height: 80px;
 }
 
-/* Modal Footer */
-.modal-footer {
-    padding: 1rem 1.5rem;
-    border-top: 1px solid #e0e0e0;
-    background-color: #f8f9fa;
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.75rem;
+/* =========================================
+   ESTILOS ESPECÍFICOS PARA CREAR FLASHCARD
+   ========================================= */
+
+#modalCrearFlashcardOverlay {
+    --modal-color: #28a745;
 }
 
-.btn-cancelar,
-.btn-guardar {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.6rem 1.2rem;
-    font-size: 0.95rem;
-    font-weight: 500;
+#modalCrearFlashcard .modal-header,
+#modalCrearFlashcardOverlay #modalCrearFlashcard .modal-header {
+    background-color: #28a745;
+    color: white;
+}
+
+#modalCrearFlashcard .modal-header-title,
+#modalCrearFlashcardOverlay #modalCrearFlashcard .modal-header-title {
+    color: white;
+}
+
+#modalCrearFlashcard .modal-close-btn,
+#modalCrearFlashcardOverlay #modalCrearFlashcard .modal-close-btn {
+    color: white;
+    opacity: 0.8;
+}
+
+#modalCrearFlashcard .modal-close-btn:hover,
+#modalCrearFlashcardOverlay #modalCrearFlashcard .modal-close-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    opacity: 1;
+}
+
+#modalCrearFlashcard .form-control:focus,
+#modalCrearFlashcard .form-select:focus,
+#modalCrearFlashcardOverlay #modalCrearFlashcard .form-control:focus,
+#modalCrearFlashcardOverlay #modalCrearFlashcard .form-select:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+#modalCrearFlashcard .btn-success,
+#modalCrearFlashcard .btn-primary,
+#modalCrearFlashcardOverlay #modalCrearFlashcard .btn-success,
+#modalCrearFlashcardOverlay #modalCrearFlashcard .btn-primary {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+#modalCrearFlashcard .btn-success:hover:not(:disabled),
+#modalCrearFlashcard .btn-primary:hover:not(:disabled),
+#modalCrearFlashcardOverlay #modalCrearFlashcard .btn-success:hover:not(:disabled),
+#modalCrearFlashcardOverlay #modalCrearFlashcard .btn-primary:hover:not(:disabled) {
+    background-color: #218838;
+    border-color: #218838;
+}
+
+/* Botones */
+.btn {
+    padding: 0.5rem 1rem;
     border-radius: 6px;
-    border: none;
+    border: 1px solid transparent;
+    font-size: 0.9rem;
+    font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
-.btn-cancelar {
-    background-color: #95a5a6;
+.btn-primary {
+    background-color: #6c757d;
     color: white;
+    border-color: #6c757d;
 }
 
-.btn-cancelar:hover {
-    background-color: #7f8c8d;
+.btn-primary:hover:not(:disabled) {
+    background-color: #5a6268;
+    border-color: #5a6268;
 }
 
-.btn-guardar {
-    background-color: #28a745;
+.btn-secondary {
+    background-color: #6c757d;
     color: white;
-    box-shadow: 0 4px 6px rgba(40, 167, 69, 0.2);
+    border-color: #6c757d;
 }
 
-.btn-guardar:hover {
-    background-color: #218838;
-    box-shadow: 0 6px 8px rgba(40, 167, 69, 0.3);
-    transform: translateY(-1px);
+.btn-secondary:hover:not(:disabled) {
+    background-color: #5a6268;
+    border-color: #5a6268;
 }
 
-.btn-guardar:active {
-    transform: translateY(1px);
+/* Botones específicos para Modal Crear Flashcard */
+#modalCrearFlashcard .btn-primary,
+#modalCrearFlashcardOverlay #modalCrearFlashcard .btn-primary {
+    background-color: #28a745 !important;
+    border-color: #28a745 !important;
+}
+
+#modalCrearFlashcard .btn-primary:hover:not(:disabled),
+#modalCrearFlashcardOverlay #modalCrearFlashcard .btn-primary:hover:not(:disabled) {
+    background-color: #218838 !important;
+    border-color: #218838 !important;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    .modal-container {
-        width: 95%;
-        max-width: none;
-    }
-
-    .modal-header {
+    #modalCrearFlashcard .modal-body,
+    #modalCrearFlashcardOverlay #modalCrearFlashcard .modal-body {
         padding: 1rem;
     }
 
-    .modal-header h3 {
-        font-size: 1.1rem;
+    #modalCrearFlashcard .form-label,
+    #modalCrearFlashcardOverlay #modalCrearFlashcard .form-label {
+        font-size: 0.9rem;
     }
 
-    .modal-body {
-        padding: 1rem;
-    }
-
-    .modal-footer {
-        padding: 0.75rem 1rem;
-        flex-direction: column-reverse;
-    }
-
-    .btn-cancelar,
-    .btn-guardar {
-        width: 100%;
+    #modalCrearFlashcard .modal-footer,
+    #modalCrearFlashcardOverlay #modalCrearFlashcard .modal-footer {
+        flex-direction: row;
     }
 }
