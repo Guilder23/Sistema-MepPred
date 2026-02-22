@@ -310,11 +310,8 @@ function crearInfoExamen(examen, numero, totalExamenes) {
                 <span class="nota">Nota: ${mejorNota}/20</span>
             </div>
         `;
-        botonHTML = `
-            <a href="/examenes/disponibles/" class="btn btn-secondary btn-sm">
-                <i class="fas fa-chart-line"></i> Ver Resultados
-            </a>
-        `;
+        // No mostrar botón para exámenes aprobados
+        botonHTML = '';
     } else if (disponible) {
         estadoHTML = `
             <div class="examen-disponible">
