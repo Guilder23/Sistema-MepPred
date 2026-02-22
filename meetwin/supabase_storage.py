@@ -12,7 +12,11 @@ from pathlib import Path
 try:
     from supabase import create_client
 except ImportError:
-    raise ImportError("Debes instalar la librería 'supabase': pip install supabase")
+    try:
+        # Para versiones más nuevas de supabase
+        from supabase.client import create_client
+    except ImportError:
+        raise ImportError("Debes instalar la librería 'supabase': pip install 'supabase>=2.4.0'")
 
 
 class SupabaseStorage(Storage):
