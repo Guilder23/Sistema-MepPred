@@ -125,10 +125,6 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 # MEDIA (IMÁGENES)
 # ========================
 
-<<<<<<< HEAD
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
-=======
 # Configuración de almacenamiento de archivos con Supabase
 DEFAULT_FILE_STORAGE = 'meetwin.supabase_storage.SupabaseStorage'
 STORAGES = {
@@ -162,19 +158,16 @@ if not SUPABASE_ENABLED:
 else:
     # Con Supabase, las URLs se generan dinámicamente
     MEDIA_URL = f"{SUPABASE_URL}/storage/v1/object/public/{SUPABASE_BUCKET}/"
->>>>>>> dev
 
 # ⚠ IMPORTANTE:
 # En Render (plan gratis) las imágenes NO son permanentes.
 # Para producción real necesitas S3 o Supabase Storage.
 
-<<<<<<< HEAD
 # ========================
 # SEGURIDAD PRODUCCIÓN
 # ========================
-=======
+
 LOGIN_URL = 'cuentas:home'
->>>>>>> dev
 
 if IS_PRODUCTION:
     SECURE_SSL_REDIRECT = True
