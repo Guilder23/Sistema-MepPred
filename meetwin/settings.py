@@ -140,8 +140,39 @@ STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
-MEDIA_URL = 'media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# Configuración de almacenamiento de archivos con Supabase
+DEFAULT_FILE_STORAGE = 'meetwin.supabase_storage.SupabaseStorage'
+STORAGES = {
+    'default': {
+        'BACKEND': 'meetwin.supabase_storage.SupabaseStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage',
+    },
+}
+
+# Fallback para desarrollo local (si Supabase no está disponible)
+try:
+    from meetwin.supabase_storage import SupabaseStorage
+    SupabaseStorage()  # Verificar que Supabase esté configurado
+    SUPABASE_ENABLED = True
+except Exception as e:
+    print(f"⚠ Advertencia: No se pudo conectar a Supabase: {e}")
+    print("  Usando almacenamiento local como fallback")
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    SUPABASE_ENABLED = False
+
+# URLs de Supabase para servir archivos públicos
+SUPABASE_URL = os.environ.get('SUPABASE_URL', '').strip()
+SUPABASE_BUCKET = os.environ.get('SUPABASE_BUCKET', 'media')
+
+# Para desarrollo local, usar MEDIA_URL como antes
+if not SUPABASE_ENABLED:
+    MEDIA_URL = 'media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
+else:
+    # Con Supabase, las URLs se generan dinámicamente
+    MEDIA_URL = f"{SUPABASE_URL}/storage/v1/object/public/{SUPABASE_BUCKET}/"
 
 AUTH_USER_MODEL = 'cuentas.User'
 
