@@ -158,6 +158,7 @@ def crear_contenido(request):
         descripcion = request.POST.get('descripcion', '').strip()
         contenido_tema = request.POST.get('contenido_tema', '').strip()
         tema_nombre = request.POST.get('tema', '').strip()
+        materia_id = request.POST.get('materia', '').strip()
         nivel_curso = request.POST.get('nivel_curso', '').strip()
         estado = request.POST.get('estado', 'activo')
         publicacion = request.POST.get('publicacion', 'no_publicado')
@@ -167,13 +168,13 @@ def crear_contenido(request):
         videos_enlaces = request.POST.getlist('videos[]')
         
         # Validaciones
-        if not all([titulo, descripcion, contenido_tema, tema_nombre, nivel_curso]):
+        if not all([titulo, descripcion, contenido_tema, tema_nombre, materia_id, nivel_curso]):
             return JsonResponse({'success': False, 'error': 'Todos los campos son requeridos'})
         
         # Buscar el tema
         from apps.temas.models import Tema
         try:
-            tema = Tema.objects.get(nombre=tema_nombre)
+            tema = Tema.objects.get(nombre=tema_nombre, materia__id=materia_id)
         except Tema.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Tema no encontrado'})
         
@@ -219,6 +220,7 @@ def editar_contenido(request):
         descripcion = request.POST.get('descripcion', '').strip()
         contenido_tema = request.POST.get('contenido_tema', '').strip()
         tema_nombre = request.POST.get('tema', '').strip()
+        materia_id = request.POST.get('materia', '').strip()
         nivel_curso = request.POST.get('nivel_curso', '').strip()
         estado = request.POST.get('estado', 'activo')
         publicacion = request.POST.get('publicacion', 'no_publicado')
@@ -232,7 +234,7 @@ def editar_contenido(request):
         # Buscar el tema
         from apps.temas.models import Tema
         try:
-            tema = Tema.objects.get(nombre=tema_nombre)
+            tema = Tema.objects.get(nombre=tema_nombre, materia__id=materia_id)
         except Tema.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Tema no encontrado'})
         
