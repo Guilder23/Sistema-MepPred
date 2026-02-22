@@ -68,6 +68,7 @@ def obtener_temas_por_materia(request, materia_id):
                 'requiere_suscripcion': tema.requiere_suscripcion,
                 'materia_id': tema.materia_id,
                 'materia_nombre': tema.materia.nombre if tema.materia else '-',
+                'examenes': [],  # Inicializar siempre con array vacío
             }
             
             # Si el usuario está autenticado, agregar información de contenidos y progreso
@@ -128,12 +129,15 @@ def obtener_temas_por_materia(request, materia_id):
                 tema_data['contenidos_completados'] = contenidos_completados
                 tema_data['porcentaje'] = round((contenidos_completados / len(contenidos_data)) * 100) if len(contenidos_data) > 0 else 0
                 
-                # Verificar estado del examen
-                examen = Examen.objects.filter(tema=tema, activo=True).first()
-                if examen:
-                    todos_completados = contenidos_completados == len(contenidos_data) and len(contenidos_data) > 0
-                    examen_disponible = todos_completados or es_admin
-                    
+                # Verificar estado de TODOS los exámenes del tema (habilitación secuencial)
+                examenes = Examen.objects.filter(tema=tema, activo=True).order_by('id')
+                examenes_data = []
+                
+                # Para habilitación secuencial
+                todos_contenidos_completados = contenidos_completados == len(contenidos_data) and len(contenidos_data) > 0
+                ultimo_examen_aprobado = True  # El primer examen no requiere aprobación previa
+                
+                for index, examen in enumerate(examenes):
                     # Verificar intentos
                     intentos = IntentoExamen.objects.filter(
                         estudiante=request.user,
@@ -148,7 +152,18 @@ def obtener_temas_por_materia(request, materia_id):
                         mejor_nota = float(mejor_intento.nota)
                         aprobado = mejor_intento.aprobado
                     
-                    tema_data['examen'] = {
+                    # Lógica de disponibilidad secuencial
+                    if es_admin:
+                        # Admins pueden ver todos los exámenes
+                        examen_disponible = True
+                    elif index == 0:
+                        # Primer examen: disponible si todos los contenidos están completados
+                        examen_disponible = todos_contenidos_completados
+                    else:
+                        # Exámenes siguientes: disponibles si el anterior fue aprobado
+                        examen_disponible = ultimo_examen_aprobado
+                    
+                    examenes_data.append({
                         'id': examen.id,
                         'titulo': examen.titulo,
                         'descripcion': examen.descripcion,
@@ -157,7 +172,12 @@ def obtener_temas_por_materia(request, materia_id):
                         'aprobado': aprobado,
                         'mejor_nota': mejor_nota,
                         'total_intentos': intentos.count(),
-                    }
+                    })
+                    
+                    # Actualizar estado para el siguiente examen
+                    ultimo_examen_aprobado = aprobado
+                
+                tema_data['examenes'] = examenes_data
             
             temas_list.append(tema_data)
         
