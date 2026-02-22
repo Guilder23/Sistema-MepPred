@@ -141,6 +141,12 @@ function cargarTemasEditarConTema(temaBuscado) {
 
 // Agregar campo de video en edición
 document.addEventListener('DOMContentLoaded', function() {
+    // Listener para cambio de materia
+    const editarMateriaSelect = document.getElementById('editarMateria');
+    if (editarMateriaSelect) {
+        editarMateriaSelect.addEventListener('change', cargarTemasEditar);
+    }
+
     const btnAgregarVideoEditar = document.getElementById('btnAgregarVideoEditar');
     if (btnAgregarVideoEditar) {
         btnAgregarVideoEditar.addEventListener('click', function() {

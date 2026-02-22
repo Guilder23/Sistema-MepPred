@@ -19,6 +19,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Listener para cambio de materia
+    const crearMateriaSelect = document.getElementById('crearMateria');
+    if (crearMateriaSelect) {
+        crearMateriaSelect.addEventListener('change', cargarTemasCrear);
+    }
+
     // Listener para el botón "Agregar más video"
     const btnAgregarVideo = document.getElementById('btnAgregarVideo');
     if (btnAgregarVideo) {
