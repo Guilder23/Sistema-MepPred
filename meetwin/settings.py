@@ -145,7 +145,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 AUTH_USER_MODEL = 'cuentas.User'
 
-LOGIN_URL = '/login/'
+LOGIN_URL = 'cuentas:home'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST_USER = os.environ.get('EMAIL_USER', '').strip().strip('"\'')
