@@ -31,8 +31,8 @@
                 <i class="fas fa-clock"></i>
                 <span id="tiempoRestante">00:00</span>
             </div>
-            <button class="btn-finalizar" onclick="confirmarFinalizarExamen()">
-                <i class="fas fa-check"></i> Finalizar Examen
+            <button class="btn-salir-examen" onclick="confirmarSalirExamen()">
+                <i class="fas fa-sign-out-alt"></i> Salir
             </button>
         </div>
     </header>
@@ -63,7 +63,7 @@
         <div class="indicadores-preguntas" id="indicadoresPreguntas">
             <!-- Se llena dinámicamente -->
         </div>
-        <button class="btn-nav btn-siguiente" onclick="preguntaSiguiente()" id="btnSiguiente">
+        <button class="btn-nav btn-siguiente" onclick="manejarBotonSiguiente()" id="btnSiguiente">
             Siguiente <i class="fas fa-chevron-right"></i>
         </button>
     </div>
@@ -80,6 +80,58 @@
         </div>
     </div>
 </div>
+
+<!-- Modal de salir del examen -->
+<div class="modal" id="modalSalir">
+    <div class="modal-contenido modal-salir">
+        <div class="modal-header-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h2>¿Salir del Examen?</h2>
+        <p><strong>¡ATENCIÓN!</strong> Si sales ahora:</p>
+        <ul class="advertencias-salir">
+            <li><i class="fas fa-times-circle"></i> Se perderán todas tus respuestas</li>
+            <li><i class="fas fa-times-circle"></i> No se guardará tu avance</li>
+            <li><i class="fas fa-times-circle"></i> Este intento NO contará como realizado</li>
+            <li><i class="fas fa-times-circle"></i> El tiempo transcurrido se perderá</li>
+        </ul>
+        <div class="nota-recordatorio">
+            <i class="fas fa-info-circle"></i>
+            <p><strong>Nota:</strong> Si solo necesitas un descanso, puedes cerrar esta ventana o refrescar la página. Tu progreso se guardará automáticamente.</p>
+        </div>
+        <div class="modal-botones">
+            <button class="btn-cancelar" onclick="cerrarModalSalir()">
+                <i class="fas fa-arrow-left"></i> Continuar Examen
+            </button>
+            <button class="btn-salir-definitivo" onclick="salirExamen()">
+                <i class="fas fa-sign-out-alt"></i> Salir y Abandonar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de preguntas sin contestar -->
+<div class="modal" id="modalPreguntasSinContestar">
+    <div class="modal-contenido modal-preguntas-sin-contestar">
+        <div class="modal-header-icon">
+            <i class="fas fa-exclamation-circle"></i>
+        </div>
+        <h2>Preguntas Sin Contestar</h2>
+        <p>Tienes <strong id="cantidadPreguntasSinContestar"></strong> pregunta(s) sin contestar.</p>
+        <p class="texto-secundario">¿Deseas finalizar de todas formas?</p>
+        <div class="modal-botones">
+            <button class="btn-cancelar" onclick="cerrarModalPreguntasSinContestar()">
+                Revisar
+            </button>
+            <button class="btn-confirmar" onclick="finalizarDesdePreguntasSinContestar()">
+                Finalizar de Todas Formas
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Contenedor de notificaciones toast -->
+<div id="toast-container"></div>
 
 <!-- Modal de resultados -->
 <div class="modal" id="modalResultados">
