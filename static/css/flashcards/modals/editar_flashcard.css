@@ -1,2 +1,98 @@
-/* CSS para el modal de editar flashcard */
-/* Todos los estilos base se heredan de editar_mazo.css */
+/* =========================================
+   MODAL EDITAR FLASHCARD
+   ========================================= */
+
+#modalEditarFlashcard .modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+    max-height: calc(90vh - 140px);
+}
+
+#modalEditarFlashcard .form-group {
+    margin-bottom: 1rem;
+    display: block;
+    visibility: visible;
+}
+
+#modalEditarFlashcard .form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #2c3e50;
+    font-size: 0.9rem;
+}
+
+#modalEditarFlashcard .modal-header {
+    background-color: #f1c40f;
+    color: #ffffff;
+}
+
+#modalEditarFlashcard .modal-header-title {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+#modalEditarFlashcard .modal-close-btn {
+    color: #ffffff;
+}
+
+#modalEditarFlashcard .modal-close-btn:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+    color: #ffffff;
+}
+
+#modalEditarFlashcard .form-control:focus {
+    border-color: #f1c40f;
+    box-shadow: 0 0 0 0.2rem rgba(241, 196, 15, 0.25);
+}
+
+#modalEditarFlashcard .btn.btn-warning {
+    background-color: #f1c40f !important;
+    background-image: none !important;
+    border-color: #f1c40f !important;
+    color: white !important;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+#modalEditarFlashcard .btn.btn-warning:hover {
+    background-color: #f39c12 !important;
+    background-image: none !important;
+    border-color: #f39c12 !important;
+    color: white !important;
+    box-shadow: 0 2px 8px rgba(241, 196, 15, 0.3);
+    transform: translateY(-1px);
+}
+
+#modalEditarFlashcard .btn.btn-secondary {
+    background-color: #95a5a6 !important;
+    color: white !important;
+}
+
+#modalEditarFlashcard .btn.btn-secondary:hover {
+    background-color: #7f8c8d !important;
+    color: white !important;
+}
+
+/* Validaciones */
+#modalEditarFlashcard .form-control.is-invalid {
+    border-color: #ef4444;
+}
+
+#modalEditarFlashcard .form-control.is-invalid:focus {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 0.2rem rgba(239, 68, 68, 0.25);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #modalEditarFlashcard .modal-body {
+        padding: 1rem;
+    }
+
+    #modalEditarFlashcard .form-label {
+        font-size: 0.9rem;
+    }
+}

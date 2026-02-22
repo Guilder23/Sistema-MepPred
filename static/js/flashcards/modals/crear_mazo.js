@@ -1,85 +1,42 @@
 // Modal para crear nuevo mazo
-let mazoCrearModal = null;
-let btnAbrirCrearMazo = null;
-let btnCancelarCrearMazo = null;
-let btnGuardarCrearMazo = null;
-let inputCrearMazoNombre = null;
-let inputCrearMazoDesc = null;
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Obtener referencias a los elementos del modal
-    mazoCrearModal = document.getElementById('modal-crear-mazo');
-    btnAbrirCrearMazo = document.getElementById('btn-abrir-crear-mazo');
-    btnCancelarCrearMazo = document.getElementById('cancelar-crear-mazo');
-    btnGuardarCrearMazo = document.getElementById('guardar-crear-mazo');
-    inputCrearMazoNombre = document.getElementById('crear-mazo-nombre');
-    inputCrearMazoDesc = document.getElementById('crear-mazo-desc');
+    const formCrearMazo = document.getElementById('formCrearMazo');
+    const btnAbrirCrearMazo = document.getElementById('btn-abrir-crear-mazo');
     
-    const closeBtn = mazoCrearModal.querySelector('.close');
-    
-    // Event listeners
+    // Event listener para abrir modal
     if (btnAbrirCrearMazo) {
-        btnAbrirCrearMazo.addEventListener('click', abrirModalCrearMazo);
+        btnAbrirCrearMazo.addEventListener('click', function() {
+            mostrarModalMazo('modalCrearMazoOverlay');
+            document.getElementById('crear-mazo-nombre').focus();
+        });
     }
     
-    if (btnCancelarCrearMazo) {
-        btnCancelarCrearMazo.addEventListener('click', cerrarModalCrearMazo);
-    }
-    
-    if (btnGuardarCrearMazo) {
-        btnGuardarCrearMazo.addEventListener('click', guardarNuevoMazo);
-    }
-    
-    if (closeBtn) {
-        closeBtn.addEventListener('click', cerrarModalCrearMazo);
-    }
-    
-    // Cerrar modal cuando se hace clic fuera del contenido
-    if (mazoCrearModal) {
-        mazoCrearModal.addEventListener('click', function(event) {
-            if (event.target === mazoCrearModal) {
-                cerrarModalCrearMazo();
-            }
+    // Event listener para el formulario
+    if (formCrearMazo) {
+        formCrearMazo.addEventListener('submit', function(e) {
+            e.preventDefault();
+            crearMazo();
         });
     }
 });
 
-function abrirModalCrearMazo() {
-    // Limpiar el formulario
-    inputCrearMazoNombre.value = '';
-    inputCrearMazoDesc.value = '';
-    
-    // Mostrar el modal
-    mazoCrearModal.classList.add('show');
-    
-    // Enfocar el campo de nombre
-    inputCrearMazoNombre.focus();
-}
-
-function cerrarModalCrearMazo() {
-    mazoCrearModal.classList.remove('show');
-}
-
-function guardarNuevoMazo() {
-    const nombre = inputCrearMazoNombre.value.trim();
-    const descripcion = inputCrearMazoDesc.value.trim();
+function crearMazo() {
+    const nombre = document.getElementById('crear-mazo-nombre').value.trim();
+    const descripcion = document.getElementById('crear-mazo-desc').value.trim();
     
     if (!nombre) {
-        alert('Por favor ingresa un nombre para el mazo');
-        inputCrearMazoNombre.focus();
+        mostrarMensaje('Error', 'Por favor ingresa un nombre para el mazo', 'error');
+        document.getElementById('crear-mazo-nombre').focus();
         return;
     }
-    
-    // Desabilitar el botón mientras se guarda
-    btnGuardarCrearMazo.disabled = true;
-    btnGuardarCrearMazo.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando...';
     
     // Enviar solicitud al servidor
     fetch('/flashcards/api/crear-mazo/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': flashcardsData.csrfToken
+            'X-CSRFToken': getCookie('csrftoken')
         },
         body: JSON.stringify({
             nombre: nombre,
@@ -89,26 +46,22 @@ function guardarNuevoMazo() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Cerrar el modal
-            cerrarModalCrearMazo();
+            mostrarMensaje('Éxito', data.message || '¡Mazo creado exitosamente!', 'success');
+            cerrarModalMazo('modalCrearMazoOverlay');
             
-            // Recargar los mazos (if function exists)
-            if (window.cargarMazos) {
-                window.cargarMazos();
-            } else {
+            // Limpiar formulario
+            document.getElementById('formCrearMazo').reset();
+            
+            // Recargar después de 1 segundo
+            setTimeout(() => {
                 location.reload();
-            }
+            }, 1000);
         } else {
-            alert('Error al crear el mazo: ' + (data.error || 'Error desconocido'));
+            mostrarMensaje('Error', data.error || 'Error al crear el mazo', 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error al crear el mazo');
-    })
-    .finally(() => {
-        // Reabilitar el botón
-        btnGuardarCrearMazo.disabled = false;
-        btnGuardarCrearMazo.innerHTML = '<i class="fas fa-folder-plus"></i> Crear Mazo';
+        mostrarMensaje('Error', 'Error al crear el mazo', 'error');
     });
 }

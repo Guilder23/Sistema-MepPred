@@ -1,25 +1,22 @@
 // Módulo de Mazos - Métodos específicos para la pestaña de mazos
 document.addEventListener('DOMContentLoaded', function() {
-    // Delegación de eventos para los botones de la lista de mazos
-    const mazosContainer = document.getElementById('mazos-container');
+    // Delegación de eventos para los botones de la tabla de mazos
+    const mazosTable = document.getElementById('mazosTable');
     
-    if (mazosContainer) {
-        mazosContainer.addEventListener('click', function(event) {
-            const btnEditar = event.target.closest('.btn-editar');
-            const btnEliminar = event.target.closest('.btn-eliminar');
+    if (mazosTable) {
+        mazosTable.addEventListener('click', function(event) {
+            const btnEditar = event.target.closest('.btn-editar-mazo');
+            const btnEliminar = event.target.closest('.btn-eliminar-mazo');
             const btnEstudiar = event.target.closest('.btn-estudiar');
             
             if (btnEditar) {
                 const mazoId = btnEditar.dataset.mazoId;
-                const mazoRow = btnEditar.closest('.mazo-row');
-                const mazoNombre = mazoRow ? mazoRow.querySelector('.mazo-nombre').textContent : '';
                 abrirModalEditarMazo(mazoId);
             }
             
             if (btnEliminar) {
                 const mazoId = btnEliminar.dataset.mazoId;
-                const mazoRow = btnEliminar.closest('.mazo-row');
-                const mazoNombre = mazoRow ? mazoRow.querySelector('.mazo-nombre').textContent : '';
+                const mazoNombre = btnEliminar.dataset.mazoNombre;
                 abrirModalEliminarMazo(mazoId, mazoNombre);
             }
             

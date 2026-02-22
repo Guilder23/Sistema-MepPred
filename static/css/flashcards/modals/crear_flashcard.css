@@ -1,2 +1,99 @@
-/* CSS para el modal de crear flashcard */
-/* Todos los estilos base se heredan de editar_mazo.css */
+/* =========================================
+   MODAL CREAR FLASHCARD
+   ========================================= */
+
+#modalCrearFlashcard .modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+    max-height: calc(90vh - 140px);
+}
+
+#modalCrearFlashcard .form-group {
+    margin-bottom: 1rem;
+    display: block;
+    visibility: visible;
+}
+
+#modalCrearFlashcard .form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #2c3e50;
+    font-size: 0.9rem;
+}
+
+#modalCrearFlashcard .modal-header {
+    background-color: #2ecc71;
+    color: #ffffff;
+}
+
+#modalCrearFlashcard .modal-header-title {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+#modalCrearFlashcard .modal-close-btn {
+    color: #ffffff;
+}
+
+#modalCrearFlashcard .modal-close-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+#modalCrearFlashcard .form-control:focus,
+#modalCrearFlashcard .form-select:focus {
+    border-color: #2ecc71;
+    box-shadow: 0 0 0 0.2rem rgba(46, 204, 113, 0.25);
+}
+
+#modalCrearFlashcard .btn.btn-success {
+    background-color: #2ecc71 !important;
+    background-image: none !important;
+    border-color: #2ecc71 !important;
+    color: white !important;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+#modalCrearFlashcard .btn.btn-success:hover {
+    background-color: #27ae60 !important;
+    background-image: none !important;
+    border-color: #27ae60 !important;
+    color: white !important;
+    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+    transform: translateY(-1px);
+}
+
+#modalCrearFlashcard .btn.btn-secondary {
+    background-color: #95a5a6 !important;
+    color: white !important;
+}
+
+#modalCrearFlashcard .btn.btn-secondary:hover {
+    background-color: #7f8c8d !important;
+    color: white !important;
+}
+
+/* Validaciones */
+#modalCrearFlashcard .form-control.is-invalid {
+    border-color: #ef4444;
+}
+
+#modalCrearFlashcard .form-control.is-invalid:focus {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 0.2rem rgba(239, 68, 68, 0.25);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #modalCrearFlashcard .modal-body {
+        padding: 1rem;
+    }
+
+    #modalCrearFlashcard .form-label {
+        font-size: 0.9rem;
+    }
+}

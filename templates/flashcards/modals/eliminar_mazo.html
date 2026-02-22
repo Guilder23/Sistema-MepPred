@@ -1,8 +1,9 @@
-<div id="modal-eliminar-mazo" class="modal">
-    <div class="modal-content">
+<!-- Modal Eliminar Mazo -->
+<div class="modal-overlay" id="modalEliminarMazoOverlay">
+    <div class="modal-content" id="modalEliminarMazo">
         <div class="modal-header">
-            <h3>Eliminar Mazo</h3>
-            <span class="close">&times;</span>
+            <h5 class="modal-header-title">Eliminar Mazo</h5>
+            <button type="button" class="modal-close-btn" onclick="cerrarModalMazo('modalEliminarMazoOverlay')">×</button>
         </div>
         <div class="modal-body">
             <div class="warning-message">
@@ -12,8 +13,8 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-secondary" id="cancelar-eliminar-mazo">Cancelar</button>
-            <button class="btn btn-danger" id="confirmar-eliminar-mazo">Eliminar</button>
+            <button type="button" class="btn btn-secondary" onclick="cerrarModalMazo('modalEliminarMazoOverlay')">Cancelar</button>
+            <button type="button" class="btn btn-danger" id="confirmar-eliminar-mazo">Eliminar</button>
         </div>
     </div>
 </div>

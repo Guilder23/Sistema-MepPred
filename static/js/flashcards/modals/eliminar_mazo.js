@@ -1,93 +1,52 @@
 // Modal para eliminar mazo
-let mazoEliminarModal = null;
-let btnCancelarEliminarMazo = null;
-let btnConfirmarEliminarMazo = null;
-let inputEliminarMazoNombre = null;
 let mazoSeleccionadoEliminar = null;
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Obtener referencias a los elementos del modal
-    mazoEliminarModal = document.getElementById('modal-eliminar-mazo');
-    btnCancelarEliminarMazo = document.getElementById('cancelar-eliminar-mazo');
-    btnConfirmarEliminarMazo = document.getElementById('confirmar-eliminar-mazo');
-    inputEliminarMazoNombre = document.getElementById('eliminar-mazo-nombre');
+    const btnConfirmarEliminarMazo = document.getElementById('confirmar-eliminar-mazo');
     
-    const closeBtn = mazoEliminarModal.querySelector('.close');
-    
-    // Event listeners
-    if (btnCancelarEliminarMazo) {
-        btnCancelarEliminarMazo.addEventListener('click', cerrarModalEliminarMazo);
-    }
-    
+    // Event listener para confirmar eliminación
     if (btnConfirmarEliminarMazo) {
         btnConfirmarEliminarMazo.addEventListener('click', confirmarEliminarMazo);
-    }
-    
-    if (closeBtn) {
-        closeBtn.addEventListener('click', cerrarModalEliminarMazo);
-    }
-    
-    // Cerrar modal cuando se hace clic fuera del contenido
-    if (mazoEliminarModal) {
-        mazoEliminarModal.addEventListener('click', function(event) {
-            if (event.target === mazoEliminarModal) {
-                cerrarModalEliminarMazo();
-            }
-        });
     }
 });
 
 function abrirModalEliminarMazo(mazoId, mazoNombre) {
     mazoSeleccionadoEliminar = mazoId;
-    inputEliminarMazoNombre.textContent = mazoNombre;
+    document.getElementById('eliminar-mazo-nombre').textContent = mazoNombre;
     
     // Mostrar el modal
-    mazoEliminarModal.classList.add('show');
-}
-
-function cerrarModalEliminarMazo() {
-    mazoEliminarModal.classList.remove('show');
-    mazoSeleccionadoEliminar = null;
+    mostrarModalMazo('modalEliminarMazoOverlay');
 }
 
 function confirmarEliminarMazo() {
     if (!mazoSeleccionadoEliminar) return;
-    
-    // Desabilitar el botón mientras se elimina
-    btnConfirmarEliminarMazo.disabled = true;
-    btnConfirmarEliminarMazo.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Eliminando...';
     
     // Enviar solicitud al servidor
     fetch(`/flashcards/api/eliminar-mazo/${mazoSeleccionadoEliminar}/`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': flashcardsData.csrfToken
+            'X-CSRFToken': getCookie('csrftoken')
         }
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Cerrar el modal
-            cerrarModalEliminarMazo();
+            mostrarMensaje('Éxito', data.message || '¡Mazo eliminado exitosamente!', 'success');
+            cerrarModalMazo('modalEliminarMazoOverlay');
             
-            // Recargar los mazos (if function exists)
-            if (window.cargarMazos) {
-                window.cargarMazos();
-            } else {
+            // Recargar después de 1 segundo
+            setTimeout(() => {
                 location.reload();
-            }
+            }, 1000);
         } else {
-            alert('Error al eliminar el mazo: ' + (data.error || 'Error desconocido'));
+            mostrarMensaje('Error', data.error || 'Error al eliminar el mazo', 'error');
+            cerrarModalMazo('modalEliminarMazoOverlay');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error al eliminar el mazo');
-    })
-    .finally(() => {
-        // Reabilitar el botón
-        btnConfirmarEliminarMazo.disabled = false;
-        btnConfirmarEliminarMazo.innerHTML = '<i class="fas fa-trash"></i> Eliminar';
+        mostrarMensaje('Error', 'Error al eliminar el mazo', 'error');
+        cerrarModalMazo('modalEliminarMazoOverlay');
     });
 }

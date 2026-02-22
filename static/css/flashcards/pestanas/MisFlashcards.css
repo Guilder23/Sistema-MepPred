@@ -1,128 +1,277 @@
-/* FLASHCARDS SECTION */
-.flashcards-section {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+/* Estilos para Mis Flashcards */
+
+:root {
+    --primary-color: #4a90e2;
+    --primary-hover: #357abd;
+    --success-color: #2ecc71;
+    --success-hover: #27ae60;
+    --danger-color: #e74c3c;
+    --danger-hover: #c0392b;
+    --warning-color: #f1c40f;
+    --warning-hover: #f39c12;
+    --info-color: #3498db;
+    --text-primary: #2c3e50;
+    --text-secondary: #7f8c8d;
+    --bg-light: #f4f6f9;
+    --border-color: #e0e0e0;
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
 }
 
-.section-header {
+/* FLASHCARDS SECTION */
+#mis-flashcards .flashcards-section {
+    width: 100%;
+}
+
+/* Encabezado */
+#mis-flashcards h3 {
+    color: var(--text-primary);
+    font-weight: 700;
+    margin-bottom: 0;
+    font-size: 1.5rem;
+    letter-spacing: -0.5px;
+}
+
+/* Row Layout */
+#mis-flashcards .row.mb-4 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 1.5rem;
+    width: 100%;
 }
 
-.section-header h3 {
-    margin: 0;
-    color: #333;
-    font-size: 1.5rem;
+#mis-flashcards .col-md-6 {
+    flex: 1;
 }
 
-/* TABLA DE FLASHCARDS */
-.flashcards-table-container {
+#mis-flashcards .text-end {
+    text-align: right;
+}
+
+/* Botones */
+#mis-flashcards .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    gap: 0.5rem;
+}
+
+#mis-flashcards .btn:active {
+    transform: translateY(1px);
+}
+
+#mis-flashcards .btn-primary,
+#mis-flashcards #btn-abrir-crear-flashcard {
+    background-color: var(--primary-color) !important;
+    background-image: none !important;
+    color: white !important;
+    box-shadow: 0 4px 6px rgba(74, 144, 226, 0.2);
+}
+
+#mis-flashcards .btn-primary:hover,
+#mis-flashcards #btn-abrir-crear-flashcard:hover {
+    background-color: var(--primary-hover) !important;
+    background-image: none !important;
+    box-shadow: 0 6px 8px rgba(74, 144, 226, 0.3);
+    transform: translateY(-1px);
+}
+
+/* Contenedor de tabla */
+#mis-flashcards .card {
     background: white;
     border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.flashcards-table {
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
     width: 100%;
+    overflow: visible;
+}
+
+#mis-flashcards .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+    display: block;
+}
+
+#mis-flashcards .table-responsive::-webkit-scrollbar {
+    height: 8px;
+}
+
+#mis-flashcards .table-responsive::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 0 0 10px 10px;
+}
+
+#mis-flashcards .table-responsive::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+#mis-flashcards .table-responsive::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Tabla */
+#mis-flashcards .table {
+    width: 100%;
+    min-width: 600px;
     border-collapse: collapse;
+    margin-bottom: 0;
 }
 
-.flashcards-table thead {
-    background: #667eea;
+#mis-flashcards .table thead {
+    background-color: #34495e;
     color: white;
 }
 
-.flashcards-table th {
-    padding: 15px;
+#mis-flashcards .table th {
+    padding: 0.75rem;
     text-align: left;
+    font-size: 0.75rem;
     font-weight: 600;
-    font-size: 0.95rem;
-}
-
-.flashcards-table tbody tr {
-    border-bottom: 1px solid #eee;
-    transition: background 0.2s;
-}
-
-.flashcards-table tbody tr:hover {
-    background: #f8f9fa;
-}
-
-.flashcards-table td {
-    padding: 15px;
-    font-size: 0.95rem;
-}
-
-.flashcard-pregunta {
-    font-weight: 600;
-    color: #333;
-    max-width: 250px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.flashcard-respuesta {
-    color: #666;
-    max-width: 250px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.flashcard-categoria {
-    color: #888;
-    font-size: 0.9rem;
-}
-
-.flashcard-mazo {
-    color: #667eea;
-    font-weight: 500;
-}
-
-.flashcard-actions {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-}
-
-.btn-icon {
-    padding: 8px 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: transparent;
-    color: #666;
+    white-space: nowrap;
 }
 
-.btn-icon:hover {
-    transform: translateY(-2px);
+#mis-flashcards .table td {
+    padding: 0.875rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
 }
 
-.btn-editar-flashcard:hover {
-    background: #2196F3;
-    color: white;
+#mis-flashcards .table tbody tr {
+    transition: all 0.2s ease;
 }
 
-.btn-eliminar-flashcard:hover {
-    background: #f44336;
-    color: white;
+#mis-flashcards .table tbody tr:hover {
+    background-color: #f8f9fa;
 }
 
-/* Empty state */
-.empty-state {
+#mis-flashcards .table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Badges */
+#mis-flashcards .badge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: capitalize;
+    display: inline-block;
+}
+
+#mis-flashcards .badge-categoria {
+    background-color: #e7e7ff;
+    color: #383874;
+}
+
+#mis-flashcards .badge-mazo {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+#mis-flashcards .text-center {
     text-align: center;
-    padding: 60px 20px;
-    color: #999;
+    padding: 2rem;
+    color: #7f8c8d;
 }
 
-.empty-state i {
-    font-size: 4rem;
-    margin-bottom: 20px;
-    opacity: 0.3;
+/* Celda de acciones */
+#mis-flashcards .acciones-cell {
+    white-space: nowrap;
+}
+
+#mis-flashcards .acciones-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Botones de Acción en Tabla */
+#mis-flashcards .btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    font-size: 0.875rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#mis-flashcards .btn-icon:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+#mis-flashcards .btn-icon:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#mis-flashcards .btn-icon i {
+    font-size: 1rem;
+}
+
+#mis-flashcards .btn-editar-flashcard {
+    background-color: #f39c12;
+    color: white;
+}
+
+#mis-flashcards .btn-editar-flashcard:hover {
+    background-color: #e67e22;
+}
+
+#mis-flashcards .btn-eliminar-flashcard {
+    background-color: #e74c3c;
+    color: white;
+}
+
+#mis-flashcards .btn-eliminar-flashcard:hover {
+    background-color: #c0392b;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #mis-flashcards .row.mb-4 {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    #mis-flashcards .row.mb-4 .col-md-6 {
+        width: 100%;
+    }
+
+    #mis-flashcards .row.mb-4 .text-end {
+        text-align: center;
+    }
+
+    #mis-flashcards #btn-abrir-crear-flashcard {
+        width: 100%;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    #mis-flashcards h3 {
+        font-size: 1.5rem;
+    }
 }

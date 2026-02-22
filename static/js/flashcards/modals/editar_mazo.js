@@ -1,40 +1,14 @@
 // Modal para editar mazo
-let mazoEditarModal = null;
-let btnCancelarEditarMazo = null;
-let btnGuardarEditarMazo = null;
-let inputEditarMazoNombre = null;
-let inputEditarMazoDesc = null;
 let mazoSeleccionadoEditar = null;
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Obtener referencias a los elementos del modal
-    mazoEditarModal = document.getElementById('modal-editar-mazo');
-    btnCancelarEditarMazo = document.getElementById('cancelar-editar');
-    btnGuardarEditarMazo = document.getElementById('guardar-editar');
-    inputEditarMazoNombre = document.getElementById('edit-mazo-nombre');
-    inputEditarMazoDesc = document.getElementById('edit-mazo-desc');
+    const formEditarMazo = document.getElementById('formEditarMazo');
     
-    const closeBtn = mazoEditarModal.querySelector('.close');
-    
-    // Event listeners
-    if (btnCancelarEditarMazo) {
-        btnCancelarEditarMazo.addEventListener('click', cerrarModalEditarMazo);
-    }
-    
-    if (btnGuardarEditarMazo) {
-        btnGuardarEditarMazo.addEventListener('click', guardarEditarMazo);
-    }
-    
-    if (closeBtn) {
-        closeBtn.addEventListener('click', cerrarModalEditarMazo);
-    }
-    
-    // Cerrar modal cuando se hace clic fuera del contenido
-    if (mazoEditarModal) {
-        mazoEditarModal.addEventListener('click', function(event) {
-            if (event.target === mazoEditarModal) {
-                cerrarModalEditarMazo();
-            }
+    // Event listener para el formulario
+    if (formEditarMazo) {
+        formEditarMazo.addEventListener('submit', function(e) {
+            e.preventDefault();
+            guardarEditarMazo();
         });
     }
 });
@@ -46,43 +20,35 @@ function abrirModalEditarMazo(mazoId) {
     if (window.flashcardsData && window.flashcardsData.mazos) {
         const mazo = window.flashcardsData.mazos.find(m => m.id == mazoId);
         if (mazo) {
-            inputEditarMazoNombre.value = mazo.nombre;
-            inputEditarMazoDesc.value = mazo.descripcion || '';
+            document.getElementById('editar-mazo-id').value = mazo.id;
+            document.getElementById('edit-mazo-nombre').value = mazo.nombre;
+            document.getElementById('edit-mazo-desc').value = mazo.descripcion || '';
         }
     }
     
     // Mostrar el modal
-    mazoEditarModal.classList.add('show');
+    mostrarModalMazo('modalEditarMazoOverlay');
     
     // Enfocar el campo de nombre
-    inputEditarMazoNombre.focus();
-}
-
-function cerrarModalEditarMazo() {
-    mazoEditarModal.classList.remove('show');
-    mazoSeleccionadoEditar = null;
+    document.getElementById('edit-mazo-nombre').focus();
 }
 
 function guardarEditarMazo() {
-    const nombre = inputEditarMazoNombre.value.trim();
-    const descripcion = inputEditarMazoDesc.value.trim();
+    const nombre = document.getElementById('edit-mazo-nombre').value.trim();
+    const descripcion = document.getElementById('edit-mazo-desc').value.trim();
     
     if (!nombre) {
-        alert('Por favor ingresa un nombre para el mazo');
-        inputEditarMazoNombre.focus();
+        mostrarMensaje('Error', 'Por favor ingresa un nombre para el mazo', 'error');
+        document.getElementById('edit-mazo-nombre').focus();
         return;
     }
-    
-    // Desabilitar el botón mientras se guarda
-    btnGuardarEditarMazo.disabled = true;
-    btnGuardarEditarMazo.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
     
     // Enviar solicitud al servidor
     fetch(`/flashcards/api/editar-mazo/${mazoSeleccionadoEditar}/`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': flashcardsData.csrfToken
+            'X-CSRFToken': getCookie('csrftoken')
         },
         body: JSON.stringify({
             nombre: nombre,
@@ -92,26 +58,19 @@ function guardarEditarMazo() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Cerrar el modal
-            cerrarModalEditarMazo();
+            mostrarMensaje('Éxito', data.message || '¡Mazo actualizado exitosamente!', 'success');
+            cerrarModalMazo('modalEditarMazoOverlay');
             
-            // Recargar los mazos (if function exists)
-            if (window.cargarMazos) {
-                window.cargarMazos();
-            } else {
+            // Recargar después de 1 segundo
+            setTimeout(() => {
                 location.reload();
-            }
+            }, 1000);
         } else {
-            alert('Error al editar el mazo: ' + (data.error || 'Error desconocido'));
+            mostrarMensaje('Error', data.error || 'Error al editar el mazo', 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error al editar el mazo');
-    })
-    .finally(() => {
-        // Reabilitar el botón
-        btnGuardarEditarMazo.disabled = false;
-        btnGuardarEditarMazo.innerHTML = 'Guardar Cambios';
+        mostrarMensaje('Error', 'Error al editar el mazo', 'error');
     });
 }

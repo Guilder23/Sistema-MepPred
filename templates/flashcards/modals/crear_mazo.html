@@ -1,22 +1,27 @@
-<div id="modal-crear-mazo" class="modal">
-    <div class="modal-content">
+<!-- Modal Crear Mazo -->
+<div class="modal-overlay" id="modalCrearMazoOverlay">
+    <div class="modal-content" id="modalCrearMazo">
         <div class="modal-header">
-            <h3>Crear Nuevo Mazo</h3>
-            <span class="close">&times;</span>
+            <h5 class="modal-header-title">Crear Nuevo Mazo</h5>
+            <button type="button" class="modal-close-btn" onclick="cerrarModalMazo('modalCrearMazoOverlay')">×</button>
         </div>
-        <div class="modal-body">
-            <div class="form-group">
-                <label for="crear-mazo-nombre">Nombre del mazo:</label>
-                <input type="text" id="crear-mazo-nombre" placeholder="Nombre del mazo..." required>
+        <form id="formCrearMazo">
+            {% csrf_token %}
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Nombre del mazo *</label>
+                    <input type="text" class="form-control" id="crear-mazo-nombre" name="nombre" placeholder="Nombre del mazo..." required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Descripción</label>
+                    <textarea class="form-control" id="crear-mazo-desc" name="descripcion" placeholder="Descripción (opcional)..." rows="3"></textarea>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="crear-mazo-desc">Descripción:</label>
-                <textarea id="crear-mazo-desc" placeholder="Descripción (opcional)..." style="max-height: 80px;"></textarea>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="cerrarModalMazo('modalCrearMazoOverlay')">Cancelar</button>
+                <button type="submit" class="btn btn-success">Crear Mazo</button>
             </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-secondary" id="cancelar-crear-mazo">Cancelar</button>
-            <button class="btn btn-primary" id="guardar-crear-mazo">Crear Mazo</button>
-        </div>
+        </form>
     </div>
 </div>

@@ -2,41 +2,31 @@
 
 // Configurar event listeners para la pestaña crear
 document.addEventListener('DOMContentLoaded', function() {
-    // Event delegation para botones de editar en la pestaña crear
-    document.addEventListener('click', function(e) {
-        const createTab = document.getElementById('create');
-        if (!createTab) return;
-        
-        // Solo manejar clicks dentro de la pestaña crear
-        if (!createTab.contains(e.target)) return;
-        
-        if (e.target.closest('.btn-editar-flashcard')) {
-            const btn = e.target.closest('.btn-editar-flashcard');
-            const flashcardId = parseInt(btn.dataset.flashcardId);
-            abrirModalEditarFlashcard(flashcardId);
-        }
-    });
+    // Delegación de eventos para los botones de la tabla de flashcards
+    const flashcardsTable = document.getElementById('flashcardsTable');
     
-    // Event delegation para botones de eliminar en la pestaña crear
-    document.addEventListener('click', function(e) {
-        const createTab = document.getElementById('create');
-        if (!createTab) return;
-        
-        // Solo manejar clicks dentro de la pestaña crear
-        if (!createTab.contains(e.target)) return;
-        
-        if (e.target.closest('.btn-eliminar-flashcard')) {
-            const btn = e.target.closest('.btn-eliminar-flashcard');
-            const flashcardId = parseInt(btn.dataset.flashcardId);
+    if (flashcardsTable) {
+        flashcardsTable.addEventListener('click', function(event) {
+            const btnEditar = event.target.closest('.btn-editar-flashcard');
+            const btnEliminar = event.target.closest('.btn-eliminar-flashcard');
             
-            // Buscar la flashcard para obtener su pregunta
-            let flashcard = null;
-            if (window.flashcardsData && window.flashcardsData.tarjetas) {
-                flashcard = window.flashcardsData.tarjetas.find(t => t.id === flashcardId);
+            if (btnEditar) {
+                const flashcardId = parseInt(btnEditar.dataset.flashcardId);
+                abrirModalEditarFlashcard(flashcardId);
             }
             
-            const pregunta = flashcard ? flashcard.pregunta : 'esta flashcard';
-            abrirModalEliminarFlashcard(flashcardId, pregunta);
-        }
-    });
+            if (btnEliminar) {
+                const flashcardId = parseInt(btnEliminar.dataset.flashcardId);
+                
+                // Buscar la flashcard para obtener su pregunta
+                let flashcard = null;
+                if (window.flashcardsData && window.flashcardsData.tarjetas) {
+                    flashcard = window.flashcardsData.tarjetas.find(t => t.id === flashcardId);
+                }
+                
+                const pregunta = flashcard ? flashcard.pregunta : 'esta flashcard';
+                abrirModalEliminarFlashcard(flashcardId, pregunta);
+            }
+        });
+    }
 });
