@@ -1,11 +1,11 @@
 <!-- Modal Crear Contenido -->
 <div class="modal-overlay" id="modalCrearOverlay">
-    <div class="modal-content modal-lg" id="modalCrear">
+    <div class="modal-content" id="modalCrearContenido">
         <div class="modal-header">
             <h5 class="modal-header-title">Crear Nuevo Contenido</h5>
-            <button type="button" class="modal-close-btn" onclick="ocultarModal('modalCrearOverlay')">×</button>
+            <button type="button" class="modal-close-btn" onclick="cerrarModal('modalCrearOverlay')">×</button>
         </div>
-        <form id="formCrear" method="POST">
+        <form id="formCrear">
             {% csrf_token %}
             <div class="modal-body">
                 <div class="form-group">
@@ -89,7 +89,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="ocultarModal('modalCrearOverlay')">Cancelar</button>
+                <button type="button" class="btn btn-secondary" onclick="cerrarModal('modalCrearOverlay')">Cancelar</button>
                 <button type="submit" class="btn btn-success">Crear Contenido</button>
             </div>
         </form>

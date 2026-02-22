@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Cerrar modal al hacer clic en X
-    const btnClose = document.querySelector('.modal-eliminar-btn-close');
+    const btnClose = document.querySelector('#modalEliminarExamen .modal-close-btn');
     if (btnClose) {
         btnClose.addEventListener('click', function() {
             cerrarModal('modalEliminarOverlay');
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Cerrar modal al hacer clic fuera del modal
-    const modalOverlay = document.querySelector('.modal-eliminar-overlay');
+    const modalOverlay = document.getElementById('modalEliminarOverlay');
     if (modalOverlay) {
         modalOverlay.addEventListener('click', function(e) {
             if (e.target === modalOverlay) {
@@ -56,10 +56,12 @@ function eliminarExamen() {
             cerrarModal('modalEliminarOverlay');
             mostrarMensaje('Éxito', 'Examen eliminado correctamente', 'success');
         } else {
+            cerrarModal('modalEliminarOverlay');
             mostrarMensaje('Error', data.error || 'Error al eliminar el examen', 'error');
         }
     })
     .catch(error => {
+        cerrarModal('modalEliminarOverlay');
         mostrarMensaje('Error', 'Error al eliminar el examen', 'error');
     })
     .finally(() => {

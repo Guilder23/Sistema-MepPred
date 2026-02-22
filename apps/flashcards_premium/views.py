@@ -69,26 +69,33 @@ def api_listar_mazos(request):
 @login_required
 @require_http_methods(["GET"])
 def api_mazos_estudiante(request):
-    """API para estudiantes premium que devuelve todos los mazos con sus flashcards filtrados por tema."""
+    """API para estudiantes premium que devuelve todos los mazos con sus flashcards filtrados por materia y/o tema."""
     # Verificar que el usuario tenga suscripción activa
     if not tiene_suscripcion_activa(request.user):
         return JsonResponse({'error': 'Necesitas una suscripción activa'}, status=403)
     
-    # Obtener el filtro de tema desde los parámetros GET
+    # Obtener los filtros de materia y tema desde los parámetros GET
+    materia_id = request.GET.get('materia_id', None)
     tema_id = request.GET.get('tema_id', None)
     
     # Obtener mazos
+    mazos_query = MazoPremium.objects.all()
+    
     if tema_id:
         try:
-            mazos = MazoPremium.objects.filter(tema_id=int(tema_id))
+            mazos_query = mazos_query.filter(tema_id=int(tema_id))
         except (ValueError, TypeError):
-            mazos = MazoPremium.objects.all()
-    else:
-        mazos = MazoPremium.objects.all()
+            pass
+    elif materia_id:
+        # Si no hay tema_id pero hay materia_id, filtrar por temas de esa materia
+        try:
+            mazos_query = mazos_query.filter(tema__materia_id=int(materia_id))
+        except (ValueError, TypeError):
+            pass
     
     mazos_data = []
     ahora = timezone.now()
-    for mazo in mazos:
+    for mazo in mazos_query:
         # Filtrar solo tarjetas que están habilitadas para estudiar (proximo_repaso <= ahora)
         tarjetas = list(
             mazo.tarjetas.filter(proximo_repaso__lte=ahora).values('id', 'pregunta', 'respuesta', 'categoria')
@@ -111,25 +118,33 @@ def api_mazos_estudiante(request):
 @login_required
 @require_http_methods(["GET"])
 def api_temas_flashcards(request):
-    """API para obtener los temas que tienen flashcards premium."""
+    """API para obtener materias y temas que tienen flashcards premium."""
     # Verificar que el usuario tenga suscripción activa
     if not tiene_suscripcion_activa(request.user):
         return JsonResponse({'error': 'Necesitas una suscripción activa'}, status=403)
     
-    # Obtener temas que tengan al menos un mazo premium
     from apps.temas.models import Tema
-    temas = Tema.objects.filter(mazos_premium__isnull=False).distinct()
-    
-    # Obtener las materias (ajusta el modelo si es necesario)
     from apps.materias_nueva.models import Materia
-    materias = Materia.objects.all()
-    materias_data = [
-        {
-            'id': materia.id,
-            'nombre': materia.nombre
-        }
-        for materia in materias
-    ]
+    
+    # Obtener temas que tengan al menos un mazo premium
+    temas_con_mazos = Tema.objects.filter(mazos_premium__isnull=False).distinct().prefetch_related('materia')
+    
+    # Agrupar temas por materia
+    materias_dict = {}
+    for tema in temas_con_mazos:
+        materia_id = tema.materia.id
+        if materia_id not in materias_dict:
+            materias_dict[materia_id] = {
+                'id': materia_id,
+                'nombre': tema.materia.nombre,
+                'temas': []
+            }
+        materias_dict[materia_id]['temas'].append({
+            'id': tema.id,
+            'nombre': tema.nombre
+        })
+    
+    materias_data = list(materias_dict.values())
     
     return JsonResponse({'success': True, 'materias': materias_data})
 

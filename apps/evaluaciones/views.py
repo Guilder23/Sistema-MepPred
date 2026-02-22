@@ -471,7 +471,7 @@ def crear_examen(request):
         
         return JsonResponse({
             'success': True,
-            'mensaje': 'Examen creado exitosamente',
+            'message': 'Examen creado exitosamente',
             'examen': {
                 'id': examen.id,
                 'titulo': examen.titulo,
@@ -538,7 +538,7 @@ def actualizar_examen(request, examen_id):
         
         return JsonResponse({
             'success': True,
-            'mensaje': 'Examen actualizado exitosamente'
+            'message': 'Examen actualizado exitosamente'
         })
     except Exception as e:
         return JsonResponse({
@@ -552,12 +552,20 @@ def eliminar_examen(request, examen_id):
     """API: Eliminar examen"""
     try:
         examen = get_object_or_404(Examen, id=examen_id)
+        
+        # Verificar si el examen tiene preguntas
+        if examen.preguntas.exists():
+            return JsonResponse({
+                'success': False,
+                'error': 'No se puede eliminar un examen que tiene preguntas. Elimine primero todas las preguntas.'
+            }, status=400)
+        
         titulo = examen.titulo
         examen.delete()
         
         return JsonResponse({
             'success': True,
-            'mensaje': f'Examen "{titulo}" eliminado exitosamente'
+            'message': f'Examen "{titulo}" eliminado exitosamente'
         })
     except Exception as e:
         return JsonResponse({

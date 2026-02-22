@@ -21,21 +21,27 @@ document.addEventListener('DOMContentLoaded', () => {
     if (loginError) {
         const openLoginBtn = document.getElementById('open-login-modal');
         if (openLoginBtn) {
-            openLoginBtn.click();
-            
-            // Mostrar el mensaje de error en el modal
             setTimeout(() => {
-                const passwordErrorElement = document.getElementById('login-password-error');
-                const passwordInput = document.getElementById('login-password');
-                
-                if (passwordErrorElement && passwordInput) {
-                    if (loginError === 'credenciales_incorrectas') {
-                        passwordErrorElement.textContent = 'Credenciales incorrectas.';
-                        passwordErrorElement.classList.add('show');
-                        passwordInput.classList.add('is-invalid');
-                    }
+                const modal = document.getElementById('login-modal');
+                if (modal) {
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
                 }
-            }, 300);
+                
+                // Mostrar el mensaje de error en el modal
+                setTimeout(() => {
+                    const passwordErrorElement = document.getElementById('login-password-error');
+                    const passwordInput = document.getElementById('login-password');
+                    
+                    if (passwordErrorElement && passwordInput) {
+                        if (loginError === 'credenciales_incorrectas') {
+                            passwordErrorElement.textContent = 'Credenciales incorrectas.';
+                            passwordErrorElement.classList.add('show');
+                            passwordInput.classList.add('is-invalid');
+                        }
+                    }
+                }, 100);
+            }, 100);
             
             // Limpiar la URL sin recargar
             window.history.replaceState({}, document.title, window.location.pathname);
@@ -43,9 +49,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (showLogin === 'true') {
+        // Esperar a que login.js esté listo
         const openLoginBtn = document.getElementById('open-login-modal');
         if (openLoginBtn) {
-            openLoginBtn.click();
+            // Darle un pequeño delay para asegurar que login.js está configurado
+            setTimeout(() => {
+                const modal = document.getElementById('login-modal');
+                if (modal) {
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+            }, 100);
         }
         // Limpiar la URL sin recargar
         window.history.replaceState({}, document.title, window.location.pathname);

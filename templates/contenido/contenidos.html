@@ -25,22 +25,19 @@
     </div>
 
     <!-- Búsqueda y filtros -->
-    <form method="get" class="filtros-container mb-3">
-        <input type="text" class="form-control" name="busqueda" id="buscar" placeholder="Buscar por título o tema..." value="{{ busqueda }}">
-        <select class="form-select" name="estado" id="filtroEstado">
+    <div class="filtros-container mb-3">
+        <input type="text" class="form-control" id="buscar" placeholder="Buscar por título o tema...">
+        <select class="form-select" id="filtroEstado">
             <option value="">Todos los estados</option>
-            <option value="activo" {% if estado == 'activo' %}selected{% endif %}>Activo</option>
-            <option value="inactivo" {% if estado == 'inactivo' %}selected{% endif %}>Inactivo</option>
+            <option value="activo">Activo</option>
+            <option value="inactivo">Inactivo</option>
         </select>
-        <select class="form-select" name="publicacion" id="filtroPublicacion">
+        <select class="form-select" id="filtroPublicacion">
             <option value="">Todas las publicaciones</option>
-            <option value="publicado" {% if publicacion == 'publicado' %}selected{% endif %}>Publicado</option>
-            <option value="no_publicado" {% if publicacion == 'no_publicado' %}selected{% endif %}>No Publicado</option>
+            <option value="publicado">Publicado</option>
+            <option value="no_publicado">No Publicado</option>
         </select>
-        <button type="submit" class="btn btn-secondary">
-            <i class="fas fa-search"></i> Buscar
-        </button>
-    </form>
+    </div>
 
     <!-- Tabla de contenidos -->
     <div class="card">

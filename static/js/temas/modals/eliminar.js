@@ -67,11 +67,13 @@ function confirmarEliminacion() {
             cerrarModal('modalEliminarOverlay');
             mostrarMensaje('Éxito', 'Tema eliminado correctamente', 'success');
         } else {
+            cerrarModal('modalEliminarOverlay');
             mostrarMensaje('Error', data.error || 'Error al eliminar el tema', 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
+        cerrarModal('modalEliminarOverlay');
         mostrarMensaje('Error', 'Error al eliminar el tema', 'error');
     })
     .finally(() => {

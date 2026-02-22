@@ -1,14 +1,14 @@
 /* Estilos para Gestión de Mazos Premium */
 
 :root {
-    --primary-color: #667eea;
-    --primary-hover: #5568d3;
+    --primary-color: #4a90e2;
+    --primary-hover: #357abd;
     --success-color: #2ecc71;
     --success-hover: #27ae60;
     --danger-color: #e74c3c;
     --danger-hover: #c0392b;
-    --warning-color: #f39c12;
-    --warning-hover: #e67e22;
+    --warning-color: #f1c40f;
+    --warning-hover: #f39c12;
     --info-color: #3498db;
     --text-primary: #2c3e50;
     --text-secondary: #7f8c8d;
@@ -25,39 +25,89 @@ body {
     background-color: var(--bg-light);
 }
 
-.mazos-container {
-    padding: 2rem;
+.container-fluid {
+    padding: 1.25rem 1rem;
     max-width: 1400px;
     margin: 0 auto;
 }
 
 /* Encabezado */
-.mazos-header {
-    margin-bottom: 2rem;
-}
-
-.header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-.header-content h1 {
+h1 {
     color: var(--text-primary);
     font-weight: 700;
-    margin: 0;
-    font-size: 1.75rem;
+    margin-bottom: 0;
+    font-size: 1.5rem;
     letter-spacing: -0.5px;
 }
 
-.btn-crear-mazo {
+/* Botones Generales */
+.btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0.6rem 1.2rem;
-    font-size: 0.95rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
     font-weight: 500;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    gap: 0.5rem;
+}
+
+.btn:active {
+    transform: translateY(1px);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    box-shadow: 0 4px 6px rgba(74, 144, 226, 0.2);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    box-shadow: 0 6px 8px rgba(74, 144, 226, 0.3);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background-color: #95a5a6;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #7f8c8d;
+}
+
+.btn-success {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: var(--success-hover);
+}
+
+.btn-danger {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: var(--danger-hover);
+}
+
+.btn-warning {
+    background-color: var(--warning-color);
+    color: #2c3e50;
+}
+
+.btn-warning:hover {
+    background-color: var(--warning-hover);
+}
+
+ .btn-crear-mazo{
     border-radius: 6px;
     border: none;
     cursor: pointer;
@@ -102,95 +152,131 @@ body {
 }
 
 /* Búsqueda */
-.busqueda-section {
-    margin-bottom: 1.5rem;
-}
-
-.input-buscar {
+.form-control, .form-select {
     width: 100%;
-    padding: 0.75rem 1rem;
-    font-size: 0.95rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
     border: 1px solid var(--border-color);
     border-radius: 6px;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.input-buscar:focus {
+.form-control:focus, .form-select:focus {
     outline: none;
-    border-color: #4a90e2;
+    border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
 }
 
-.input-buscar::placeholder {
+.form-control::placeholder {
     color: var(--text-secondary);
 }
 
 /* Tabla */
-.tabla-section {
+.card {
     background: white;
     border-radius: 10px;
     box-shadow: var(--shadow-md);
     overflow: hidden;
     border: 1px solid var(--border-color);
+    width: 100%;
 }
 
-.tabla-mazos {
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+    display: block;
+}
+
+/* Scrollbar styling */
+.table-responsive::-webkit-scrollbar {
+    height: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 0;
 }
 
-.tabla-mazos thead {
-    background-color: #34495e;
-    color: white;
+.table thead,
+.table thead.table-dark {
+    background-color: #34495e !important;
+    color: white !important;
 }
 
-.tabla-mazos th {
-    padding: 1rem;
+.table th {
+    padding: 0.75rem;
     text-align: left;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     border: none;
+    color: white !important;
+    background-color: #34495e !important;
 }
 
-.tabla-mazos td {
-    padding: 1rem;
+.table td {
+    padding: 0.875rem;
     vertical-align: middle;
     border-bottom: 1px solid var(--border-color);
     color: var(--text-primary);
 }
 
-.tabla-mazos tbody tr {
+.table tbody tr {
     transition: all 0.2s ease;
 }
 
-.tabla-mazos tbody tr:hover {
+.table tbody tr:hover {
     background-color: #f8f9fa;
 }
 
-.tabla-mazos tbody tr:last-child td {
+.table tbody tr:last-child td {
     border-bottom: none;
 }
 
-/* Mensaje sin datos */
-.no-data-message {
+/* Badges */
+.badge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: capitalize;
+    display: inline-block;
+}
+
+.text-center {
     text-align: center;
-    padding: 3rem 2rem;
+    padding: 2rem;
     color: var(--text-secondary);
 }
 
-.no-data-message i {
-    font-size: 3rem;
-    display: block;
-    margin-bottom: 1rem;
-    opacity: 0.5;
+/* Espaciado */
+.mb-3 {
+    margin-bottom: 0.75rem;
 }
 
-.no-data-message p {
-    margin: 0;
-    font-size: 1rem;
+.mb-4 {
+    margin-bottom: 1rem;
+}
+
+.text-end {
+    text-align: right;
 }
 
 /* Celda de acciones */
@@ -198,33 +284,46 @@ body {
     white-space: nowrap;
 }
 
-.acciones-cell {
+.acciones-buttons {
     display: flex;
     gap: 0.5rem;
+    justify-content: center;
     align-items: center;
 }
 
-.btn-accion {
-    padding: 0.5rem;
-    width: 36px;
-    height: 36px;
-    display: flex;
+/* Botones de Acción en Tabla */
+.btn-icon {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 6px;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    font-size: 0.875rem;
     border: none;
+    border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
-    color: white;
-    font-size: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.btn-accion:hover {
+.btn-icon:hover {
     transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.btn-icon:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-icon i {
+    font-size: 1rem;
 }
 
 .btn-ver {
     background-color: #3498db;
+    color: white;
 }
 
 .btn-ver:hover {
@@ -233,6 +332,7 @@ body {
 
 .btn-editar {
     background-color: #f39c12;
+    color: white;
 }
 
 .btn-editar:hover {
@@ -241,6 +341,7 @@ body {
 
 .btn-eliminar {
     background-color: #e74c3c;
+    color: white;
 }
 
 .btn-eliminar:hover {
@@ -249,32 +350,47 @@ body {
 
 /* Responsive */
 @media (max-width: 768px) {
-    .mazos-container {
-        padding: 1rem;
+    .container-fluid {
+        padding: 0;
+        margin: 0;
+        width: 100vw;
     }
-    
-    .header-content {
+
+    /* Encabezado y botón crear */
+    .row.mb-4 {
+        display: flex;
         flex-direction: column;
         gap: 1rem;
-        align-items: flex-start;
+        padding: 1rem;
     }
-    
-    .header-content h1 {
-        font-size: 1.5rem;
-    }
-    
-    .btn-crear-mazo {
+
+    .row.mb-4 .col-md-6 {
         width: 100%;
     }
 
-    .tabla-mazos thead th,
-    .tabla-mazos tbody td {
+    .row.mb-4 .col-md-6.text-end {
+        text-align: center;
+    }
+
+    #btnCrearMazo {
+        width: 100%;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    .table th,
+    .table td {
         padding: 0.75rem 0.5rem;
         font-size: 0.875rem;
     }
 
-    .acciones-cell .btn-accion {
-        padding: 0.4rem 0.6rem;
+    .acciones-buttons .btn-icon {
+        width: 32px;
+        height: 32px;
         font-size: 0.75rem;
     }
 }

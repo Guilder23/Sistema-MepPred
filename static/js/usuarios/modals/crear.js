@@ -227,18 +227,16 @@ function crearUsuario(e) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            mostrarAlerta('¡Usuario creado exitosamente!', 'success');
-            ocultarModal('modalCrearOverlay');
-            this.reset();
-            if (typeof cargarUsuarios === 'function') {
-                cargarUsuarios();
-            }
+            cargarUsuarios();
+            cerrarModal('modalCrearOverlay');
+            document.getElementById('formCrearUsuario').reset();
+            mostrarMensaje('Éxito', data.message || 'Usuario creado correctamente', 'success');
         } else {
-            mostrarAlerta(data.error || 'Error al crear usuario', 'danger');
+            mostrarMensaje('Error', data.error || 'Error al crear el usuario', 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        mostrarAlerta('Error al crear usuario', 'danger');
+        mostrarMensaje('Error', 'Error al crear el usuario', 'error');
     });
 }

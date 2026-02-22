@@ -1,137 +1,180 @@
-/* Estilos específicos para el modal de eliminar contenido */
+/* =========================================
+   ESTILOS BASE PARA MODAL
+   ========================================= */
 
-/* Overlay */
-#modalEliminarOverlay {
-    display: none;
+.modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 9999;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-}
-
-#modalEliminarOverlay.active {
-    display: flex;
-    align-items: center;
+    backdrop-filter: blur(4px);
+    display: none;
     justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
-/* Modal content */
-#modalEliminarOverlay .modal-content {
-    background: white;
-    border-radius: 8px;
+.modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-content {
+    background-color: white;
     width: 90%;
-    max-width: 450px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transform: translateY(20px);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Header */
-#modalEliminarOverlay .modal-header {
-    background-color: #e74c3c;
-    color: white;
-    padding: 0.85rem 1.25rem;
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
+}
+
+.modal-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-radius: 8px 8px 0 0;
+    background-color: white;
 }
 
-#modalEliminarOverlay .modal-header-title {
-    color: white;
+.modal-header-title {
     margin: 0;
-    font-size: 1.15rem;
+    font-size: 1.25rem;
     font-weight: 600;
+    color: #2c3e50;
 }
 
-#modalEliminarOverlay .modal-close-btn {
+.modal-close-btn {
     background: none;
     border: none;
-    color: white;
     font-size: 1.5rem;
+    line-height: 1;
+    color: #7f8c8d;
     cursor: pointer;
-    padding: 0;
-    width: 30px;
-    height: 30px;
+    padding: 0.25rem;
+    border-radius: 50%;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
-    transition: background-color 0.2s;
+    width: 32px;
+    height: 32px;
 }
 
-#modalEliminarOverlay .modal-close-btn:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-}
-
-/* Body */
-#modalEliminarOverlay .modal-body {
-    padding: 0.85rem 1.25rem;
-    background-color: #fff;
-}
-
-#modalEliminarOverlay .modal-body p {
-    color: #2c3e50;
-    font-size: 0.95rem;
-    margin: 0 0 0.35rem 0;
-    line-height: 1.4;
-}
-
-#modalEliminarOverlay .modal-body p:last-child {
-    margin-bottom: 0;
-}
-
-#modalEliminarOverlay .modal-body strong {
+.modal-close-btn:hover {
+    background-color: #f1f1f1;
     color: #e74c3c;
-    font-weight: 600;
 }
 
-#modalEliminarOverlay .text-muted {
-    color: #7f8c8d;
-    font-size: 0.9rem;
+.modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
 }
 
-/* Footer */
-#modalEliminarOverlay .modal-footer {
-    padding: 0.75rem 1.25rem;
-    background-color: #f8f9fa;
+.modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
     border-top: 1px solid #e0e0e0;
+    background-color: #f8f9fa;
     display: flex;
     justify-content: flex-end;
     gap: 0.75rem;
-    border-radius: 0 0 8px 8px;
 }
 
-/* Botones */
-#modalEliminarOverlay .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.6rem 1.2rem;
-    font-size: 0.95rem;
+/* =========================================
+   ESTILOS ESPECÍFICOS PARA ELIMINAR
+   ========================================= */
+
+#modalEliminarContenido .modal-header {
+    background-color: #dc3545;
+    color: white;
+}
+
+#modalEliminarContenido .modal-header-title {
+    color: white;
+    font-weight: 600;
+}
+
+#modalEliminarContenido .modal-close-btn {
+    color: white;
+}
+
+#modalEliminarContenido .modal-close-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+#modalEliminarContenido .modal-body {
+    padding: 1.5rem;
+    background-color: #fff;
+}
+
+#modalEliminarContenido .modal-body p {
+    color: #2c3e50;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+#modalEliminarContenido .modal-body strong {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+#modalEliminarContenido .text-danger {
+    color: #dc3545;
+}
+
+#modalEliminarContenido .text-danger small {
+    font-size: 0.85rem;
     font-weight: 500;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
 }
 
-#modalEliminarOverlay .btn-secondary {
+#modalEliminarContenido .btn-danger {
+    background-color: #dc3545;
+    color: white;
+    font-weight: 500;
+}
+
+#modalEliminarContenido .btn-danger:hover:not(:disabled) {
+    background-color: #c82333;
+    color: white;
+}
+
+#modalEliminarContenido .btn-secondary {
     background-color: #95a5a6;
     color: white;
 }
 
-#modalEliminarOverlay .btn-secondary:hover {
+#modalEliminarContenido .btn-secondary:hover:not(:disabled) {
     background-color: #7f8c8d;
-}
-
-#modalEliminarOverlay .btn-danger {
-    background-color: #e74c3c;
     color: white;
-}
-
-#modalEliminarOverlay .btn-danger:hover {
-    background-color: #c0392b;
 }

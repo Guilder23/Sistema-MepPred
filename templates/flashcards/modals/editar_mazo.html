@@ -1,22 +1,28 @@
-<div id="modal-editar-mazo" class="modal">
-    <div class="modal-content">
+<!-- Modal Editar Mazo -->
+<div class="modal-overlay" id="modalEditarMazoOverlay">
+    <div class="modal-content" id="modalEditarMazo">
         <div class="modal-header">
-            <h3>Editar Mazo</h3>
-            <span class="close">&times;</span>
+            <h5 class="modal-header-title">Editar Mazo</h5>
+            <button type="button" class="modal-close-btn" onclick="cerrarModalMazo('modalEditarMazoOverlay')">×</button>
         </div>
-        <div class="modal-body">
-            <div class="form-group">
-                <label for="edit-mazo-nombre">Nombre:</label>
-                <input type="text" id="edit-mazo-nombre" required>
+        <form id="formEditarMazo">
+            {% csrf_token %}
+            <input type="hidden" id="editar-mazo-id" name="mazo_id">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Nombre *</label>
+                    <input type="text" class="form-control" id="edit-mazo-nombre" name="nombre" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Descripción</label>
+                    <textarea class="form-control" id="edit-mazo-desc" name="descripcion" rows="3"></textarea>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="edit-mazo-desc">Descripción:</label>
-                <textarea id="edit-mazo-desc"></textarea>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="cerrarModalMazo('modalEditarMazoOverlay')">Cancelar</button>
+                <button type="submit" class="btn btn-warning">Guardar Cambios</button>
             </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-secondary" id="cancelar-editar">Cancelar</button>
-            <button class="btn btn-primary" id="guardar-editar">Guardar Cambios</button>
-        </div>
+        </form>
     </div>
 </div>

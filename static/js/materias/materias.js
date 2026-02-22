@@ -137,23 +137,34 @@ function abrirModalCrear() {
 function abrirModalVer(id) {
     const materia = materiasData.find(m => m.id === id);
     if (materia) {
-        // Cargar datos en el modal
         const modal = document.getElementById('modalVerOverlay');
         if (modal) {
-            // Disparar evento personalizado que será escuchado en ver.js
-            window.materiaPendiente = materia;
-            modal.classList.add('active');
+            // Construir contenido dinámico
+            let htmlContenido = `
+                <div class="info-row">
+                    <label>Nombre:</label>
+                    <span>${escapeHtml(materia.nombre)}</span>
+                </div>
+                <div class="info-row">
+                    <label>Descripción:</label>
+                    <span>${escapeHtml(materia.descripcion || 'Sin descripción')}</span>
+                </div>
+                <div class="info-row">
+                    <label>Fecha de Creación:</label>
+                    <span>${materia.created_at || '-'}</span>
+                </div>
+                <div class="info-row">
+                    <label>Última Actualización:</label>
+                    <span>${materia.updated_at || '-'}</span>
+                </div>
+            `;
             
-            // Cargar detalles
-            const setText = (elId, value) => {
-                const el = document.getElementById(elId);
-                if (el) el.textContent = value ?? '-';
-            };
-
-            setText('verNombre', materia.nombre);
-            setText('verDescripcion', materia.descripcion || 'Sin descripción');
-            setText('verFechaCreacion', materia.created_at || '-');
-            setText('verFechaActualizacion', materia.updated_at || '-');
+            const contentDiv = document.getElementById('verMateriaContent');
+            if (contentDiv) {
+                contentDiv.innerHTML = htmlContenido;
+            }
+            
+            modal.classList.add('active');
         }
     }
 }
@@ -197,6 +208,11 @@ function cerrarModal(elementId) {
     if (modal) {
         modal.classList.remove('active');
     }
+}
+
+// Alias de cerrarModal para compatibilidad con HTML
+function ocultarModal(elementId) {
+    cerrarModal(elementId);
 }
 
 // Cerrar modal al hacer clic en el overlay

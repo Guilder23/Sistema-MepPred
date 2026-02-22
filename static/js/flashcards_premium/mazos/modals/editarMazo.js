@@ -1,31 +1,5 @@
 // Script para modal editar mazo
 
-// Funciones para manejar modales
-window.abrirModal = function(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    }
-}
-
-window.cerrarModal = function(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-        const form = modal.querySelector('form');
-        if (form) form.reset();
-    }
-}
-
-// Cerrar modal al hacer clic fuera
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('modal-overlay')) {
-        cerrarModal(e.target.id);
-    }
-});
-
 // Cargar materias en el select editar
 async function cargarMateriasEditarMazo(callback) {
     try {
@@ -109,12 +83,12 @@ window.editarMazoModal = async function(mazoId) {
                     }
                 });
                 
-                abrirModal('editarMazoModal');
+                mostrarModal('modalEditarMazoOverlay');
             }
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('Error al cargar el mazo');
+        mostrarMensaje('Error', 'Error al cargar el mazo', 'danger');
     }
 };
 
@@ -142,17 +116,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await response.json();
                 
                 if (data.success) {
-                    alert('Mazo actualizado exitosamente');
-                    cerrarModal('editarMazoModal');
+                    mostrarMensaje('Éxito', 'Mazo actualizado exitosamente', 'success');
+                    ocultarModal('modalEditarMazoOverlay');
                     if (typeof cargarMazos === 'function') {
                         cargarMazos();
                     }
                 } else {
-                    alert('Error: ' + (data.error || 'No se pudo actualizar'));
+                    mostrarMensaje('Error', 'Error: ' + (data.error || 'No se pudo actualizar'), 'danger');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error al actualizar el mazo');
+                mostrarMensaje('Error', 'Error al actualizar el mazo', 'danger');
             }
         });
     }

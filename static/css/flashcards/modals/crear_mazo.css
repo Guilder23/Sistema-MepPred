@@ -1,2 +1,73 @@
-/* CSS para el modal de crear mazo */
-/* Todos los estilos base se heredan de editar_mazo.css */
+/* =========================================
+   MODAL CREAR MAZO
+   ========================================= */
+
+#modalCrearMazo .modal-header {
+    background-color: #2ecc71;
+    color: #ffffff;
+}
+
+#modalCrearMazo .modal-header-title {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+#modalCrearMazo .modal-close-btn {
+    color: #ffffff;
+}
+
+#modalCrearMazo .modal-close-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+#modalCrearMazo .form-control:focus {
+    border-color: #2ecc71;
+    box-shadow: 0 0 0 0.2rem rgba(46, 204, 113, 0.25);
+}
+
+#modalCrearMazo .btn.btn-success {
+    background-color: #28a745 !important;
+    color: white !important;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+#modalCrearMazo .btn.btn-success:hover {
+    background-color: #218838 !important;
+    color: white !important;
+    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+}
+
+#modalCrearMazo .btn.btn-secondary {
+    background-color: #95a5a6 !important;
+    color: white !important;
+}
+
+#modalCrearMazo .btn.btn-secondary:hover {
+    background-color: #7f8c8d !important;
+    color: white !important;
+}
+
+/* Validaciones */
+#modalCrearMazo .form-control.is-invalid {
+    border-color: #ef4444;
+}
+
+#modalCrearMazo .form-control.is-invalid:focus {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 0.2rem rgba(239, 68, 68, 0.25);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #modalCrearMazo .modal-body {
+        padding: 1rem;
+    }
+
+    #modalCrearMazo .form-label {
+        font-size: 0.9rem;
+    }
+}

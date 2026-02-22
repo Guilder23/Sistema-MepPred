@@ -3,7 +3,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     const formEditar = document.getElementById('formEditarMateria');
     const btnActualizar = document.getElementById('btnActualizarMateria');
-    const btnCancelar = document.getElementById('btnCancelarEditarMateria');
 
     if (formEditar) {
         formEditar.addEventListener('submit', function(e) {
@@ -30,14 +29,8 @@ document.addEventListener('DOMContentLoaded', function() {
         btnActualizar.addEventListener('click', actualizarMateria);
     }
 
-    if (btnCancelar) {
-        btnCancelar.addEventListener('click', function() {
-            cerrarModal('modalEditarOverlay');
-        });
-    }
-
     // Cerrar modal al hacer clic en X
-    const btnClose = document.querySelector('.modal-editar-btn-close');
+    const btnClose = document.querySelector('#modalEditarOverlay .modal-close-btn');
     if (btnClose) {
         btnClose.addEventListener('click', function() {
             cerrarModal('modalEditarOverlay');
@@ -45,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Cerrar modal al hacer clic fuera del modal
-    const modalOverlay = document.querySelector('.modal-editar-overlay');
+    const modalOverlay = document.querySelector('#modalEditarOverlay');
     if (modalOverlay) {
         modalOverlay.addEventListener('click', function(e) {
             if (e.target === modalOverlay) {
@@ -148,7 +141,7 @@ function actualizarMateria() {
             // Recargar tabla
             cargarMaterias();
             cerrarModal('modalEditarOverlay');
-            mostrarMensaje('Éxito', 'Materia actualizada correctamente', 'success');
+            mostrarMensaje('Éxito', data.message || 'Materia actualizada correctamente', 'success');
         } else {
             mostrarMensaje('Error', data.error || 'Error al actualizar la materia', 'error');
         }

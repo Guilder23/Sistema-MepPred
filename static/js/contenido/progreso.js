@@ -188,6 +188,11 @@ function crearTarjetaTema(tema) {
     card.dataset.temaId = tema.id;
     card.dataset.temaNombre = tema.nombre.toLowerCase();
     
+    // Debug: verificar si los exámenes están llegando
+    if (tema.examenes && tema.examenes.length > 0) {
+        console.log(`Tema "${tema.nombre}" tiene ${tema.examenes.length} exámenes:`, tema.examenes);
+    }
+    
     // Los contenidos ahora vienen directamente del API
     const contenidos = tema.contenidos || [];
     const totalContenidos = tema.total_contenidos || 0;
@@ -244,12 +249,16 @@ function crearTarjetaTema(tema) {
             </div>
         `;
         
-        // Agregar información del examen si existe
-        if (tema.examen) {
-            const examenDiv = document.createElement('div');
-            examenDiv.className = 'tema-examen';
-            examenDiv.innerHTML = crearInfoExamen(tema.examen);
-            body.appendChild(examenDiv);
+        // Agregar información de los exámenes si existen
+        if (tema.examenes && tema.examenes.length > 0) {
+            console.log(`Agregando ${tema.examenes.length} exámenes al tema "${tema.nombre}"`);
+            const examenesDiv = document.createElement('div');
+            examenesDiv.className = 'tema-examenes';
+            examenesDiv.innerHTML = crearListaExamenes(tema.examenes);
+            body.appendChild(examenesDiv);
+            console.log('Exámenes agregados al DOM');
+        } else {
+            console.log(`Tema "${tema.nombre}" no tiene exámenes o el array está vacío`);
         }
     }
     
@@ -267,7 +276,24 @@ function toggleTemaCard(card) {
     chevron.classList.toggle('rotated');
 }
 
-function crearInfoExamen(examen) {
+function crearListaExamenes(examenes) {
+    if (!examenes || examenes.length === 0) {
+        return '';
+    }
+    
+    const examenesHTML = examenes.map((examen, index) => {
+        return crearInfoExamen(examen, index + 1, examenes.length);
+    }).join('');
+    
+    return `
+        <div class="examenes-section">
+            <h5 class="examenes-titulo"><i class="fas fa-graduation-cap"></i> Exámenes del Tema</h5>
+            ${examenesHTML}
+        </div>
+    `;
+}
+
+function crearInfoExamen(examen, numero, totalExamenes) {
     const disponible = examen.disponible;
     const aprobado = examen.aprobado;
     const mejorNota = examen.mejor_nota;
@@ -284,11 +310,8 @@ function crearInfoExamen(examen) {
                 <span class="nota">Nota: ${mejorNota}/20</span>
             </div>
         `;
-        botonHTML = `
-            <a href="/examenes/ver-resultados/${examen.id}/" class="btn btn-secondary btn-sm">
-                <i class="fas fa-chart-line"></i> Ver Resultados
-            </a>
-        `;
+        // No mostrar botón para exámenes aprobados
+        botonHTML = '';
     } else if (disponible) {
         estadoHTML = `
             <div class="examen-disponible">
@@ -304,11 +327,16 @@ function crearInfoExamen(examen) {
             </a>
         `;
     } else {
+        // Mensaje diferente para el primer examen vs los siguientes
+        const mensajeBloqueo = numero === 1 
+            ? 'Completa todos los contenidos del tema' 
+            : 'Aprueba el examen anterior para desbloquear';
+        
         estadoHTML = `
             <div class="examen-bloqueado">
                 <i class="fas fa-lock"></i>
                 <span>Examen Bloqueado</span>
-                <small>Completa todos los contenidos del tema</small>
+                <small>${mensajeBloqueo}</small>
             </div>
         `;
     }

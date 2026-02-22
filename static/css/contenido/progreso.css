@@ -974,6 +974,30 @@
     border-top: 1px solid var(--border-color);
 }
 
+.tema-examenes {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.examenes-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.examenes-titulo {
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.examenes-titulo i {
+    color: var(--primary-color);
+    margin-right: 0.5rem;
+}
+
 .examen-info {
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     padding: 1rem;

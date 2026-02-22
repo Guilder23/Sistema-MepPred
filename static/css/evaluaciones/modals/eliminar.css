@@ -1,227 +1,190 @@
-/* Modal para eliminar materia - Rojo - Versión compacta */
+/* =========================================
+   ESTILOS BASE PARA MODAL
+   ========================================= */
 
-.modal-eliminar-overlay {
-    display: none;
+.modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: none;
     justify-content: center;
     align-items: center;
-    padding: 1rem;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
-.modal-eliminar-overlay.active {
+.modal-overlay.active {
     display: flex;
+    opacity: 1;
 }
 
-.modal-eliminar-container {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-    width: 100%;
-    max-width: 400px;
-    animation: modalEliminarSlideUp 0.3s ease-out;
+.modal-content {
+    background-color: white;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transform: translateY(20px);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
 }
 
-@keyframes modalEliminarSlideUp {
-    from {
-        transform: translateY(15px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
 }
 
-.modal-eliminar-header {
-    background: #dc3545;
-    color: white;
-    padding: 1.25rem;
+.modal-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
+    background-color: white;
 }
 
-.modal-eliminar-header h2 {
+.modal-header-title {
     margin: 0;
-    font-size: 1.3rem;
+    font-size: 1.25rem;
     font-weight: 600;
-    color: white;
-    text-align: center;
-    flex: 1;
+    color: #2c3e50;
 }
 
-.modal-eliminar-btn-close {
-    background: rgba(255, 255, 255, 0.15);
-    color: white;
+.modal-close-btn {
+    background: none;
     border: none;
-    padding: 0.4rem;
-    width: 32px;
-    height: 32px;
-    border-radius: 6px;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: #7f8c8d;
     cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 50%;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
-    font-size: 1.1rem;
-    margin-left: auto;
+    width: 32px;
+    height: 32px;
 }
 
-.modal-eliminar-btn-close:hover {
-    background: rgba(255, 255, 255, 0.25);
+.modal-close-btn:hover {
+    background-color: #f1f1f1;
+    color: #e74c3c;
 }
 
-.modal-eliminar-body {
-    padding: 1.75rem 1.5rem;
-    text-align: center;
+.modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
 }
 
-.modal-eliminar-warning-icon {
-    font-size: 2.75rem;
-    color: #dc3545;
-    margin-bottom: 1.25rem;
+.modal-body::-webkit-scrollbar {
+    width: 8px;
 }
 
-.modal-eliminar-body p {
-    margin: 0.5rem 0;
-    color: #495057;
-    font-size: 0.95rem;
-    line-height: 1.5;
+.modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
 }
 
-.modal-eliminar-materia-name {
-    font-weight: 700;
-    color: #2c3e50;
-    font-size: 1rem;
-    margin: 0.75rem 0;
-    padding: 0.5rem 0.75rem;
-    background: #f8f9fa;
-    border-radius: 6px;
-    border-left: 3px solid #dc3545;
-    display: inline-block;
+.modal-body::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
 }
 
-.modal-eliminar-footer {
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.modal-footer {
     padding: 1rem 1.5rem;
-    background: #f8f9fa;
+    border-top: 1px solid #e0e0e0;
+    background-color: #f8f9fa;
     display: flex;
     justify-content: flex-end;
     gap: 0.75rem;
-    border-top: 1px solid #dee2e6;
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
 }
 
-.modal-eliminar-btn {
-    padding: 0.6rem 1.5rem;
-    font-size: 0.9rem;
+/* =========================================
+   ESTILOS ESPECÍFICOS PARA ELIMINAR
+   ========================================= */
+
+#modalEliminarExamen .modal-header {
+    background-color: #dc3545;
+    color: white;
+}
+
+#modalEliminarExamen .modal-header-title {
+    color: white;
     font-weight: 600;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    min-width: 90px;
 }
 
-.modal-eliminar-btn-cancelar {
-    background: #6c757d;
+#modalEliminarExamen .modal-close-btn {
     color: white;
 }
 
-.modal-eliminar-btn-cancelar:hover {
-    background: #5a6268;
-    transform: translateY(-1px);
-}
-
-.modal-eliminar-btn-eliminar {
-    background: #dc3545;
+#modalEliminarExamen .modal-close-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
     color: white;
-    box-shadow: 0 2px 6px rgba(220, 53, 69, 0.25);
 }
 
-.modal-eliminar-btn-eliminar:hover {
-    background: #c82333;
-    box-shadow: 0 3px 8px rgba(220, 53, 69, 0.35);
-    transform: translateY(-1px);
+#modalEliminarExamen .modal-body {
+    padding: 1.5rem;
+    background-color: #fff;
 }
 
-.modal-eliminar-btn-eliminar:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
+#modalEliminarExamen .modal-body p {
+    color: #2c3e50;
+    font-size: 1rem;
+    margin-bottom: 1rem;
 }
 
+#modalEliminarExamen .modal-body strong {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+#modalEliminarExamen .text-danger {
+    color: #dc3545;
+}
+
+#modalEliminarExamen .text-danger small {
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+#modalEliminarExamen .btn-danger {
+    background-color: #dc3545;
+    color: white;
+    font-weight: 500;
+}
+
+#modalEliminarExamen .btn-danger:hover:not(:disabled) {
+    background-color: #c82333;
+}
+
+/* Alerta de peligro */
+#modalEliminarExamen .alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-    .modal-eliminar-container {
-        max-width: 350px;
+    #modalEliminarExamen .modal-content {
+        max-width: 95%;
     }
 
-    .modal-eliminar-header {
-        padding: 1.125rem;
-    }
-
-    .modal-eliminar-header h2 {
-        font-size: 1.2rem;
-    }
-
-    .modal-eliminar-body {
-        padding: 1.5rem 1.25rem;
-    }
-
-    .modal-eliminar-warning-icon {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-    }
-
-    .modal-eliminar-footer {
-        padding: 1rem;
-        flex-direction: row;
-        justify-content: flex-end;
-    }
-
-    .modal-eliminar-btn {
-        min-width: 80px;
-        padding: 0.55rem 1.25rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .modal-eliminar-container {
-        max-width: 320px;
-    }
-    
-    .modal-eliminar-body {
-        padding: 1.25rem 1rem;
-    }
-    
-    .modal-eliminar-header {
-        padding: 1rem;
-    }
-    
-    .modal-eliminar-header h2 {
-        font-size: 1.1rem;
-    }
-    
-    .modal-eliminar-warning-icon {
-        font-size: 2.25rem;
-    }
-    
-    .modal-eliminar-footer {
-        flex-direction: column-reverse;
-        gap: 0.5rem;
-    }
-    
-    .modal-eliminar-btn {
-        width: 100%;
-        padding: 0.65rem;
+    #modalEliminarExamen .modal-body {
+        padding: 1.5rem 1rem;
     }
 }

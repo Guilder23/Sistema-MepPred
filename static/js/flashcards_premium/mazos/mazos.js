@@ -1,4 +1,98 @@
 // JavaScript para Gestión de Mazos Premium
+
+// ==========================================
+// UTILIDADES
+// ==========================================
+
+// Función para obtener CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Función para escapar HTML y prevenir XSS
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Mostrar mensaje tipo toast en la esquina inferior derecha
+function mostrarMensaje(titulo, mensaje, tipo) {
+    // Crear contenedor de notificaciones si no existe
+    let container = document.querySelector('.toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+
+    // Crear el toast
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${tipo}`;
+    
+    // Icono según el tipo
+    let icono = '';
+    switch(tipo) {
+        case 'success':
+            icono = '<i class="fas fa-check-circle"></i>';
+            break;
+        case 'error':
+        case 'danger':
+            icono = '<i class="fas fa-exclamation-circle"></i>';
+            break;
+        case 'warning':
+            icono = '<i class="fas fa-exclamation-triangle"></i>';
+            break;
+        case 'info':
+            icono = '<i class="fas fa-info-circle"></i>';
+            break;
+        default:
+            icono = '<i class="fas fa-bell"></i>';
+    }
+
+    toast.innerHTML = `
+        <div class="toast-icon">${icono}</div>
+        <div class="toast-content">
+            <div class="toast-title">${escapeHtml(titulo)}</div>
+            <div class="toast-message">${escapeHtml(mensaje)}</div>
+        </div>
+        <button class="toast-close" onclick="this.parentElement.remove()">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+
+    container.appendChild(toast);
+
+    // Animar entrada
+    setTimeout(() => toast.classList.add('show'), 10);
+
+    // Auto-eliminar después de 5 segundos
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 5000);
+}
+
+// Alias para compatibilidad con mostrarAlerta
+function mostrarAlerta(mensaje, tipo) {
+    mostrarMensaje('Notificación', mensaje, tipo);
+}
+
+// ==========================================
+// LÓGICA PRINCIPAL
+// ==========================================
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Mazos.js cargado');
     cargarMazos();
@@ -15,11 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (btnCrear) {
         btnCrear.addEventListener('click', async function() {
             console.log('Click en botón crear mazo');
-            // Cargar temas antes de abrir el modal
-            if (typeof cargarTemasCrear === 'function') {
-                await cargarTemasCrear();
-            }
-            abrirModal('crearMazoModal');
+            mostrarModal('modalCrearMazoOverlay');
         });
     }
 });
@@ -42,7 +132,7 @@ async function cargarMazos() {
 
 // Función para mostrar mazos en la tabla
 function mostrarMazos(mazos) {
-    const tbody = document.getElementById('tablaMazos');
+    const tbody = document.querySelector('#tablaMazos tbody');
     if (!tbody) return;
     
     tbody.innerHTML = '';
@@ -72,17 +162,18 @@ function mostrarMazos(mazos) {
             <td>${mazo.descripcion || '-'}</td>
             <td><span style="background: #667eea; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.85rem;">${mazo.tarjetas_count || 0}</span></td>
             <td>${mazo.created_at}</td>
-            <td>
-                <div class="acciones-cell">
-                    <button class="btn-accion btn-ver" onclick="verMazo(${mazo.id})" title="Ver detalles">
+            <td class="acciones-cell">
+                <div class="acciones-buttons">
+                    <button class="btn-icon btn-ver" onclick="verMazo(${mazo.id})" title="Ver detalles">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button class="btn-accion btn-editar" onclick="editarMazo(${mazo.id})" title="Editar">
+                    <button class="btn-icon btn-editar" onclick="editarMazo(${mazo.id})" title="Editar">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button class="btn-accion btn-eliminar" onclick="eliminarMazo(${mazo.id})" title="Eliminar">
+                    <button class="btn-icon btn-eliminar" onclick="eliminarMazo(${mazo.id})" title="Eliminar">
                         <i class="fas fa-trash"></i>
                     </button>
+                </div>
                 </div>
             </td>
         `;
@@ -124,3 +215,37 @@ function eliminarMazo(id) {
         window.eliminarMazoModal(id);
     }
 }
+
+// Funciones globales para manejar modales (copiado de usuarios.js)
+window.mostrarModal = function(overlayId) {
+    const overlay = document.getElementById(overlayId);
+    if (overlay) {
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+window.cerrarModal = function(elementId) {
+    const modal = document.getElementById(elementId);
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+        const form = modal.querySelector('form');
+        if (form) form.reset();
+    }
+}
+
+// Alias para compatibilidad
+window.ocultarModal = function(overlayId) {
+    cerrarModal(overlayId);
+}
+
+// Alias legacy para compatibilidad
+window.abrirModal = window.mostrarModal;
+
+// Cerrar modal al hacer clic fuera
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal-overlay')) {
+        window.ocultarModal(e.target.id);
+    }
+});

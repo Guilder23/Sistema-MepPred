@@ -1,199 +1,276 @@
-/* Estilos específicos para el modal de crear contenido */
+/* =========================================
+   ESTILOS BASE PARA MODAL
+   ========================================= */
 
-/* Overlay del modal */
-#modalCrearOverlay {
-    display: none;
+.modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 9999;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-}
-
-#modalCrearOverlay.active {
-    display: flex;
-    align-items: center;
+    backdrop-filter: blur(4px);
+    display: none;
     justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
-/* Contenido del modal */
-#modalCrearOverlay .modal-content {
-    background: white;
-    border-radius: 8px;
+.modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-content {
+    background-color: white;
     width: 90%;
-    max-width: 600px;
+    max-width: 500px;
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transform: translateY(20px);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
     max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
 }
 
-/* Header del modal */
-#modalCrearOverlay .modal-header {
-    background-color: #28a745;
-    color: white;
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
+}
+
+.modal-header {
     padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-radius: 8px 8px 0 0;
+    background-color: white;
 }
 
-#modalCrearOverlay .modal-header-title {
-    color: white;
+.modal-header-title {
     margin: 0;
     font-size: 1.25rem;
     font-weight: 600;
+    color: #2c3e50;
 }
 
-#modalCrearOverlay .modal-close-btn {
+.modal-close-btn {
     background: none;
     border: none;
-    color: white;
     font-size: 1.5rem;
+    line-height: 1;
+    color: #7f8c8d;
     cursor: pointer;
-    padding: 0;
-    width: 30px;
-    height: 30px;
+    padding: 0.25rem;
+    border-radius: 50%;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
-    transition: background-color 0.2s;
+    width: 32px;
+    height: 32px;
 }
 
-#modalCrearOverlay .modal-close-btn:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+.modal-close-btn:hover {
+    background-color: #f1f1f1;
+    color: #e74c3c;
 }
 
-/* Body del modal */
-#modalCrearOverlay .modal-body {
+.modal-body {
     padding: 1.5rem;
+    overflow-y: auto;
 }
 
-#modalCrearOverlay .form-group {
-    margin-bottom: 1.25rem;
+.modal-body::-webkit-scrollbar {
+    width: 8px;
 }
 
-#modalCrearOverlay .form-label {
+.modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e0e0e0;
+    background-color: #f8f9fa;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-label {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 500;
     color: #2c3e50;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
 }
 
-#modalCrearOverlay .form-control,
-#modalCrearOverlay .form-select {
-    width: 100%;
-    padding: 0.6rem 0.9rem;
-    font-size: 0.95rem;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    transition: all 0.2s ease;
-}
+/* =========================================
+   ESTILOS ESPECÍFICOS PARA CREAR
+   ========================================= */
 
-#modalCrearOverlay .form-control:focus,
-#modalCrearOverlay .form-select:focus {
-    outline: none;
-    border-color: #28a745;
-    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
-}
-
-#modalCrearOverlay textarea.form-control {
-    resize: vertical;
-    min-height: 80px;
-}
-
-/* Contenedor de videos dinámico */
-#modalCrearOverlay #videosContainer .video-input-group {
-    position: relative;
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    margin-bottom: 0.5rem;
-}
-
-#modalCrearOverlay #videosContainer .video-input-group input {
-    flex: 1;
-}
-
-#modalCrearOverlay #videosContainer .video-input-group .btn-remove-video {
-    background-color: #e74c3c;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 0.6rem 0.8rem;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-#modalCrearOverlay #videosContainer .video-input-group .btn-remove-video:hover {
-    background-color: #c0392b;
-}
-
-/* Footer del modal */
-#modalCrearOverlay .modal-footer {
-    padding: 1rem 1.5rem;
-    background-color: #f8f9fa;
-    border-top: 1px solid #e0e0e0;
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.75rem;
-    border-radius: 0 0 8px 8px;
-}
-
-/* Botones */
-#modalCrearOverlay .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.6rem 1.2rem;
-    font-size: 0.95rem;
-    font-weight: 500;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    gap: 0.5rem;
-}
-
-#modalCrearOverlay .btn-secondary {
-    background-color: #95a5a6;
-    color: white;
-}
-
-#modalCrearOverlay .btn-secondary:hover {
-    background-color: #7f8c8d;
-}
-
-#modalCrearOverlay .btn-success {
+#modalCrearContenido .modal-header {
     background-color: #28a745;
     color: white;
 }
 
-#modalCrearOverlay .btn-success:hover {
+#modalCrearContenido .modal-header-title {
+    color: white;
+}
+
+#modalCrearContenido .modal-close-btn {
+    color: white;
+}
+
+#modalCrearContenido .modal-close-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+#modalCrearContenido .form-control:focus,
+#modalCrearContenido .form-select:focus {
+    border-color: #2ecc71;
+    box-shadow: 0 0 0 0.2rem rgba(46, 204, 113, 0.25);
+}
+
+.btn.btn-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn.btn-success:hover {
     background-color: #218838;
+    color: white;
+}
+
+#modalCrearContenido .btn-outline-primary {
+    border: 2px solid #2ecc71;
+    color: #2ecc71;
+    background-color: transparent;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.875rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#modalCrearContenido .btn-outline-primary:hover {
+    background-color: #2ecc71;
+    color: white;
+    box-shadow: 0 2px 8px rgba(46, 204, 113, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Estilos para videos */
+#modalCrearContenido .video-input-group {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+#modalCrearContenido .video-input-group input {
+    flex: 1;
+}
+
+#modalCrearContenido .btn-remove-video {
+    background: none;
+    border: none;
+    color: #e74c3c;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0.5rem;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#modalCrearContenido .btn-remove-video:hover {
+    color: #c0392b;
+    transform: scale(1.2);
+}
+
+.btn.btn-secondary {
+    background-color: #95a5a6;
+    color: white;
+}
+
+.btn.btn-secondary:hover {
+    background-color: #7f8c8d;
+    color: white;
+}
+
+/* Validaciones */
+#modalCrearContenido .form-control.is-invalid,
+#modalCrearContenido .form-select.is-invalid {
+    border-color: #ef4444;
+}
+
+#modalCrearContenido .form-control.is-invalid:focus,
+#modalCrearContenido .form-select.is-invalid:focus {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 0.2rem rgba(239, 68, 68, 0.25);
+}
+
+#modalCrearContenido .form-text.text-danger {
+    color: #ef4444;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: block;
+    animation: slideInError 0.3s ease-out;
+}
+
+@keyframes slideInError {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#modalCrearContenido .form-control.form-control-error,
+#modalCrearContenido .form-select.form-control-error {
+    border-color: #ef4444;
+}
+
+#modalCrearContenido .form-error {
+    display: block;
+    margin-top: 0.25rem;
+    color: #ef4444;
+    font-size: 0.875rem;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    #modalCrearOverlay .modal-content {
-        width: 95%;
-        margin: 1rem;
-    }
-
-    #modalCrearOverlay .modal-body {
+    #modalCrearContenido .modal-body {
         padding: 1rem;
     }
 
-    #modalCrearOverlay .modal-footer {
-        flex-direction: column;
-    }
-
-    #modalCrearOverlay .modal-footer .btn {
-        width: 100%;
+    #modalCrearContenido .form-label {
+        font-size: 0.9rem;
     }
 }

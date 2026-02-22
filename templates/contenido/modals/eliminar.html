@@ -1,18 +1,22 @@
 <!-- Modal Eliminar Contenido -->
 <div class="modal-overlay" id="modalEliminarOverlay">
-    <div class="modal-content modal-sm" id="modalEliminar">
-        <div class="modal-header modal-header-danger">
+    <div class="modal-content" id="modalEliminarContenido">
+        <div class="modal-header">
             <h5 class="modal-header-title">Eliminar Contenido</h5>
-            <button type="button" class="modal-close-btn" onclick="ocultarModal('modalEliminarOverlay')">×</button>
+            <button type="button" class="modal-close-btn" onclick="cerrarModal('modalEliminarOverlay')">×</button>
         </div>
         <div class="modal-body">
-            <p>¿Estás seguro de que deseas eliminar este contenido?</p>
-            <p><strong id="eliminarContenidoNombre"></strong></p>
-            <p class="text-muted">Esta acción no se puede deshacer.</p>
+            <p>¿Estás seguro de que deseas eliminar el contenido <strong id="nombreContenidoEliminar"></strong>?</p>
+            <p class="text-danger"><small>Esta acción no se puede deshacer.</small></p>
+            <input type="hidden" id="idContenidoEliminar">
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" onclick="ocultarModal('modalEliminarOverlay')">Cancelar</button>
-            <button type="button" class="btn btn-danger" id="btnConfirmarEliminar">Eliminar</button>
+            <button type="button" class="btn btn-secondary" onclick="cerrarModal('modalEliminarOverlay')">
+                Cancelar
+            </button>
+            <button type="button" class="btn btn-danger" id="btnEliminarContenido">
+                <i class="fas fa-trash"></i> Eliminar
+            </button>
         </div>
     </div>
 </div>

@@ -1,31 +1,5 @@
 // Script para modal crear mazo
 
-// Funciones para manejar modales
-window.abrirModal = function(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    }
-}
-
-window.cerrarModal = function(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-        const form = modal.querySelector('form');
-        if (form) form.reset();
-    }
-}
-
-// Cerrar modal al hacer clic fuera
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('modal-overlay')) {
-        cerrarModal(e.target.id);
-    }
-});
-
 // Cargar materias en el select crear
 async function cargarMateriasCrearMazo() {
     try {
@@ -79,15 +53,27 @@ async function cargarTemasCrearMazo() {
 
 document.addEventListener('DOMContentLoaded', function() {
     // Cargar materias cuando se abre el modal
-    const crearMazoModal = document.getElementById('crearMazoModal');
-    if (crearMazoModal) {
-        // Observar cambios en el display del modal
+    const overlay = document.getElementById('modalCrearMazoOverlay');
+    
+    if (overlay) {
+        // Observar cambios en la clase active
         const observer = new MutationObserver(() => {
-            if (crearMazoModal.style.display === 'flex') {
+            if (overlay.classList.contains('active')) {
+                // Limpiar formulario
+                const form = document.getElementById('formCrearMazo');
+                if (form) {
+                    form.reset();
+                }
+                // Resetear temas
+                const temaSelect = document.getElementById('temaMazo');
+                if (temaSelect) {
+                    temaSelect.innerHTML = '<option value="">Seleccione un tema</option>';
+                }
+                // Cargar materias
                 cargarMateriasCrearMazo();
             }
         });
-        observer.observe(crearMazoModal, { attributes: true, attributeFilter: ['style'] });
+        observer.observe(overlay, { attributes: true, attributeFilter: ['class'] });
     }
     
     const btnGuardar = document.getElementById('btnGuardarMazo');
@@ -112,17 +98,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await response.json();
                 
                 if (data.success) {
-                    alert('Mazo creado exitosamente');
-                    cerrarModal('crearMazoModal');
+                    mostrarMensaje('Éxito', 'Mazo creado exitosamente', 'success');
+                    ocultarModal('modalCrearMazoOverlay');
                     if (typeof cargarMazos === 'function') {
                         cargarMazos();
                     }
                 } else {
-                    alert('Error: ' + (data.error || 'No se pudo crear el mazo'));
+                    mostrarMensaje('Error', 'Error: ' + (data.error || 'No se pudo crear el mazo'), 'danger');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error al crear el mazo');
+                mostrarMensaje('Error', 'Error al crear el mazo', 'danger');
             }
         });
     }

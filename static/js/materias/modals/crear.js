@@ -3,7 +3,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     const formCrear = document.getElementById('formCrearMateria');
     const btnGuardar = document.getElementById('btnGuardarMateria');
-    const btnCancelar = document.getElementById('btnCancelarMateria');
 
     if (formCrear) {
         formCrear.addEventListener('submit', function(e) {
@@ -30,14 +29,8 @@ document.addEventListener('DOMContentLoaded', function() {
         btnGuardar.addEventListener('click', guardarMateria);
     }
 
-    if (btnCancelar) {
-        btnCancelar.addEventListener('click', function() {
-            cerrarModal('modalCrearOverlay');
-        });
-    }
-
     // Cerrar modal al hacer clic en X
-    const btnClose = document.querySelector('.modal-crear-btn-close');
+    const btnClose = document.querySelector('.modal-close-btn');
     if (btnClose) {
         btnClose.addEventListener('click', function() {
             cerrarModal('modalCrearOverlay');
@@ -45,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Cerrar modal al hacer clic fuera del modal
-    const modalOverlay = document.querySelector('.modal-crear-overlay');
+    const modalOverlay = document.querySelector('#modalCrearOverlay');
     if (modalOverlay) {
         modalOverlay.addEventListener('click', function(e) {
             if (e.target === modalOverlay) {
@@ -147,7 +140,7 @@ function guardarMateria() {
             // Recargar tabla
             cargarMaterias();
             cerrarModal('modalCrearOverlay');
-            mostrarMensaje('Éxito', 'Materia creada correctamente', 'success');
+            mostrarMensaje('Éxito', data.message || 'Materia creada correctamente', 'success');
         } else {
             mostrarMensaje('Error', data.error || 'Error al crear la materia', 'error');
         }

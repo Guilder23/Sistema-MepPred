@@ -286,7 +286,7 @@ def crear_mazo_api(request):
         
         return JsonResponse({
             'success': True,
-            'error': None,
+            'message': '¡Mazo creado exitosamente!',
             'id': mazo.id,
             'nombre': mazo.nombre,
         })
@@ -305,11 +305,19 @@ def eliminar_mazo_api(request, mazo_id):
     
     try:
         mazo = Mazo.objects.get(id=mazo_id, usuario=usuario)
+        
+        # Validar que el mazo no tenga flashcards
+        if mazo.tarjetas.exists():
+            return JsonResponse({
+                'success': False,
+                'error': 'No se puede eliminar el mazo porque contiene flashcards. Elimínalas primero.',
+            }, status=400)
+        
         mazo.delete()
         
         return JsonResponse({
             'success': True,
-            'error': None,
+            'message': '¡Mazo eliminado exitosamente!',
         })
     
     except Mazo.DoesNotExist:
@@ -340,7 +348,7 @@ def editar_mazo_api(request, mazo_id):
         
         return JsonResponse({
             'success': True,
-            'error': None,
+            'message': '¡Mazo actualizado exitosamente!',
             'id': mazo.id,
             'nombre': mazo.nombre,
         })

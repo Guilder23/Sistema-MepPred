@@ -94,31 +94,12 @@ function abrirModalEditar(usuarioId) {
 function editarUsuario(e) {
     e.preventDefault();
     
-    const formData = new FormData(this);
-    const formEditar = document.getElementById('formEditar');
-    
-    // Validar campos
-    const nombre = formEditar.querySelector('input[name="nombre"]').value.trim();
-    const email = formEditar.querySelector('input[name="email"]').value.trim();
-    
-    // Validar nombre
-    const regexNombre = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{3,150}$/;
-    if (!regexNombre.test(nombre)) {
-        mostrarAlerta('El nombre debe contener solo letras (3-150 caracteres)', 'danger');
-        return;
-    }
-    
-    // Validar email
-    const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!regexEmail.test(email)) {
-        mostrarAlerta('Por favor ingresa un email válido', 'danger');
-        return;
-    }
-    
-    // El input hidden ya maneja el valor de is_active, pero nos aseguramos
-    // de enviar el ID que a veces puede faltar en el formData si es un campo deshabilitado
     const usuarioId = document.getElementById('usuarioIdEditar').value;
-    formData.set('id', usuarioId);
+    const isActive = document.getElementById('editActivoSelect').value === 'true';
+    
+    const formData = new FormData();
+    formData.append('id', usuarioId);
+    formData.append('is_active', isActive);
     
     fetch('/usuarios/api/editar/', {
         method: 'POST',
@@ -130,17 +111,15 @@ function editarUsuario(e) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            mostrarAlerta('¡Usuario actualizado exitosamente!', 'success');
-            ocultarModal('modalEditarOverlay');
-            if (typeof cargarUsuarios === 'function') {
-                cargarUsuarios();
-            }
+            cargarUsuarios();
+            cerrarModal('modalEditarOverlay');
+            mostrarMensaje('Éxito', data.message || 'Usuario actualizado correctamente', 'success');
         } else {
-            mostrarAlerta(data.error || 'Error al actualizar usuario', 'danger');
+            mostrarMensaje('Error', data.error || 'Error al actualizar el usuario', 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        mostrarAlerta('Error al actualizar usuario', 'danger');
+        mostrarMensaje('Error', 'Error al actualizar el usuario', 'error');
     });
 }

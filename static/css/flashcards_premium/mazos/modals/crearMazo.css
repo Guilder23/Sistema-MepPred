@@ -1,4 +1,6 @@
-/* Estilos base para modal crear mazo */
+/* =========================================
+   ESTILOS BASE PARA MODAL
+   ========================================= */
 
 .modal-overlay {
     position: fixed;
@@ -16,14 +18,15 @@
     transition: opacity 0.3s ease;
 }
 
-.modal-overlay[style*="display: flex"] {
+.modal-overlay.active {
+    display: flex;
     opacity: 1;
 }
 
-.modal-container {
+.modal-content {
     background-color: white;
     width: 90%;
-    max-width: 600px;
+    max-width: 500px;
     border-radius: 12px;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     transform: translateY(20px);
@@ -34,33 +37,32 @@
     flex-direction: column;
 }
 
-.modal-overlay[style*="display: flex"] .modal-container {
+.modal-overlay.active .modal-content {
     transform: translateY(0);
 }
 
 .modal-header {
     padding: 1.25rem 1.5rem;
-    background-color: #28a745;
-    color: white;
+    border-bottom: 1px solid #e0e0e0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: none;
+    background-color: white;
 }
 
-.modal-header h3 {
+.modal-header-title {
     margin: 0;
     font-size: 1.25rem;
     font-weight: 600;
-    color: white;
+    color: #2c3e50;
 }
 
-.btn-cerrar-modal {
+.modal-close-btn {
     background: none;
     border: none;
     font-size: 1.5rem;
     line-height: 1;
-    color: white;
+    color: #7f8c8d;
     cursor: pointer;
     padding: 0.25rem;
     border-radius: 50%;
@@ -70,55 +72,16 @@
     justify-content: center;
     width: 32px;
     height: 32px;
-    opacity: 0.8;
 }
 
-.btn-cerrar-modal:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    opacity: 1;
+.modal-close-btn:hover {
+    background-color: #f1f1f1;
+    color: #e74c3c;
 }
 
 .modal-body {
     padding: 1.5rem;
     overflow-y: auto;
-    flex: 1;
-}
-
-.form-group {
-    margin-bottom: 1.25rem;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-    color: #2c3e50;
-    font-size: 0.9rem;
-}
-
-.form-group input,
-.form-group textarea,
-.form-group select {
-    width: 100%;
-    padding: 0.6rem 1rem;
-    font-size: 0.95rem;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
-    outline: none;
-    border-color: #28a745;
-    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
-}
-
-.form-group textarea {
-    resize: vertical;
-    min-height: 100px;
-    font-family: inherit;
 }
 
 .modal-footer {
@@ -130,70 +93,124 @@
     gap: 0.75rem;
 }
 
-.btn-cancelar,
-.btn-guardar {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.6rem 1.2rem;
-    font-size: 0.95rem;
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
     font-weight: 500;
+    color: #2c3e50;
+    font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #e0e0e0;
     border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: inherit;
 }
 
-.btn-cancelar {
-    background-color: #95a5a6;
-    color: white;
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
 }
 
-.btn-cancelar:hover {
-    background-color: #7f8c8d;
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
 }
 
-.btn-guardar {
+/* =========================================
+   ESTILOS ESPECÍFICOS PARA CREAR MAZO
+   ========================================= */
+
+#modalCrearMazoOverlay {
+    --modal-color: #28a745;
+}
+
+#modalCrearMazo .modal-header,
+#modalCrearMazoOverlay #modalCrearMazo .modal-header {
     background-color: #28a745;
     color: white;
-    box-shadow: 0 4px 6px rgba(40, 167, 69, 0.2);
 }
 
-.btn-guardar:hover {
+#modalCrearMazo .modal-header-title,
+#modalCrearMazoOverlay #modalCrearMazo .modal-header-title {
+    color: white;
+}
+
+#modalCrearMazo .modal-close-btn,
+#modalCrearMazoOverlay #modalCrearMazo .modal-close-btn {
+    color: white;
+    opacity: 0.8;
+}
+
+#modalCrearMazo .modal-close-btn:hover,
+#modalCrearMazoOverlay #modalCrearMazo .modal-close-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    opacity: 1;
+}
+
+#modalCrearMazo .form-control:focus,
+#modalCrearMazo .form-select:focus,
+#modalCrearMazoOverlay #modalCrearMazo .form-control:focus,
+#modalCrearMazoOverlay #modalCrearMazo .form-select:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+#modalCrearMazo .btn-success,
+#modalCrearMazo .btn-primary,
+#modalCrearMazoOverlay #modalCrearMazo .btn-success,
+#modalCrearMazoOverlay #modalCrearMazo .btn-primary {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+#modalCrearMazo .btn-success:hover:not(:disabled),
+#modalCrearMazo .btn-primary:hover:not(:disabled),
+#modalCrearMazoOverlay #modalCrearMazo .btn-success:hover:not(:disabled),
+#modalCrearMazoOverlay #modalCrearMazo .btn-primary:hover:not(:disabled) {
     background-color: #218838;
-    box-shadow: 0 6px 8px rgba(40, 167, 69, 0.3);
-    transform: translateY(-1px);
+    border-color: #218838;
 }
 
-.btn-guardar:active {
-    transform: translateY(1px);
+/* Validaciones */
+#modalCrearMazo .form-control.is-invalid,
+#modalCrearMazo .form-select.is-invalid,
+#modalCrearMazoOverlay #modalCrearMazo .form-control.is-invalid,
+#modalCrearMazoOverlay #modalCrearMazo .form-select.is-invalid {
+    border-color: #ef4444;
 }
 
+#modalCrearMazo .form-control.is-invalid:focus,
+#modalCrearMazo .form-select.is-invalid:focus,
+#modalCrearMazoOverlay #modalCrearMazo .form-control.is-invalid:focus,
+#modalCrearMazoOverlay #modalCrearMazo .form-select.is-invalid:focus {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 0.2rem rgba(239, 68, 68, 0.25);
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-    .modal-container {
-        width: 95%;
-        max-width: none;
-    }
-
-    .modal-header {
+    #modalCrearMazo .modal-body,
+    #modalCrearMazoOverlay #modalCrearMazo .modal-body {
         padding: 1rem;
     }
 
-    .modal-header h3 {
-        font-size: 1.1rem;
-    }
-
-    .modal-body {
-        padding: 1rem;
-    }
-
-    .modal-footer {
-        padding: 0.75rem 1rem;
-        flex-direction: column-reverse;
-    }
-
-    .btn-cancelar,
-    .btn-guardar {
-        width: 100%;
+    #modalCrearMazo .form-label,
+    #modalCrearMazoOverlay #modalCrearMazo .form-label {
+        font-size: 0.9rem;
     }
 }
