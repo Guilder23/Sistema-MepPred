@@ -696,7 +696,7 @@ def calificar_examen(request, examen_id):
         # Calcular porcentaje
         porcentaje = (preguntas_correctas / total_preguntas * 100) if total_preguntas > 0 else 0
         aprobado = porcentaje >= 60  # 60% para aprobar
-        nota = round(porcentaje / 5, 2)  # Nota sobre 20
+        nota = round(porcentaje, 2)  # Nota sobre 100
         
         # Verificar intentos previos
         intentos_previos = IntentoExamen.objects.filter(

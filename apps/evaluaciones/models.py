@@ -179,7 +179,7 @@ class IntentoExamen(models.Model):
     nota = models.DecimalField(
         max_digits=5,
         decimal_places=2,
-        verbose_name="Nota sobre 20"
+        verbose_name="Nota sobre 100"
     )
     aprobado = models.BooleanField(
         verbose_name="Aprobado"
