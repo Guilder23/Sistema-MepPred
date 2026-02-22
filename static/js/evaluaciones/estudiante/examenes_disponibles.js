@@ -189,7 +189,7 @@ function crearTarjetaExamen(examen, temaNombre = null) {
                     ? `<span class="restantes ranking-disponible">${intentosRestantes} intento para ranking</span>`
                     : `<span class="sin-ranking-text">Ya no puedes entrar al ranking</span>`
                 }
-                ${examen.mejor_nota !== null ? `<span class="mejor-nota">Mejor: ${examen.mejor_nota}/20</span>` : ''}
+                ${examen.mejor_nota !== null ? `<span class="mejor-nota">Mejor: ${examen.mejor_nota}/100</span>` : ''}
             </div>
         `;
         

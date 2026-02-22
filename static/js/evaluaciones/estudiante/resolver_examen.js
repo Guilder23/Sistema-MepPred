@@ -90,7 +90,7 @@ function mostrarHistorialIntentos() {
                 </div>
                 <div class="intento-detalles">
                     <div class="intento-nota">
-                        <span class="nota-valor">${intento.nota}/20</span>
+                        <span class="nota-valor">${intento.nota}/100</span>
                         <span class="nota-porcentaje">(${intento.porcentaje}%)</span>
                     </div>
                     <div class="intento-estado">${aprobadoTexto}</div>
@@ -126,7 +126,7 @@ function mostrarLimiteIntentosAlcanzado() {
                 ${intentosData.realizados.map((intento, index) => `
                     <div class="intento-resumen ${intento.aprobado ? 'aprobado' : 'reprobado'}">
                         <span class="intento-num">Intento ${intento.numero}:</span>
-                        <span class="intento-nota">${intento.nota}/20</span>
+                        <span class="intento-nota">${intento.nota}/100</span>
                         <span class="intento-porcentaje">(${intento.porcentaje}%)</span>
                         <span class="intento-estado">${intento.aprobado ? '✓ Aprobado' : '✗ Reprobado'}</span>
                     </div>
@@ -521,7 +521,7 @@ function mostrarResultados(calificacion, resultados) {
             <i class="fas ${aprobadoIcono}"></i>
             <div class="calificacion-info">
                 <h3>${aprobadoTexto}</h3>
-                <div class="nota-final">${calificacion.nota}/20</div>
+                <div class="nota-final">${calificacion.nota}/100</div>
                 <div class="porcentaje">${calificacion.porcentaje}%</div>
             </div>
         </div>

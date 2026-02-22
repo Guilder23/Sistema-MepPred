@@ -121,11 +121,11 @@ class Contenido(models.Model):
                 ).first()
                 
                 if examen_anterior:
-                    # Verificar si aprobó el examen (nota >= 16/20 = 80%)
+                    # Verificar si aprobó el examen (nota >= 80/100 = 80%)
                     intento_aprobado = IntentoExamen.objects.filter(
                         estudiante=usuario,
                         examen=examen_anterior,
-                        nota__gte=16
+                        nota__gte=80
                     ).exists()
                     
                     if not intento_aprobado:

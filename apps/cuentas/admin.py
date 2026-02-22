@@ -24,7 +24,6 @@ desverificar_usuarios.short_description = "✗ Marcar usuarios como no verificad
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
     list_display = ('email', 'username', 'role', 'email_verificado_badge', 'is_staff', 'is_active')
-    list_editable = ('email_verificado',)
     list_filter = ('email_verificado', 'is_staff', 'is_active', 'role')
     ordering = ('-date_joined',)
     search_fields = ('email', 'username')

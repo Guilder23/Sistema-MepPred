@@ -181,7 +181,7 @@ function añadirTooltips() {
         
         if (promedio && examenes && mejor) {
             fila.setAttribute('title', 
-                `Promedio: ${promedio}/20 | Exámenes: ${examenes} | Mejor: ${mejor}`
+                `Promedio: ${promedio}/100 | Exámenes: ${examenes} | Mejor: ${mejor}`
             );
         }
     });
