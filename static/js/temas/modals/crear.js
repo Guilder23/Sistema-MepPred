@@ -168,7 +168,7 @@ function guardarTema() {
             // Recargar tabla
             cargarTemas();
             cerrarModal('modalCrearOverlay');
-            mostrarMensaje('Éxito', 'Tema creado correctamente', 'success');
+            mostrarMensaje('Éxito', data.message || 'Tema creado correctamente', 'success');
         } else {
             mostrarMensaje('Error', data.error || 'Error al crear el tema', 'error');
         }

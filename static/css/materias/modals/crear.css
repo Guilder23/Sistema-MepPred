@@ -1,245 +1,162 @@
-/* Modal para crear materia - Verde */
+/* =========================================
+   ESTILOS BASE PARA MODAL
+   ========================================= */
 
-.modal-crear-overlay {
-    display: none;
+.modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: none;
     justify-content: center;
     align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
-.modal-crear-overlay.active {
+.modal-overlay.active {
     display: flex;
+    opacity: 1;
 }
 
-.modal-crear-container {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+.modal-content {
+    background-color: white;
     width: 90%;
-    max-width: 600px;
+    max-width: 500px;
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transform: translateY(20px);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
     max-height: 90vh;
-    overflow-y: auto;
-    animation: modalCrearSlideUp 0.3s ease-out;
+    display: flex;
+    flex-direction: column;
 }
 
-@keyframes modalCrearSlideUp {
-    from {
-        transform: translateY(20px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
 }
 
-.modal-crear-header {
-    background: #28a745;
-    color: white;
-    padding: 1.5rem;
+.modal-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: none;
+    background-color: white;
 }
 
-.modal-crear-header h2 {
+.modal-header-title {
     margin: 0;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 600;
-    text-align: center;
-    flex: 1;
+    color: #2c3e50;
 }
 
-.modal-crear-btn-close {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
+.modal-close-btn {
+    background: none;
     border: none;
-    padding: 0.5rem;
-    width: 36px;
-    height: 36px;
-    border-radius: 6px;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: #7f8c8d;
     cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 50%;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
-    font-size: 1.2rem;
-    margin-left: auto;
+    width: 32px;
+    height: 32px;
 }
 
-.modal-crear-btn-close:hover {
-    background: rgba(255, 255, 255, 0.3);
+.modal-close-btn:hover {
+    background-color: #f1f1f1;
+    color: #e74c3c;
 }
 
-.modal-crear-body {
-    padding: 2rem;
-    text-align: left;
+.modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
 }
 
-.modal-crear-form-group {
-    margin-bottom: 1.5rem;
-}
-
-.modal-crear-form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-    color: #2c3e50;
-    font-size: 0.9rem;
-    text-align: left;
-}
-
-.modal-crear-form-control {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border: 2px solid #e1e8ed;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    font-family: inherit;
-    transition: all 0.3s ease;
-    box-sizing: border-box;
+.modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e0e0e0;
     background-color: #f8f9fa;
-}
-
-.modal-crear-form-control:focus {
-    outline: none;
-    border-color: #28a745;
-    background-color: white;
-    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
-}
-
-textarea.modal-crear-form-control {
-    resize: vertical;
-    min-height: 100px;
-    line-height: 1.5;
-}
-
-.modal-crear-required label::after {
-    content: ' *';
-    color: #dc3545;
-    font-weight: 700;
-}
-
-.modal-crear-error-message {
-    color: #dc3545;
-    font-size: 0.85rem;
-    margin-top: 0.3rem;
-    display: none;
-}
-
-.modal-crear-error-message.show {
-    display: block;
-}
-
-.modal-crear-footer {
-    padding: 1.25rem 2rem;
-    background: #f8f9fa;
     display: flex;
     justify-content: flex-end;
     gap: 0.75rem;
-    border-top: 1px solid #dee2e6;
 }
 
-.modal-crear-btn {
-    padding: 0.65rem 1.75rem;
-    font-size: 0.95rem;
-    font-weight: 600;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    font-size: 0.875rem;
+    color: #333;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-family: inherit;
     transition: all 0.2s ease;
-    min-width: 100px;
+    background-color: #f9fafb;
 }
 
-.modal-crear-btn-cancelar {
-    background: #6c757d;
-    color: white;
+.form-control:focus {
+    outline: none;
+    border-color: #28a745;
+    background-color: white;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
 }
 
-.modal-crear-btn-cancelar:hover {
-    background: #5a6268;
-    transform: translateY(-1px);
-}
+/* =========================================
+   ESTILOS ESPECÍFICOS PARA CREAR (VERDE)
+   ========================================= */
 
-.modal-crear-btn-guardar {
+#modalCrearMateria .modal-header {
     background: #28a745;
     color: white;
-    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.25);
+    border-bottom: none;
 }
 
-.modal-crear-btn-guardar:hover {
-    background: #218838;
-    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.35);
-    transform: translateY(-1px);
+#modalCrearMateria .modal-header-title {
+    color: white;
 }
 
-.modal-crear-btn-guardar:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
+#modalCrearMateria .form-control:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
 }
 
+#modalCrearMateria .btn-success {
+    background-color: #28a745;
+}
+
+#modalCrearMateria .btn-success:hover:not(:disabled) {
+    background-color: #218838;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-    .modal-crear-container {
-        width: 95%;
-        max-height: 95vh;
-    }
-
-    .modal-crear-header {
-        padding: 1.25rem;
-    }
-
-    .modal-crear-header h2 {
-        font-size: 1.25rem;
-    }
-
-    .modal-crear-body {
-        padding: 1.5rem;
-    }
-
-    .modal-crear-footer {
+    #modalCrearMateria .modal-body {
         padding: 1rem;
-        flex-direction: column-reverse;
     }
 
-    .modal-crear-btn {
-        width: 100%;
-    }
-}
-
-/* Estilos para validaciones */
-.modal-crear-form-control-error {
-    border-color: #ef4444 !important;
-}
-
-.modal-crear-form-control-error:focus {
-    border-color: #ef4444 !important;
-    box-shadow: 0 0 0 0.2rem rgba(239, 68, 68, 0.25) !important;
-}
-
-.modal-crear-form-error {
-    color: #ef4444;
-    font-size: 0.875rem;
-    display: block;
-    margin-top: 0.25rem;
-    animation: slideInError 0.3s ease-out;
-}
-
-@keyframes slideInError {
-    from {
-        opacity: 0;
-        transform: translateY(-5px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
+    #modalCrearMateria .form-label {
+        font-size: 0.9rem;
     }
 }

@@ -163,11 +163,12 @@ def editar_usuario(request):
         return JsonResponse({'error': 'No tienes permisos'}, status=403)
     
     try:
-        usuario_id = request.POST.get('usuario_id')
+        # Aceptar tanto 'id' como 'usuario_id'
+        usuario_id = request.POST.get('id') or request.POST.get('usuario_id')
         nombre = request.POST.get('nombre', '').strip()
         email = request.POST.get('email', '').strip().lower()
-        role = request.POST.get('role', 'student')
-        study_year = request.POST.get('study_year', 'pre_uni')
+        role = request.POST.get('role', '').strip()
+        study_year = request.POST.get('study_year', '').strip()
         
         # Manejar diferentes formatos de is_active ('true', 'on', '1', True)
         is_active_val = request.POST.get('is_active')
@@ -175,30 +176,43 @@ def editar_usuario(request):
         
         usuario = User.objects.get(id=usuario_id)
         
-        # Validar email único
-        if email != usuario.email and User.objects.filter(email=email).exists():
-            return JsonResponse({'success': False, 'error': 'Este email ya está registrado'})
-        
         # Registrar cambios para auditoría
         cambios = {}
-        if usuario.first_name + ' ' + usuario.last_name != nombre:
-            cambios['nombre'] = nombre
-        if usuario.email != email:
-            cambios['email'] = email
-        if getattr(usuario, 'role', 'student') != role:
-            cambios['role'] = role
+        
+        # Solo actualizar campos si se proporcionan
+        if nombre:
+            # Validar email único
+            if email and email != usuario.email and User.objects.filter(email=email).exists():
+                return JsonResponse({'success': False, 'error': 'Este email ya está registrado'})
+            
+            nombres = nombre.split(' ', 1)
+            usuario.first_name = nombres[0]
+            usuario.last_name = nombres[1] if len(nombres) > 1 else ''
+            if nombre != usuario.first_name + ' ' + usuario.last_name:
+                cambios['nombre'] = nombre
+        
+        if email:
+            # Validar email único
+            if email != usuario.email and User.objects.filter(email=email).exists():
+                return JsonResponse({'success': False, 'error': 'Este email ya está registrado'})
+            usuario.email = email
+            if usuario.email != email:
+                cambios['email'] = email
+        
+        if role:
+            usuario.role = role
+            if getattr(usuario, 'role', 'student') != role:
+                cambios['role'] = role
+            usuario.is_staff = role == 'admin'
+        
+        if study_year:
+            usuario.study_year = study_year
+        
+        # Actualizar estado
         if usuario.is_active != is_active:
+            usuario.is_active = is_active
             cambios['estado'] = 'activo' if is_active else 'inactivo'
         
-        # Actualizar usuario
-        nombres = nombre.split(' ', 1)
-        usuario.first_name = nombres[0]
-        usuario.last_name = nombres[1] if len(nombres) > 1 else ''
-        usuario.email = email
-        usuario.role = role
-        usuario.study_year = study_year
-        usuario.is_active = is_active
-        usuario.is_staff = role == 'admin'
         usuario.save()
         
         # Registrar en auditoría

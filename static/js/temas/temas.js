@@ -120,13 +120,13 @@ function mostrarTemas(temas) {
                 <td>${fechaCreacion}</td>
                 <td>
                     <div class="acciones-cell">
-                        <button class="btn-icon btn-info" onclick="abrirModalVer(${tema.id})" title="Ver detalles">
+                        <button class="btn-icon btn-ver" onclick="abrirModalVer(${tema.id})" title="Ver detalles">
                             <i class="fas fa-eye"></i>
                         </button>
-                        <button class="btn-icon btn-warning" onclick="abrirModalEditar(${tema.id})" title="Editar">
+                        <button class="btn-icon btn-editar" onclick="abrirModalEditar(${tema.id})" title="Editar">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button class="btn-icon btn-danger" onclick="abrirModalEliminar(${tema.id})" title="Eliminar">
+                        <button class="btn-icon btn-eliminar" onclick="abrirModalEliminar(${tema.id})" title="Eliminar">
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
@@ -292,10 +292,61 @@ function cerrarModal(modalId) {
     }
 }
 
-// Mostrar mensaje de notificación
-function mostrarMensaje(titulo, mensaje, tipo = 'success') {
-    // Implementar según el sistema de notificaciones que uses
-    alert(titulo + ': ' + mensaje);
+// Mostrar mensaje de notificación con toast
+function mostrarMensaje(titulo, mensaje, tipo) {
+    // Crear contenedor de notificaciones si no existe
+    let container = document.querySelector('.toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+
+    // Crear el toast
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${tipo}`;
+    
+    // Icono según el tipo
+    let icono = '';
+    switch(tipo) {
+        case 'success':
+            icono = '<i class="fas fa-check-circle"></i>';
+            break;
+        case 'error':
+        case 'danger':
+            icono = '<i class="fas fa-exclamation-circle"></i>';
+            break;
+        case 'warning':
+            icono = '<i class="fas fa-exclamation-triangle"></i>';
+            break;
+        case 'info':
+            icono = '<i class="fas fa-info-circle"></i>';
+            break;
+        default:
+            icono = '<i class="fas fa-bell"></i>';
+    }
+
+    toast.innerHTML = `
+        <div class="toast-icon">${icono}</div>
+        <div class="toast-content">
+            <div class="toast-title">${escapeHtml(titulo)}</div>
+            <div class="toast-message">${escapeHtml(mensaje)}</div>
+        </div>
+        <button class="toast-close" onclick="this.parentElement.remove()">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+
+    container.appendChild(toast);
+
+    // Animar entrada
+    setTimeout(() => toast.classList.add('show'), 10);
+
+    // Auto-eliminar después de 5 segundos
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 5000);
 }
 
 // Escape HTML para prevenir XSS

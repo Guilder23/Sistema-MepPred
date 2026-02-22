@@ -1,30 +1,6 @@
 // Script para modal eliminar flashcard
 
-// Funciones para manejar modales
-window.abrirModal = function(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    }
-}
-
-window.cerrarModal = function(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-    }
-}
-
-// Cerrar modal al hacer clic fuera
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('modal-overlay')) {
-        cerrarModal(e.target.id);
-    }
-});
-
-window.eliminarFlashcardModal = async function(flashcardId) {
+window.eliminarFlashcard = async function(flashcardId) {
     try {
         const response = await fetch('/flashcards-premium/api/mazos/');
         const data = await response.json();
@@ -44,12 +20,12 @@ window.eliminarFlashcardModal = async function(flashcardId) {
                 document.getElementById('deleteFlashcardPregunta').textContent = flashcard.pregunta.substring(0, 100);
                 document.getElementById('deleteFlashcardRespuesta').textContent = flashcard.respuesta.substring(0, 100);
                 
-                abrirModal('eliminarFlashcardModal');
+                mostrarModal('modalEliminarFlashcardOverlay');
             }
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('Error al cargar la flashcard');
+        mostrarMensaje('Error', 'Error al cargar la flashcard', 'danger');
     }
 };
 
@@ -71,33 +47,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await response.json();
                 
                 if (data.success) {
-                    alert('Flashcard eliminada exitosamente');
-                    cerrarModal('eliminarFlashcardModal');
+                    mostrarMensaje('Éxito', 'Flashcard eliminada exitosamente', 'success');
+                    ocultarModal('modalEliminarFlashcardOverlay');
                     if (typeof cargarFlashcards === 'function') {
                         cargarFlashcards();
                     }
                 } else {
-                    alert('Error al eliminar la flashcard');
+                    mostrarMensaje('Error', 'Error al eliminar la flashcard', 'danger');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error al eliminar la flashcard');
+                mostrarMensaje('Error', 'Error al eliminar la flashcard', 'danger');
             }
         });
     }
 });
-
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}

@@ -1,109 +1,171 @@
-/* Estilos específicos para el modal de ver contenido */
+/* =========================================
+   ESTILOS BASE PARA MODAL
+   ========================================= */
 
-/* Overlay */
-#modalVerOverlay {
-    display: none;
+.modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 9999;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-}
-
-#modalVerOverlay.active {
-    display: flex;
-    align-items: center;
+    backdrop-filter: blur(4px);
+    display: none;
     justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
-/* Modal content */
-#modalVerOverlay .modal-content {
-    background: white;
-    border-radius: 8px;
+.modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-content {
+    background-color: white;
     width: 90%;
-    max-width: 600px;
+    max-width: 500px;
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transform: translateY(20px);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
     max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
 }
 
-/* Header */
-#modalVerOverlay .modal-header {
-    background-color: #3498db;
-    color: white;
-    padding: 1rem 1.5rem;
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
+}
+
+.modal-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-radius: 8px 8px 0 0;
+    background-color: white;
 }
 
-#modalVerOverlay .modal-header-title {
-    color: white;
+.modal-header-title {
     margin: 0;
     font-size: 1.25rem;
     font-weight: 600;
+    color: #2c3e50;
 }
 
-#modalVerOverlay .modal-close-btn {
+.modal-close-btn {
     background: none;
     border: none;
-    color: white;
     font-size: 1.5rem;
+    line-height: 1;
+    color: #7f8c8d;
     cursor: pointer;
-    padding: 0;
-    width: 30px;
-    height: 30px;
+    padding: 0.25rem;
+    border-radius: 50%;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
-    transition: background-color 0.2s;
+    width: 32px;
+    height: 32px;
 }
 
-#modalVerOverlay .modal-close-btn:hover {
+.modal-close-btn:hover {
+    background-color: #f1f1f1;
+    color: #e74c3c;
+}
+
+.modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+}
+
+.modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e0e0e0;
+    background-color: #f8f9fa;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+/* =========================================
+   ESTILOS ESPECÍFICOS PARA VER
+   ========================================= */
+
+#modalVerContenido .modal-header {
+    background-color: #3498db;
+    color: white;
+}
+
+#modalVerContenido .modal-header-title {
+    color: white;
+    font-weight: 600;
+}
+
+#modalVerContenido .modal-close-btn {
+    color: white;
+}
+
+#modalVerContenido .modal-close-btn:hover {
     background-color: rgba(255, 255, 255, 0.2);
+    color: white;
 }
 
-/* Body */
-#modalVerOverlay .modal-body {
+#modalVerContenido .modal-body {
     padding: 1.5rem;
 }
 
 /* Grupos de detalle */
-#modalVerOverlay .detalle-grupo {
-    margin-bottom: 1.25rem;
+#modalVerContenido .detalle-grupo {
+    margin-bottom: 1rem;
     padding-bottom: 1rem;
     border-bottom: 1px solid #e0e0e0;
 }
 
-#modalVerOverlay .detalle-grupo:last-child {
+#modalVerContenido .detalle-grupo:last-child {
     border-bottom: none;
 }
 
-#modalVerOverlay .detalle-label {
+#modalVerContenido .detalle-label {
     display: block;
     font-weight: 600;
     color: #2c3e50;
     margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    font-size: 0.85rem;
 }
 
-#modalVerOverlay .detalle-valor {
+#modalVerContenido .detalle-valor {
     color: #34495e;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     margin: 0;
     padding: 0.5rem;
     background-color: #f8f9fa;
     border-radius: 4px;
 }
 
-#modalVerOverlay .contenido-texto {
+#modalVerContenido .contenido-texto {
     white-space: pre-wrap;
     line-height: 1.6;
     max-height: 200px;
@@ -111,11 +173,11 @@
 }
 
 /* Videos */
-#modalVerOverlay #verVideos {
+#modalVerContenido #verVideos {
     margin-top: 0.5rem;
 }
 
-#modalVerOverlay #verVideos .video-item {
+#modalVerContenido #verVideos .video-item {
     padding: 0.75rem;
     background-color: #f8f9fa;
     border-radius: 4px;
@@ -125,11 +187,11 @@
     gap: 0.75rem;
 }
 
-#modalVerOverlay #verVideos .video-item i {
+#modalVerContenido #verVideos .video-item i {
     color: #3498db;
 }
 
-#modalVerOverlay #verVideos .video-item a {
+#modalVerContenido #verVideos .video-item a {
     color: #3498db;
     text-decoration: none;
     flex: 1;
@@ -138,70 +200,60 @@
     white-space: nowrap;
 }
 
-#modalVerOverlay #verVideos .video-item a:hover {
+#modalVerContenido #verVideos .video-item a:hover {
     text-decoration: underline;
 }
 
 /* Badges */
-#modalVerOverlay .badge {
+#modalVerContenido .badge {
     display: inline-block;
     padding: 0.4rem 0.8rem;
     font-size: 0.85rem;
     font-weight: 500;
-    border-radius: 20px;
-    text-transform: capitalize;
+    border-radius: 4px;
 }
 
-#modalVerOverlay .badge-activo {
+#modalVerContenido .badge-success {
     background-color: #d4edda;
     color: #155724;
 }
 
-#modalVerOverlay .badge-inactivo {
+#modalVerContenido .badge-danger {
     background-color: #f8d7da;
     color: #721c24;
 }
 
-#modalVerOverlay .badge-publicado {
+#modalVerContenido .badge-info {
     background-color: #d1ecf1;
     color: #0c5460;
 }
 
-#modalVerOverlay .badge-no-publicado {
+#modalVerContenido .badge-warning {
     background-color: #fff3cd;
     color: #856404;
 }
 
-/* Footer */
-#modalVerOverlay .modal-footer {
-    padding: 1rem 1.5rem;
-    background-color: #f8f9fa;
-    border-top: 1px solid #e0e0e0;
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.75rem;
-    border-radius: 0 0 8px 8px;
+.btn {
+    color: white;
 }
 
-/* Botones */
-#modalVerOverlay .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.6rem 1.2rem;
-    font-size: 0.95rem;
-    font-weight: 500;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-#modalVerOverlay .btn-secondary {
+.btn-secondary {
     background-color: #95a5a6;
     color: white;
 }
 
-#modalVerOverlay .btn-secondary:hover {
+.btn-secondary:hover {
     background-color: #7f8c8d;
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #modalVerContenido .modal-body {
+        padding: 1rem;
+    }
+
+    #modalVerContenido .detalle-label {
+        font-size: 0.85rem;
+    }
 }

@@ -4,14 +4,20 @@ let contenidoIdAEliminar = null;
 
 function abrirModalEliminar(contenidoId, contenidoNombre) {
     contenidoIdAEliminar = contenidoId;
-    document.getElementById('eliminarContenidoNombre').textContent = contenidoNombre;
-    mostrarModal('modalEliminarOverlay');
+    const nombreElement = document.getElementById('nombreContenidoEliminar');
+    if (nombreElement) {
+        nombreElement.textContent = contenidoNombre;
+    }
+    const overlay = document.getElementById('modalEliminarOverlay');
+    if (overlay) {
+        overlay.classList.add('active');
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    const btnConfirmarEliminar = document.getElementById('btnConfirmarEliminar');
-    if (btnConfirmarEliminar) {
-        btnConfirmarEliminar.addEventListener('click', eliminarContenido);
+    const btnEliminarContenido = document.getElementById('btnEliminarContenido');
+    if (btnEliminarContenido) {
+        btnEliminarContenido.addEventListener('click', eliminarContenido);
     }
 });
 
@@ -28,17 +34,19 @@ function eliminarContenido() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            mostrarAlerta('¡Contenido eliminado exitosamente!', 'success');
-            ocultarModal('modalEliminarOverlay');
+            mostrarMensaje('Éxito', data.message || '¡Contenido eliminado exitosamente!', 'success');
+            cerrarModal('modalEliminarOverlay');
             contenidoIdAEliminar = null;
             // Recargar la página para actualizar la lista
-            window.location.reload();
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
         } else {
-            mostrarAlerta(data.error || 'Error al eliminar contenido', 'danger');
+            mostrarMensaje('Error', data.message || 'Error al eliminar contenido', 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        mostrarAlerta('Error al eliminar contenido', 'danger');
+        mostrarMensaje('Error', 'Error al eliminar contenido', 'error');
     });
 }

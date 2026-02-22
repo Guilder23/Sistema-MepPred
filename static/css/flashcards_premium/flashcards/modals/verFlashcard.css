@@ -1,4 +1,6 @@
-/* Estilos base para modal ver flashcard */
+/* =========================================
+   ESTILOS BASE PARA MODAL
+   ========================================= */
 
 .modal-overlay {
     position: fixed;
@@ -16,14 +18,15 @@
     transition: opacity 0.3s ease;
 }
 
-.modal-overlay[style*="display: flex"] {
+.modal-overlay.active {
+    display: flex;
     opacity: 1;
 }
 
-.modal-container {
+.modal-content {
     background-color: white;
     width: 90%;
-    max-width: 600px;
+    max-width: 500px;
     border-radius: 12px;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     transform: translateY(20px);
@@ -34,33 +37,32 @@
     flex-direction: column;
 }
 
-.modal-overlay[style*="display: flex"] .modal-container {
+.modal-overlay.active .modal-content {
     transform: translateY(0);
 }
 
 .modal-header {
     padding: 1.25rem 1.5rem;
-    background-color: #17a2b8;
-    color: white;
+    border-bottom: 1px solid #e0e0e0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: none;
+    background-color: white;
 }
 
-.modal-header h3 {
+.modal-header-title {
     margin: 0;
     font-size: 1.25rem;
     font-weight: 600;
-    color: white;
+    color: #2c3e50;
 }
 
-.btn-cerrar-modal {
+.modal-close-btn {
     background: none;
     border: none;
     font-size: 1.5rem;
     line-height: 1;
-    color: white;
+    color: #7f8c8d;
     cursor: pointer;
     padding: 0.25rem;
     border-radius: 50%;
@@ -70,18 +72,25 @@
     justify-content: center;
     width: 32px;
     height: 32px;
-    opacity: 0.8;
 }
 
-.btn-cerrar-modal:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    opacity: 1;
+.modal-close-btn:hover {
+    background-color: #f1f1f1;
+    color: #e74c3c;
 }
 
 .modal-body {
     padding: 1.5rem;
     overflow-y: auto;
-    flex: 1;
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e0e0e0;
+    background-color: #f8f9fa;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
 }
 
 .detalle-item {
@@ -114,61 +123,74 @@
     word-wrap: break-word;
 }
 
-.modal-footer {
-    padding: 1rem 1.5rem;
-    border-top: 1px solid #e0e0e0;
-    background-color: #f8f9fa;
-    display: flex;
-    justify-content: flex-end;
+/* =========================================
+   ESTILOS ESPECÍFICOS PARA VER FLASHCARD
+   ========================================= */
+
+#modalVerFlashcardOverlay {
+    --modal-color: #17a2b8;
 }
 
-.btn-cerrar {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.6rem 1.2rem;
-    font-size: 0.95rem;
-    font-weight: 500;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    background-color: #95a5a6;
+#modalVerFlashcard .modal-header,
+#modalVerFlashcardOverlay #modalVerFlashcard .modal-header {
+    background-color: #17a2b8;
     color: white;
 }
 
-.btn-cerrar:hover {
-    background-color: #7f8c8d;
-    transform: translateY(-1px);
+#modalVerFlashcard .modal-header-title,
+#modalVerFlashcardOverlay #modalVerFlashcard .modal-header-title {
+    color: white;
 }
 
-.btn-cerrar:active {
-    transform: translateY(1px);
+#modalVerFlashcard .modal-close-btn,
+#modalVerFlashcardOverlay #modalVerFlashcard .modal-close-btn {
+    color: white;
+    opacity: 0.8;
 }
 
+#modalVerFlashcard .modal-close-btn:hover,
+#modalVerFlashcardOverlay #modalVerFlashcard .modal-close-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    opacity: 1;
+}
+
+/* Botones */
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    border-color: #6c757d;
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background-color: #5a6268;
+    border-color: #5a6268;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-    .modal-container {
-        width: 95%;
-        max-width: none;
-    }
-
-    .modal-header {
+    #modalVerFlashcard .modal-body,
+    #modalVerFlashcardOverlay #modalVerFlashcard .modal-body {
         padding: 1rem;
     }
 
-    .modal-header h3 {
-        font-size: 1.1rem;
+    #modalVerFlashcard .detalle-item label,
+    #modalVerFlashcardOverlay #modalVerFlashcard .detalle-item label {
+        font-size: 0.8rem;
     }
 
-    .modal-body {
-        padding: 1rem;
-    }
-
-    .modal-footer {
-        padding: 0.75rem 1rem;
-    }
-
-    .btn-cerrar {
-        width: 100%;
+    #modalVerFlashcard .modal-footer,
+    #modalVerFlashcardOverlay #modalVerFlashcard .modal-footer {
+        flex-direction: row;
     }
 }

@@ -1,16 +1,8 @@
 // Script para modal de ver detalles de materia
 
 document.addEventListener('DOMContentLoaded', function() {
-    const btnCerrar = document.getElementById('btnCerrarVer');
-
-    if (btnCerrar) {
-        btnCerrar.addEventListener('click', function() {
-            cerrarModal('modalVerOverlay');
-        });
-    }
-
     // Cerrar modal al hacer clic en X
-    const btnClose = document.querySelector('.modal-ver-btn-close');
+    const btnClose = document.querySelector('#modalVerOverlay .modal-close-btn');
     if (btnClose) {
         btnClose.addEventListener('click', function() {
             cerrarModal('modalVerOverlay');
@@ -18,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Cerrar modal al hacer clic fuera del modal
-    const modalOverlay = document.querySelector('.modal-ver-overlay');
+    const modalOverlay = document.querySelector('#modalVerOverlay');
     if (modalOverlay) {
         modalOverlay.addEventListener('click', function(e) {
             if (e.target === modalOverlay) {

@@ -1,42 +1,14 @@
 // Modal para editar flashcard
-let flashcardEditarModal = null;
-let btnCancelarEditarFlashcard = null;
-let btnGuardarEditarFlashcard = null;
-let inputEditarFlashcardCategoria = null;
-let textareaEditarFlashcardPregunta = null;
-let textareaEditarFlashcardRespuesta = null;
 let flashcardSeleccionadaEditar = null;
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Obtener referencias a los elementos del modal
-    flashcardEditarModal = document.getElementById('modal-editar-flashcard');
-    btnCancelarEditarFlashcard = document.getElementById('cancelar-editar-flashcard');
-    btnGuardarEditarFlashcard = document.getElementById('guardar-editar-flashcard');
-    inputEditarFlashcardCategoria = document.getElementById('editar-flashcard-categoria');
-    textareaEditarFlashcardPregunta = document.getElementById('editar-flashcard-pregunta');
-    textareaEditarFlashcardRespuesta = document.getElementById('editar-flashcard-respuesta');
+    const formEditarFlashcard = document.getElementById('formEditarFlashcard');
     
-    const closeBtn = flashcardEditarModal.querySelector('.close');
-    
-    // Event listeners
-    if (btnCancelarEditarFlashcard) {
-        btnCancelarEditarFlashcard.addEventListener('click', cerrarModalEditarFlashcard);
-    }
-    
-    if (btnGuardarEditarFlashcard) {
-        btnGuardarEditarFlashcard.addEventListener('click', guardarEditarFlashcard);
-    }
-    
-    if (closeBtn) {
-        closeBtn.addEventListener('click', cerrarModalEditarFlashcard);
-    }
-    
-    // Cerrar modal cuando se hace clic fuera del contenido
-    if (flashcardEditarModal) {
-        flashcardEditarModal.addEventListener('click', function(event) {
-            if (event.target === flashcardEditarModal) {
-                cerrarModalEditarFlashcard();
-            }
+    // Enviar formulario
+    if (formEditarFlashcard) {
+        formEditarFlashcard.addEventListener('submit', function(e) {
+            e.preventDefault();
+            guardarEditarFlashcard();
         });
     }
 });
@@ -48,51 +20,44 @@ function abrirModalEditarFlashcard(flashcardId) {
     if (window.flashcardsData && window.flashcardsData.tarjetas) {
         const flashcard = window.flashcardsData.tarjetas.find(t => t.id == flashcardId);
         if (flashcard) {
-            inputEditarFlashcardCategoria.value = flashcard.categoria || '';
-            textareaEditarFlashcardPregunta.value = flashcard.pregunta;
-            textareaEditarFlashcardRespuesta.value = flashcard.respuesta;
+            document.getElementById('editar-flashcard-id').value = flashcard.id;
+            document.getElementById('editar-flashcard-categoria').value = flashcard.categoria || '';
+            document.getElementById('editar-flashcard-pregunta').value = flashcard.pregunta;
+            document.getElementById('editar-flashcard-respuesta').value = flashcard.respuesta;
+            
+            console.log('Flashcard cargada:', {
+                id: flashcard.id,
+                categoria: flashcard.categoria,
+                pregunta: flashcard.pregunta
+            });
         }
     }
     
     // Mostrar el modal
-    flashcardEditarModal.classList.add('show');
-    
-    // Enfocar el campo de pregunta
-    textareaEditarFlashcardPregunta.focus();
-}
-
-function cerrarModalEditarFlashcard() {
-    flashcardEditarModal.classList.remove('show');
-    flashcardSeleccionadaEditar = null;
+    mostrarModalMazo('modalEditarFlashcardOverlay');
 }
 
 function guardarEditarFlashcard() {
-    const categoria = inputEditarFlashcardCategoria.value.trim();
-    const pregunta = textareaEditarFlashcardPregunta.value.trim();
-    const respuesta = textareaEditarFlashcardRespuesta.value.trim();
+    const categoria = document.getElementById('editar-flashcard-categoria').value.trim();
+    const pregunta = document.getElementById('editar-flashcard-pregunta').value.trim();
+    const respuesta = document.getElementById('editar-flashcard-respuesta').value.trim();
     
     if (!pregunta) {
-        alert('Por favor ingresa una pregunta');
-        textareaEditarFlashcardPregunta.focus();
+        mostrarMensaje('Error', 'Por favor ingresa una pregunta', 'error');
         return;
     }
     
     if (!respuesta) {
-        alert('Por favor ingresa una respuesta');
-        textareaEditarFlashcardRespuesta.focus();
+        mostrarMensaje('Error', 'Por favor ingresa una respuesta', 'error');
         return;
     }
-    
-    // Desabilitar el botón mientras se guarda
-    btnGuardarEditarFlashcard.disabled = true;
-    btnGuardarEditarFlashcard.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
     
     // Enviar solicitud al servidor
     fetch(`/flashcards/api/editar-flashcard/${flashcardSeleccionadaEditar}/`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': flashcardsData.csrfToken
+            'X-CSRFToken': getCookie('csrftoken')
         },
         body: JSON.stringify({
             categoria: categoria,
@@ -103,26 +68,15 @@ function guardarEditarFlashcard() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Cerrar el modal
-            cerrarModalEditarFlashcard();
-            
-            // Recargar las flashcards
-            if (window.cargarFlashcards) {
-                window.cargarFlashcards();
-            } else {
-                location.reload();
-            }
+            cerrarModalMazo('modalEditarFlashcardOverlay');
+            mostrarMensaje('Éxito', data.message || '¡Flashcard actualizada exitosamente!', 'success');
+            setTimeout(() => location.reload(), 1000);
         } else {
-            alert('Error al editar la flashcard: ' + (data.error || 'Error desconocido'));
+            mostrarMensaje('Error', data.error || 'Error al editar la flashcard', 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error al editar la flashcard');
-    })
-    .finally(() => {
-        // Reabilitar el botón
-        btnGuardarEditarFlashcard.disabled = false;
-        btnGuardarEditarFlashcard.innerHTML = 'Guardar Cambios';
+        mostrarMensaje('Error', 'Error al editar la flashcard', 'error');
     });
 }

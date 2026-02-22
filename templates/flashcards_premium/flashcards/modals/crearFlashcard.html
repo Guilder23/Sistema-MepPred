@@ -1,9 +1,9 @@
 <!-- Modal Crear Flashcard -->
-<div class="modal-overlay" id="crearFlashcardModal" style="display: none;">
-    <div class="modal-container">
+<div class="modal-overlay" id="modalCrearFlashcardOverlay">
+    <div class="modal-content" id="modalCrearFlashcard">
         <div class="modal-header">
-            <h3>Crear Flashcard Premium</h3>
-            <button type="button" class="btn-cerrar-modal" onclick="cerrarModal('crearFlashcardModal')">&times;</button>
+            <h5 class="modal-header-title">Crear Flashcard Premium</h5>
+            <button type="button" class="modal-close-btn" onclick="ocultarModal('modalCrearFlashcardOverlay')">&times;</button>
         </div>
         <div class="modal-body">
             <form id="formCrearFlashcard">
@@ -28,8 +28,8 @@
             </form>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn-cancelar" onclick="cerrarModal('crearFlashcardModal')">Cancelar</button>
-            <button type="button" class="btn-guardar" id="btnGuardarFlashcard">Guardar</button>
+            <button type="button" class="btn btn-secondary" onclick="ocultarModal('modalCrearFlashcardOverlay')">Cancelar</button>
+            <button type="button" class="btn btn-primary" id="btnGuardarFlashcard">Guardar</button>
         </div>
     </div>
 </div>

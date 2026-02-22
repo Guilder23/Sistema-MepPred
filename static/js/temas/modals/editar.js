@@ -169,7 +169,7 @@ function actualizarTema() {
             // Recargar tabla
             cargarTemas();
             cerrarModal('modalEditarOverlay');
-            mostrarMensaje('Éxito', 'Tema actualizado correctamente', 'success');
+            mostrarMensaje('Éxito', data.message || 'Tema actualizado correctamente', 'success');
         } else {
             mostrarMensaje('Error', data.error || 'Error al actualizar el tema', 'error');
         }

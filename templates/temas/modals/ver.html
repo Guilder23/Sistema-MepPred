@@ -1,42 +1,42 @@
 <!-- Modal Ver Tema -->
-<div class="modal-ver-overlay" id="modalVerOverlay">
-    <div class="modal-ver-container">
-        <div class="modal-ver-header">
-            <h2>Detalles del Tema</h2>
-            <button type="button" class="modal-ver-btn-close">&times;</button>
+<div class="modal-overlay" id="modalVerOverlay">
+    <div class="modal-content" id="modalVerTema">
+        <div class="modal-header">
+            <h5 class="modal-header-title">Detalles del Tema</h5>
+            <button type="button" class="modal-close-btn" onclick="cerrarModal('modalVerOverlay')">×</button>
         </div>
-        <div class="modal-ver-body">
-            <div class="modal-ver-info-row">
-                <div class="modal-ver-info-label">ID</div>
-                <div class="modal-ver-info-value" id="verId">-</div>
+        <div class="modal-body">
+            <div class="info-row">
+                <div class="info-label">ID</div>
+                <div class="info-value" id="verId">-</div>
             </div>
-            <div class="modal-ver-info-row">
-                <div class="modal-ver-info-label">Nombre</div>
-                <div class="modal-ver-info-value" id="verNombre">-</div>
+            <div class="info-row">
+                <div class="info-label">Nombre</div>
+                <div class="info-value" id="verNombre">-</div>
             </div>
-            <div class="modal-ver-info-row">
-                <div class="modal-ver-info-label">Materia</div>
-                <div class="modal-ver-info-value" id="verMateria">-</div>
+            <div class="info-row">
+                <div class="info-label">Materia</div>
+                <div class="info-value" id="verMateria">-</div>
             </div>
-            <div class="modal-ver-info-row">
-                <div class="modal-ver-info-label">Descripción</div>
-                <div class="modal-ver-info-value" id="verDescripcion">-</div>
+            <div class="info-row">
+                <div class="info-label">Descripción</div>
+                <div class="info-value" id="verDescripcion">-</div>
             </div>
-            <div class="modal-ver-info-row">
-                <div class="modal-ver-info-label">Tipo de Acceso</div>
-                <div class="modal-ver-info-value" id="verRequiereSuscripcion">-</div>
+            <div class="info-row">
+                <div class="info-label">Tipo de Acceso</div>
+                <div class="info-value" id="verRequiereSuscripcion">-</div>
             </div>
-            <div class="modal-ver-info-row">
-                <div class="modal-ver-info-label">Fecha de Creación</div>
-                <div class="modal-ver-info-value" id="verFechaCreacion">-</div>
+            <div class="info-row">
+                <div class="info-label">Fecha de Creación</div>
+                <div class="info-value" id="verFechaCreacion">-</div>
             </div>
-            <div class="modal-ver-info-row">
-                <div class="modal-ver-info-label">Última Actualización</div>
-                <div class="modal-ver-info-value" id="verFechaActualizacion">-</div>
+            <div class="info-row">
+                <div class="info-label">Última Actualización</div>
+                <div class="info-value" id="verFechaActualizacion">-</div>
             </div>
         </div>
-        <div class="modal-ver-footer">
-            <button type="button" class="modal-ver-btn modal-ver-btn-cerrar" id="btnCerrarVer">Cerrar</button>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="cerrarModal('modalVerOverlay')">Cerrar</button>
         </div>
     </div>
 </div>

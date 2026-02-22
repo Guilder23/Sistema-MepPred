@@ -1,32 +1,36 @@
-<div id="modal-crear-flashcard" class="modal">
-    <div class="modal-content">
+<!-- Modal Crear Flashcard -->
+<div class="modal-overlay" id="modalCrearFlashcardOverlay">
+    <div class="modal-content" id="modalCrearFlashcard">
         <div class="modal-header">
-            <h3>Crear Nueva Flashcard</h3>
-            <span class="close">&times;</span>
+            <h5 class="modal-header-title">Crear Nueva Flashcard</h5>
+            <button type="button" class="modal-close-btn" onclick="cerrarModalMazo('modalCrearFlashcardOverlay')">×</button>
         </div>
-        <div class="modal-body">
-            <div class="form-group">
-                <label for="crear-flashcard-mazo">Seleccionar Mazo:</label>
-                <select id="crear-flashcard-mazo" required>
-                    <option value="">-- Selecciona un mazo --</option>
-                </select>
+        <form id="formCrearFlashcard">
+            {% csrf_token %}
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Seleccionar Mazo *</label>
+                    <select class="form-control" id="crear-flashcard-mazo" name="mazo" required>
+                        <option value="">-- Selecciona un mazo --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Categoría</label>
+                    <input type="text" class="form-control" id="crear-flashcard-categoria" name="categoria" placeholder="Ej: Programación, Historia, Inglés...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Pregunta/Frente *</label>
+                    <textarea class="form-control" id="crear-flashcard-pregunta" name="pregunta" rows="2" placeholder="Escribe la pregunta o concepto aquí..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Respuesta/Reverso *</label>
+                    <textarea class="form-control" id="crear-flashcard-respuesta" name="respuesta" rows="2" placeholder="Escribe la respuesta o definición aquí..." required></textarea>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="crear-flashcard-categoria">Categoría:</label>
-                <input type="text" id="crear-flashcard-categoria" placeholder="Ej: Programación, Historia, Inglés...">
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="cerrarModalMazo('modalCrearFlashcardOverlay')">Cancelar</button>
+                <button type="submit" class="btn btn-success">Crear Flashcard</button>
             </div>
-            <div class="form-group">
-                <label for="crear-flashcard-pregunta">Pregunta/Frente:</label>
-                <textarea id="crear-flashcard-pregunta" placeholder="Escribe la pregunta o concepto aquí..." required></textarea>
-            </div>
-            <div class="form-group">
-                <label for="crear-flashcard-respuesta">Respuesta/Reverso:</label>
-                <textarea id="crear-flashcard-respuesta" placeholder="Escribe la respuesta o definición aquí..." required></textarea>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-secondary" id="cancelar-crear-flashcard">Cancelar</button>
-            <button class="btn btn-primary" id="guardar-crear-flashcard">Crear Flashcard</button>
-        </div>
+        </form>
     </div>
 </div>

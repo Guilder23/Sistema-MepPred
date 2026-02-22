@@ -1,61 +1,33 @@
 // Script para modal editar flashcard
 
-// Funciones para manejar modales
-window.abrirModal = function(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    }
-}
-
-window.cerrarModal = function(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-        const form = modal.querySelector('form');
-        if (form) form.reset();
-    }
-}
-
-// Cerrar modal al hacer clic fuera
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('modal-overlay')) {
-        cerrarModal(e.target.id);
-    }
-});
-
-// Cargar mazos en el select
-async function cargarMazosEnSelect() {
+// Cargar mazos en el select editar
+async function cargarMazosEditarFlashcard() {
     try {
         const response = await fetch('/flashcards-premium/api/mazos/');
         const data = await response.json();
         
         if (data.success) {
-            const select = document.getElementById('mazoFlashcard');
             const editSelect = document.getElementById('editMazoFlashcard');
             
-            [select, editSelect].forEach(s => {
-                if (s) {
-                    s.innerHTML = '<option value="">Seleccione un mazo</option>';
-                    data.mazos.forEach(mazo => {
-                        const option = document.createElement('option');
-                        option.value = mazo.id;
-                        option.textContent = mazo.nombre;
-                        s.appendChild(option);
-                    });
-                }
-            });
+            if (editSelect) {
+                editSelect.innerHTML = '<option value="">Seleccione un mazo</option>';
+                data.mazos.forEach(mazo => {
+                    const option = document.createElement('option');
+                    option.value = mazo.id;
+                    option.textContent = mazo.nombre;
+                    editSelect.appendChild(option);
+                });
+            }
         }
     } catch (error) {
         console.error('Error al cargar mazos:', error);
     }
 }
 
-window.editarFlashcardModal = async function(flashcardId) {
+window.editarFlashcard = async function(flashcardId) {
     try {
-        await cargarMazosEnSelect();
+        // Cargar mazos primero
+        await cargarMazosEditarFlashcard();
         
         const response = await fetch('/flashcards-premium/api/mazos/');
         const data = await response.json();
@@ -79,12 +51,12 @@ window.editarFlashcardModal = async function(flashcardId) {
                 document.getElementById('editRespuestaFlashcard').value = flashcard.respuesta;
                 document.getElementById('editCategoriaFlashcard').value = flashcard.categoria || '';
                 
-                abrirModal('editarFlashcardModal');
+                mostrarModal('modalEditarFlashcardOverlay');
             }
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('Error al cargar la flashcard');
+        mostrarMensaje('Error', 'Error al cargar la flashcard', 'danger');
     }
 };
 
@@ -112,32 +84,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await response.json();
                 
                 if (data.success) {
-                    cerrarModal('editarFlashcardModal');
+                    mostrarMensaje('Éxito', 'Flashcard actualizada exitosamente', 'success');
+                    ocultarModal('modalEditarFlashcardOverlay');
                     if (typeof cargarFlashcards === 'function') {
                         cargarFlashcards();
                     }
                 } else {
-                    alert('Error: ' + (data.error || 'No se pudo actualizar'));
+                    mostrarMensaje('Error', 'Error: ' + (data.error || 'No se pudo actualizar'), 'danger');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error al actualizar la flashcard');
+                mostrarMensaje('Error', 'Error al actualizar la flashcard', 'danger');
             }
         });
     }
 });
-
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}

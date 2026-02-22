@@ -1,2 +1,95 @@
-/* CSS para el modal de eliminar flashcard */
-/* Todos los estilos base se heredan de eliminar_mazo.css */
+/* =========================================
+   MODAL ELIMINAR FLASHCARD
+   ========================================= */
+
+#modalEliminarFlashcard .modal-header {
+    background-color: #dc3545;
+    color: #ffffff;
+}
+
+#modalEliminarFlashcard .modal-header-title {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+#modalEliminarFlashcard .modal-close-btn {
+    color: #ffffff;
+}
+
+#modalEliminarFlashcard .modal-close-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+#modalEliminarFlashcard .warning-message {
+    background-color: #fff3cd;
+    border-left: 4px solid #ffc107;
+    padding: 1rem;
+    border-radius: 4px;
+    text-align: center;
+}
+
+#modalEliminarFlashcard .warning-message i {
+    font-size: 3rem;
+    color: #ffc107;
+    margin-bottom: 1rem;
+}
+
+#modalEliminarFlashcard .warning-message p {
+    margin: 0.5rem 0;
+    color: #856404;
+}
+
+#modalEliminarFlashcard .warning-text {
+    font-size: 0.9rem;
+}
+
+#modalEliminarFlashcard .warning-text strong {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+#modalEliminarFlashcard .btn.btn-danger {
+    background-color: #dc3545 !important;
+    background-image: none !important;
+    border-color: #dc3545 !important;
+    color: white !important;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+#modalEliminarFlashcard .btn.btn-danger:hover {
+    background-color: #c82333 !important;
+    background-image: none !important;
+    border-color: #c82333 !important;
+    color: white !important;
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+    transform: translateY(-1px);
+}
+
+#modalEliminarFlashcard .btn.btn-secondary {
+    background-color: #95a5a6 !important;
+    color: white !important;
+}
+
+#modalEliminarFlashcard .btn.btn-secondary:hover {
+    background-color: #7f8c8d !important;
+    color: white !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #modalEliminarFlashcard .modal-body {
+        padding: 1rem;
+    }
+
+    #modalEliminarFlashcard .warning-message i {
+        font-size: 2.5rem;
+    }
+
+    #modalEliminarFlashcard .warning-message p {
+        font-size: 0.9rem;
+    }
+}

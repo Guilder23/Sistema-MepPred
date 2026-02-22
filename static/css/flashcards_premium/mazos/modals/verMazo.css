@@ -1,4 +1,6 @@
-/* Estilos base para modal ver mazo */
+/* =========================================
+   ESTILOS BASE PARA MODAL
+   ========================================= */
 
 .modal-overlay {
     position: fixed;
@@ -16,14 +18,15 @@
     transition: opacity 0.3s ease;
 }
 
-.modal-overlay[style*="display: flex"] {
+.modal-overlay.active {
+    display: flex;
     opacity: 1;
 }
 
-.modal-container {
+.modal-content {
     background-color: white;
     width: 90%;
-    max-width: 600px;
+    max-width: 500px;
     border-radius: 12px;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     transform: translateY(20px);
@@ -34,33 +37,32 @@
     flex-direction: column;
 }
 
-.modal-overlay[style*="display: flex"] .modal-container {
+.modal-overlay.active .modal-content {
     transform: translateY(0);
 }
 
 .modal-header {
     padding: 1.25rem 1.5rem;
-    background-color: #17a2b8;
-    color: white;
+    border-bottom: 1px solid #e0e0e0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: none;
+    background-color: white;
 }
 
-.modal-header h3 {
+.modal-header-title {
     margin: 0;
     font-size: 1.25rem;
     font-weight: 600;
-    color: white;
+    color: #2c3e50;
 }
 
-.btn-cerrar-modal {
+.modal-close-btn {
     background: none;
     border: none;
     font-size: 1.5rem;
     line-height: 1;
-    color: white;
+    color: #7f8c8d;
     cursor: pointer;
     padding: 0.25rem;
     border-radius: 50%;
@@ -70,48 +72,16 @@
     justify-content: center;
     width: 32px;
     height: 32px;
-    opacity: 0.8;
 }
 
-.btn-cerrar-modal:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    opacity: 1;
+.modal-close-btn:hover {
+    background-color: #f1f1f1;
+    color: #e74c3c;
 }
 
 .modal-body {
     padding: 1.5rem;
     overflow-y: auto;
-    flex: 1;
-}
-
-.detalle-item {
-    margin-bottom: 1.25rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #e0e0e0;
-}
-
-.detalle-item:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
-}
-
-.detalle-item label {
-    display: block;
-    font-weight: 600;
-    color: #17a2b8;
-    margin-bottom: 0.5rem;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.detalle-item p {
-    margin: 0;
-    color: #2c3e50;
-    font-size: 1rem;
-    line-height: 1.6;
-    word-wrap: break-word;
 }
 
 .modal-footer {
@@ -120,55 +90,98 @@
     background-color: #f8f9fa;
     display: flex;
     justify-content: flex-end;
+    gap: 0.75rem;
 }
 
-.btn-cerrar {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.6rem 1.2rem;
-    font-size: 0.95rem;
-    font-weight: 500;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    background-color: #95a5a6;
+/* =========================================
+   ESTILOS ESPECÍFICOS PARA VER MAZO
+   ========================================= */
+
+#modalVerMazoOverlay .modal-header,
+#modalVerMazo .modal-header {
+    background-color: #17a2b8;
     color: white;
 }
 
-.btn-cerrar:hover {
-    background-color: #7f8c8d;
-    transform: translateY(-1px);
+#modalVerMazoOverlay .modal-header-title,
+#modalVerMazo .modal-header-title,
+#modalVerMazoOverlay .modal-header h5,
+#modalVerMazo .modal-header h5 {
+    color: white;
 }
 
-.btn-cerrar:active {
-    transform: translateY(1px);
+#modalVerMazoOverlay .modal-close-btn,
+#modalVerMazo .modal-close-btn {
+    color: white;
+    opacity: 0.8;
 }
 
+#modalVerMazoOverlay .modal-close-btn:hover,
+#modalVerMazo .modal-close-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    opacity: 1;
+}
+
+#modalVerMazoOverlay .modal-body,
+#modalVerMazo .modal-body {
+    padding: 1.5rem;
+}
+
+/* Información de mazo */
+#modalVerMazoOverlay .info-row,
+#modalVerMazo .info-row,
+#modalVerMazoOverlay .detalle-item,
+#modalVerMazo .detalle-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+#modalVerMazoOverlay .info-row label,
+#modalVerMazo .info-row label,
+#modalVerMazoOverlay .detalle-item label,
+#modalVerMazo .detalle-item label {
+    font-weight: 600;
+    color: #2c3e50;
+    width: 30%;
+}
+
+#modalVerMazoOverlay .info-row span,
+#modalVerMazo .info-row span,
+#modalVerMazoOverlay .detalle-item span,
+#modalVerMazo .detalle-item span {
+    color: #495057;
+}
+
+#modalVerMazoOverlay .info-row:last-child,
+#modalVerMazo .info-row:last-child,
+#modalVerMazoOverlay .detalle-item:last-child,
+#modalVerMazo .detalle-item:last-child {
+    border-bottom: none;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-    .modal-container {
-        width: 95%;
-        max-width: none;
-    }
-
-    .modal-header {
+    #modalVerMazo .modal-body,
+    #modalVerMazoOverlay #modalVerMazo .modal-body {
         padding: 1rem;
     }
 
-    .modal-header h3 {
-        font-size: 1.1rem;
+    #modalVerMazo .info-row,
+    #modalVerMazoOverlay #modalVerMazo .info-row,
+    #modalVerMazo .detalle-item,
+    #modalVerMazoOverlay #modalVerMazo .detalle-item {
+        flex-direction: column;
+        gap: 0.5rem;
     }
 
-    .modal-body {
-        padding: 1rem;
-    }
-
-    .modal-footer {
-        padding: 0.75rem 1rem;
-    }
-
-    .btn-cerrar {
+    #modalVerMazo .info-row label,
+    #modalVerMazoOverlay #modalVerMazo .info-row label,
+    #modalVerMazo .detalle-item label,
+    #modalVerMazoOverlay #modalVerMazo .detalle-item label {
         width: 100%;
+        margin-bottom: 0.25rem;
     }
 }

@@ -1,26 +1,31 @@
-<div id="modal-editar-flashcard" class="modal">
-    <div class="modal-content">
+<!-- Modal Editar Flashcard -->
+<div class="modal-overlay" id="modalEditarFlashcardOverlay">
+    <div class="modal-content" id="modalEditarFlashcard">
         <div class="modal-header">
-            <h3>Editar Flashcard</h3>
-            <span class="close">&times;</span>
+            <h5 class="modal-header-title">Editar Flashcard</h5>
+            <button type="button" class="modal-close-btn" onclick="cerrarModalMazo('modalEditarFlashcardOverlay')">×</button>
         </div>
-        <div class="modal-body">
-            <div class="form-group">
-                <label for="editar-flashcard-categoria">Categoría:</label>
-                <input type="text" id="editar-flashcard-categoria" placeholder="Ej: Programación, Historia, Inglés...">
+        <form id="formEditarFlashcard">
+            {% csrf_token %}
+            <input type="hidden" id="editar-flashcard-id" name="flashcard_id">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Categoría</label>
+                    <input type="text" class="form-control" id="editar-flashcard-categoria" name="categoria" placeholder="Ej: Programación, Historia, Inglés...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Pregunta/Frente *</label>
+                    <textarea class="form-control" id="editar-flashcard-pregunta" name="pregunta" rows="2" placeholder="Escribe la pregunta o concepto aquí..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Respuesta/Reverso *</label>
+                    <textarea class="form-control" id="editar-flashcard-respuesta" name="respuesta" rows="2" placeholder="Escribe la respuesta o definición aquí..." required></textarea>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="editar-flashcard-pregunta">Pregunta/Frente:</label>
-                <textarea id="editar-flashcard-pregunta" placeholder="Escribe la pregunta o concepto aquí..." required></textarea>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="cerrarModalMazo('modalEditarFlashcardOverlay')">Cancelar</button>
+                <button type="submit" class="btn btn-warning">Guardar Cambios</button>
             </div>
-            <div class="form-group">
-                <label for="editar-flashcard-respuesta">Respuesta/Reverso:</label>
-                <textarea id="editar-flashcard-respuesta" placeholder="Escribe la respuesta o definición aquí..." required></textarea>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-secondary" id="cancelar-editar-flashcard">Cancelar</button>
-            <button class="btn btn-primary" id="guardar-editar-flashcard">Guardar Cambios</button>
-        </div>
+        </form>
     </div>
 </div>

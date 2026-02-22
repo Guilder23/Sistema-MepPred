@@ -10,6 +10,16 @@ let intervalTimer = null;
 document.addEventListener('DOMContentLoaded', function() {
     const examenId = document.getElementById('examenId').value;
     cargarExamen(examenId);
+    
+    // Advertir al intentar cerrar la ventana o recargar la página
+    window.addEventListener('beforeunload', function(e) {
+        const modalResultados = document.getElementById('modalResultados');
+        if (examen && modalResultados && modalResultados.style.display !== 'flex') {
+            e.preventDefault();
+            e.returnValue = '¿Seguro que quieres salir? Perderás el progreso del examen.';
+            return e.returnValue;
+        }
+    });
 });
 
 // Cargar examen desde el servidor
@@ -137,27 +147,46 @@ function inicializarExamen() {
         document.getElementById('examenTitulo').textContent = examen.titulo;
         document.getElementById('examenMateria').textContent = examen.materia_nombre;
         
-        // Inicializar respuestas vacías
+        // Inicializar respuestas vacías primero
         examen.preguntas.forEach(pregunta => {
             respuestas[pregunta.id] = {};
         });
         
-        // Iniciar temporizador
-        tiempoInicio = Date.now();
-        tiempoRestante = examen.duracion_minutos * 60; // en segundos
+        // Verificar si hay progreso guardado
+        const progresoGuardado = recuperarProgreso();
+        
+        if (progresoGuardado) {
+            // Restaurar progreso guardado sobre las respuestas inicializadas
+            Object.keys(progresoGuardado.respuestas).forEach(preguntaId => {
+                if (respuestas[preguntaId]) {
+                    respuestas[preguntaId] = progresoGuardado.respuestas[preguntaId];
+                }
+            });
+            preguntaActualIndex = progresoGuardado.preguntaActual;
+            tiempoInicio = progresoGuardado.tiempoInicio;
+            tiempoRestante = progresoGuardado.tiempoRestante;
+        } else {
+            // Iniciar temporizador con tiempo completo
+            tiempoInicio = Date.now();
+            tiempoRestante = examen.duracion_minutos * 60; // en segundos
+        }
+        
         iniciarTimer();
         
-        // Crear indicadores de preguntas (PRIMERO crear los indicadores)
+        // Crear indicadores de preguntas
         crearIndicadoresPreguntas();
         
-        // Mostrar primera pregunta (DESPUÉS mostrar la pregunta)
-        mostrarPregunta(0);
+        // Mostrar pregunta actual
+        mostrarPregunta(preguntaActualIndex);
         
         // Mostrar navegación
         document.getElementById('navegacionPreguntas').style.display = 'flex';
     } catch (error) {
         console.error('Error en inicializarExamen:', error);
-        alert('Error al inicializar el examen: ' + error.message);
+        console.error('Stack:', error.stack);
+        alert('Error al inicializar el examen. Por favor, recarga la página. Detalles: ' + error.message);
+        // Limpiar progreso corrupto si hay error
+        limpiarProgreso();
     }
 }
 
@@ -170,10 +199,12 @@ function iniciarTimer() {
         
         if (tiempoRestante <= 0) {
             clearInterval(intervalTimer);
+            limpiarProgreso(); // Limpiar progreso guardado
             alert('¡Tiempo agotado! El examen se finalizará automáticamente.');
             finalizarExamen();
         } else {
             actualizarTimer();
+            guardarProgreso(); // Guardar progreso cada segundo
         }
     }, 1000);
 }
@@ -214,6 +245,13 @@ function mostrarPregunta(index) {
     preguntaActualIndex = index;
     const pregunta = examen.preguntas[index];
     
+    // Asegurar que respuestas[pregunta.id] existe
+    if (!respuestas[pregunta.id]) {
+        respuestas[pregunta.id] = {};
+    }
+    
+    const respuestaPregunta = respuestas[pregunta.id];
+    
     // Construir HTML de la pregunta
     let html = `
         <div class="pregunta-card">
@@ -230,15 +268,15 @@ function mostrarPregunta(index) {
                                 <div class="enunciado-numero">${enunciado.numero}</div>
                                 <div class="enunciado-texto">${escapeHtml(enunciado.texto)}</div>
                                 <div class="enunciado-opciones">
-                                    <label class="radio-label ${respuestas[pregunta.id][enunciado.id] === 'V' ? 'selected' : ''}">
+                                    <label class="radio-label ${respuestaPregunta[enunciado.id] === 'V' ? 'selected' : ''}">
                                         <input type="radio" name="enunciado_${enunciado.id}" value="V" 
-                                            ${respuestas[pregunta.id][enunciado.id] === 'V' ? 'checked' : ''}
+                                            ${respuestaPregunta[enunciado.id] === 'V' ? 'checked' : ''}
                                             onchange="marcarEnunciado(${pregunta.id}, ${enunciado.id}, 'V')">
                                         <span class="radio-custom">V</span>
                                     </label>
-                                    <label class="radio-label ${respuestas[pregunta.id][enunciado.id] === 'F' ? 'selected' : ''}">
+                                    <label class="radio-label ${respuestaPregunta[enunciado.id] === 'F' ? 'selected' : ''}">
                                         <input type="radio" name="enunciado_${enunciado.id}" value="F"
-                                            ${respuestas[pregunta.id][enunciado.id] === 'F' ? 'checked' : ''}
+                                            ${respuestaPregunta[enunciado.id] === 'F' ? 'checked' : ''}
                                             onchange="marcarEnunciado(${pregunta.id}, ${enunciado.id}, 'F')">
                                         <span class="radio-custom">F</span>
                                     </label>
@@ -255,9 +293,9 @@ function mostrarPregunta(index) {
                     <h3>Selecciona la opción correcta:</h3>
                     <div class="opciones-lista">
                         ${pregunta.opciones.map(opcion => `
-                            <label class="opcion-item ${respuestas[pregunta.id]['opcion'] == opcion.id ? 'selected' : ''}">
+                            <label class="opcion-item ${respuestaPregunta['opcion'] == opcion.id ? 'selected' : ''}">
                                 <input type="radio" name="opcion_${pregunta.id}" value="${opcion.id}"
-                                    ${respuestas[pregunta.id]['opcion'] == opcion.id ? 'checked' : ''}
+                                    ${respuestaPregunta['opcion'] == opcion.id ? 'checked' : ''}
                                     onchange="marcarOpcion(${pregunta.id}, ${opcion.id})">
                                 <div class="opcion-contenido">
                                     <span class="opcion-letra">${opcion.letra}</span>
@@ -277,8 +315,7 @@ function mostrarPregunta(index) {
     actualizarIndicadores();
     
     // Actualizar botones de navegación
-    document.getElementById('btnAnterior').disabled = index === 0;
-    document.getElementById('btnSiguiente').disabled = index === examen.preguntas.length - 1;
+    actualizarBotonesNavegacion(index);
     
     // Actualizar progreso
     actualizarProgreso();
@@ -286,9 +323,13 @@ function mostrarPregunta(index) {
 
 // Marcar respuesta de enunciado
 function marcarEnunciado(preguntaId, enunciadoId, valor) {
+    if (!respuestas[preguntaId]) {
+        respuestas[preguntaId] = {};
+    }
     respuestas[preguntaId][enunciadoId] = valor;
     actualizarIndicadores();
     actualizarProgreso();
+    guardarProgreso(); // Guardar progreso al responder
     
     // Actualizar visualmente
     const labels = document.querySelectorAll(`input[name="enunciado_${enunciadoId}"]`).forEach(input => {
@@ -298,9 +339,13 @@ function marcarEnunciado(preguntaId, enunciadoId, valor) {
 
 // Marcar opción seleccionada
 function marcarOpcion(preguntaId, opcionId) {
+    if (!respuestas[preguntaId]) {
+        respuestas[preguntaId] = {};
+    }
     respuestas[preguntaId]['opcion'] = opcionId;
     actualizarIndicadores();
     actualizarProgreso();
+    guardarProgreso(); // Guardar progreso al responder
     
     // Actualizar visualmente
     const labels = document.querySelectorAll(`input[name="opcion_${preguntaId}"]`).forEach(input => {
@@ -312,13 +357,14 @@ function marcarOpcion(preguntaId, opcionId) {
 function actualizarIndicadores() {
     examen.preguntas.forEach((pregunta, index) => {
         const indicador = document.querySelector(`[data-index="${index}"]`);
+        if (!indicador) return;
         
         // Verificar si la pregunta está contestada
-        const respuesta = respuestas[pregunta.id];
+        const respuesta = respuestas[pregunta.id] || {};
         let contestada = false;
         
         // Verificar enunciados
-        const enunciadosContestados = pregunta.enunciados.every(e => respuesta[e.id]);
+        const enunciadosContestados = pregunta.enunciados.length === 0 || pregunta.enunciados.every(e => respuesta[e.id]);
         // Verificar opciones
         const opcionContestada = pregunta.opciones.length === 0 || respuesta['opcion'];
         
@@ -334,8 +380,8 @@ function actualizarProgreso() {
     let preguntasContestadas = 0;
     
     examen.preguntas.forEach(pregunta => {
-        const respuesta = respuestas[pregunta.id];
-        const enunciadosContestados = pregunta.enunciados.every(e => respuesta[e.id]);
+        const respuesta = respuestas[pregunta.id] || {};
+        const enunciadosContestados = pregunta.enunciados.length === 0 || pregunta.enunciados.every(e => respuesta[e.id]);
         const opcionContestada = pregunta.opciones.length === 0 || respuesta['opcion'];
         
         if (enunciadosContestados && opcionContestada) {
@@ -352,6 +398,7 @@ function actualizarProgreso() {
 function preguntaAnterior() {
     if (preguntaActualIndex > 0) {
         mostrarPregunta(preguntaActualIndex - 1);
+        guardarProgreso(); // Guardar progreso al navegar
     }
 }
 
@@ -359,6 +406,37 @@ function preguntaAnterior() {
 function preguntaSiguiente() {
     if (preguntaActualIndex < examen.preguntas.length - 1) {
         mostrarPregunta(preguntaActualIndex + 1);
+        guardarProgreso(); // Guardar progreso al navegar
+    }
+}
+
+// Actualizar botones de navegación
+function actualizarBotonesNavegacion(index) {
+    const btnAnterior = document.getElementById('btnAnterior');
+    const btnSiguiente = document.getElementById('btnSiguiente');
+    const esUltimaPregunta = index === examen.preguntas.length - 1;
+    
+    // Botón anterior
+    btnAnterior.disabled = index === 0;
+    
+    // Botón siguiente/finalizar
+    if (esUltimaPregunta) {
+        btnSiguiente.innerHTML = '<i class="fas fa-check"></i> Finalizar Examen';
+        btnSiguiente.classList.add('btn-finalizar-examen');
+    } else {
+        btnSiguiente.innerHTML = 'Siguiente <i class="fas fa-chevron-right"></i>';
+        btnSiguiente.classList.remove('btn-finalizar-examen');
+    }
+}
+
+// Manejar click en botón siguiente/finalizar
+function manejarBotonSiguiente() {
+    const esUltimaPregunta = preguntaActualIndex === examen.preguntas.length - 1;
+    
+    if (esUltimaPregunta) {
+        confirmarFinalizarExamen();
+    } else {
+        preguntaSiguiente();
     }
 }
 
@@ -368,8 +446,8 @@ function confirmarFinalizarExamen() {
     let preguntasSinContestar = [];
     
     examen.preguntas.forEach((pregunta, index) => {
-        const respuesta = respuestas[pregunta.id];
-        const enunciadosContestados = pregunta.enunciados.every(e => respuesta[e.id]);
+        const respuesta = respuestas[pregunta.id] || {};
+        const enunciadosContestados = pregunta.enunciados.length === 0 || pregunta.enunciados.every(e => respuesta[e.id]);
         const opcionContestada = pregunta.opciones.length === 0 || respuesta['opcion'];
         
         if (!enunciadosContestados || !opcionContestada) {
@@ -378,9 +456,14 @@ function confirmarFinalizarExamen() {
     });
     
     if (preguntasSinContestar.length > 0) {
-        if (!confirm(`Tienes ${preguntasSinContestar.length} pregunta(s) sin contestar. ¿Deseas finalizar de todas formas?`)) {
-            return;
+        // Actualizar cantidad en el modal
+        const cantidadElement = document.getElementById('cantidadPreguntasSinContestar');
+        if (cantidadElement) {
+            cantidadElement.textContent = preguntasSinContestar.length;
         }
+        // Mostrar modal personalizado en lugar de confirm()
+        document.getElementById('modalPreguntasSinContestar').style.display = 'flex';
+        return;
     }
     
     document.getElementById('modalConfirmar').style.display = 'flex';
@@ -395,6 +478,7 @@ function cerrarModalConfirmar() {
 async function finalizarExamen() {
     cerrarModalConfirmar();
     clearInterval(intervalTimer);
+    limpiarProgreso(); // Limpiar progreso guardado al finalizar
     
     // Calcular tiempo empleado
     const tiempoEmpleado = Math.floor((Date.now() - tiempoInicio) / 1000);
@@ -534,4 +618,147 @@ function getCookie(name) {
         }
     }
     return cookieValue;
+}
+
+// Guardar progreso en localStorage
+function guardarProgreso() {
+    if (!examen) return;
+    
+    const progreso = {
+        examenId: examen.id,
+        respuestas: respuestas,
+        preguntaActual: preguntaActualIndex,
+        tiempoInicio: tiempoInicio,
+        tiempoRestante: tiempoRestante,
+        timestamp: Date.now()
+    };
+    
+    localStorage.setItem(`examen_progreso_${examen.id}`, JSON.stringify(progreso));
+}
+
+// Recuperar progreso de localStorage
+function recuperarProgreso() {
+    if (!examen) return null;
+    
+    const progresoGuardado = localStorage.getItem(`examen_progreso_${examen.id}`);
+    if (!progresoGuardado) return null;
+    
+    try {
+        const progreso = JSON.parse(progresoGuardado);
+        
+        // Verificar que el progreso sea del mismo examen
+        if (progreso.examenId !== examen.id) {
+            return null;
+        }
+        
+        // Verificar que no haya expirado (máximo 24 horas)
+        const tiempoTranscurrido = Date.now() - progreso.timestamp;
+        const maxTiempo = 24 * 60 * 60 * 1000; // 24 horas en milisegundos
+        
+        if (tiempoTranscurrido > maxTiempo) {
+            limpiarProgreso();
+            return null;
+        }
+        
+        // Validar que preguntaActual sea un índice válido
+        if (progreso.preguntaActual < 0 || progreso.preguntaActual >= examen.preguntas.length) {
+            progreso.preguntaActual = 0;
+        }
+        
+        // Validar que respuestas sea un objeto
+        if (!progreso.respuestas || typeof progreso.respuestas !== 'object') {
+            progreso.respuestas = {};
+        }
+        
+        return progreso;
+    } catch (error) {
+        console.error('Error al recuperar progreso:', error);
+        limpiarProgreso();
+        return null;
+    }
+}
+
+// Limpiar progreso guardado
+function limpiarProgreso() {
+    if (!examen) return;
+    localStorage.removeItem(`examen_progreso_${examen.id}`);
+}
+
+// Confirmar salir del examen
+function confirmarSalirExamen() {
+    document.getElementById('modalSalir').style.display = 'flex';
+}
+
+// Cerrar modal de salir
+function cerrarModalSalir() {
+    document.getElementById('modalSalir').style.display = 'none';
+}
+
+// Salir del examen
+function salirExamen() {
+    clearInterval(intervalTimer);
+    limpiarProgreso();
+    window.location.href = '/examenes/disponibles/';
+}
+
+// Cerrar modal de preguntas sin contestar
+function cerrarModalPreguntasSinContestar() {
+    document.getElementById('modalPreguntasSinContestar').style.display = 'none';
+}
+
+// Finalizar examen desde modal de preguntas sin contestar
+function finalizarDesdePreguntasSinContestar() {
+    cerrarModalPreguntasSinContestar();
+    document.getElementById('modalConfirmar').style.display = 'flex';
+}
+
+// Mostrar notificación toast
+function mostrarToast(mensaje, tipo = 'info') {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+    
+    // Crear elemento toast
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${tipo}`;
+    
+    // Determinar el icono según el tipo
+    let icono = '';
+    switch(tipo) {
+        case 'success':
+            icono = '✓';
+            break;
+        case 'warning':
+            icono = '⚠';
+            break;
+        case 'error':
+            icono = '✕';
+            break;
+        case 'info':
+        default:
+            icono = 'ℹ';
+            break;
+    }
+    
+    toast.innerHTML = `
+        <span class="toast-icon">${icono}</span>
+        <span class="toast-message">${mensaje}</span>
+        <button class="toast-close" onclick="cerrarToast(this)">&times;</button>
+    `;
+    
+    // Agregar al contenedor
+    container.appendChild(toast);
+    
+    // Auto-cerrar después de 4 segundos
+    setTimeout(() => {
+        cerrarToast(toast.querySelector('.toast-close'));
+    }, 4000);
+}
+
+// Cerrar notificación toast
+function cerrarToast(button) {
+    const toast = button.parentElement || button;
+    toast.classList.add('fade-out');
+    setTimeout(() => {
+        toast.remove();
+    }, 300);
 }

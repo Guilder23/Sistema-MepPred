@@ -1,29 +1,5 @@
 // Script para modal eliminar mazo
 
-// Funciones para manejar modales
-window.abrirModal = function(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    }
-}
-
-window.cerrarModal = function(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-    }
-}
-
-// Cerrar modal al hacer clic fuera
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('modal-overlay')) {
-        cerrarModal(e.target.id);
-    }
-});
-
 window.eliminarMazoModal = async function(mazoId) {
     try {
         const response = await fetch('/flashcards-premium/api/mazos/');
@@ -37,12 +13,12 @@ window.eliminarMazoModal = async function(mazoId) {
                 document.getElementById('eliminarNombreMazo').textContent = mazo.nombre;
                 document.getElementById('eliminarTotalFlashcards').textContent = mazo.tarjetas_count || 0;
                 
-                abrirModal('eliminarMazoModal');
+                mostrarModal('modalEliminarMazoOverlay');
             }
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('Error al cargar el mazo');
+        mostrarMensaje('Error', 'Error al cargar el mazo', 'danger');
     }
 };
 
@@ -52,6 +28,13 @@ document.addEventListener('DOMContentLoaded', function() {
     if (btnConfirmar) {
         btnConfirmar.addEventListener('click', async function() {
             const id = document.getElementById('eliminarMazoId').value;
+            const totalFlashcards = parseInt(document.getElementById('eliminarTotalFlashcards').textContent) || 0;
+            
+            // Validar si tiene flashcards
+            if (totalFlashcards > 0) {
+                mostrarMensaje('No se puede eliminar', `Este mazo tiene ${totalFlashcards} flashcard(s). Debe eliminar todas las flashcards antes de poder eliminar el mazo.`, 'warning');
+                return;
+            }
             
             try {
                 const response = await fetch(`/flashcards-premium/api/mazos/${id}/eliminar/`, {
@@ -64,17 +47,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await response.json();
                 
                 if (data.success) {
-                    alert('Mazo eliminado exitosamente');
-                    cerrarModal('eliminarMazoModal');
+                    mostrarMensaje('Éxito', 'Mazo eliminado exitosamente', 'success');
+                    ocultarModal('modalEliminarMazoOverlay');
                     if (typeof cargarMazos === 'function') {
                         cargarMazos();
                     }
                 } else {
-                    alert('Error al eliminar el mazo');
+                    mostrarMensaje('Error', 'Error al eliminar el mazo', 'danger');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error al eliminar el mazo');
+                mostrarMensaje('Error', 'Error al eliminar el mazo', 'danger');
             }
         });
     }

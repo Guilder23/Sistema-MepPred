@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Cerrar modal al hacer clic en X
-    const btnClose = document.querySelector('.modal-ver-btn-close');
+    const btnClose = document.querySelector('#modalVerExamen .modal-close-btn');
     if (btnClose) {
         btnClose.addEventListener('click', function() {
             cerrarModal('modalVerOverlay');
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Cerrar modal al hacer clic fuera del modal
-    const modalOverlay = document.querySelector('.modal-ver-overlay');
+    const modalOverlay = document.getElementById('modalVerOverlay');
     if (modalOverlay) {
         modalOverlay.addEventListener('click', function(e) {
             if (e.target === modalOverlay) {

@@ -2,10 +2,13 @@
 
 let examenesData = [];
 let searchTimeout;
+let materiasData = [];
+let temasData = [];
 
 // Inicializar cuando carga la página
 document.addEventListener('DOMContentLoaded', function() {
     cargarExamenes();
+    cargarMateriasYTemas();
     
     // Event listeners para búsqueda
     const searchInput = document.getElementById('searchInput');
@@ -16,12 +19,91 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Event listeners para filtros
+    const filtroMateria = document.getElementById('filtroMateria');
+    const filtroTema = document.getElementById('filtroTema');
+    const filtroTipo = document.getElementById('filtroTipo');
+    const filtroEstado = document.getElementById('filtroEstado');
+
+    if (filtroMateria) {
+        filtroMateria.addEventListener('change', function() {
+            actualizarSelectTemas();
+            filtrarExamenes();
+        });
+    }
+
+    if (filtroTema) {
+        filtroTema.addEventListener('change', filtrarExamenes);
+    }
+
+    if (filtroTipo) {
+        filtroTipo.addEventListener('change', filtrarExamenes);
+    }
+
+    if (filtroEstado) {
+        filtroEstado.addEventListener('change', filtrarExamenes);
+    }
+
     // Event listener para botón nuevo examen
     const btnNuevoExamen = document.getElementById('btnNuevoExamen');
     if (btnNuevoExamen) {
         btnNuevoExamen.addEventListener('click', abrirModalCrear);
     }
 });
+
+// Cargar materias y temas disponibles
+function cargarMateriasYTemas() {
+    fetch('/materias/api/materias-y-temas/')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                materiasData = data.materias || [];
+                temasData = data.temas || [];
+                poblarSelectMaterias();
+            }
+        })
+        .catch(error => console.error('Error al cargar materias y temas:', error));
+}
+
+// Poblar el select de materias
+function poblarSelectMaterias() {
+    const filtroMateria = document.getElementById('filtroMateria');
+    materiasData.forEach(materia => {
+        const option = document.createElement('option');
+        option.value = materia.id;
+        option.textContent = materia.nombre;
+        filtroMateria.appendChild(option);
+    });
+}
+
+// Actualizar select de temas basado en la materia seleccionada
+function actualizarSelectTemas() {
+    const filtroMateria = document.getElementById('filtroMateria').value;
+    const filtroTema = document.getElementById('filtroTema');
+    
+    // Limpiar opciones de tema (excepto la primera)
+    while (filtroTema.options.length > 1) {
+        filtroTema.remove(1);
+    }
+    
+    if (filtroMateria) {
+        const temasFiltrados = temasData.filter(tema => tema.materia_id == filtroMateria);
+        temasFiltrados.forEach(tema => {
+            const option = document.createElement('option');
+            option.value = tema.id;
+            option.textContent = tema.nombre;
+            filtroTema.appendChild(option);
+        });
+    } else {
+        // Si no hay materia seleccionada, mostrar todos los temas
+        temasData.forEach(tema => {
+            const option = document.createElement('option');
+            option.value = tema.id;
+            option.textContent = tema.nombre;
+            filtroTema.appendChild(option);
+        });
+    }
+}
 
 // Cargar exámenes del servidor
 function cargarExamenes() {
@@ -97,21 +179,48 @@ function mostrarExamenes(examenes) {
     }).join('');
 }
 
-// Filtrar exámenes por búsqueda
+// Filtrar exámenes por búsqueda y filtros
 function filtrarExamenes() {
     const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const filtroMateria = document.getElementById('filtroMateria').value;
+    const filtroTema = document.getElementById('filtroTema').value;
+    const filtroTipo = document.getElementById('filtroTipo').value;
+    const filtroEstado = document.getElementById('filtroEstado').value;
     
-    if (!searchTerm) {
-        mostrarExamenes(examenesData);
-        return;
-    }
-
-    const filtrados = examenesData.filter(examen => 
-        examen.titulo.toLowerCase().includes(searchTerm) ||
-        examen.tema_nombre.toLowerCase().includes(searchTerm) ||
-        (examen.materia_nombre && examen.materia_nombre.toLowerCase().includes(searchTerm)) ||
-        (examen.descripcion && examen.descripcion.toLowerCase().includes(searchTerm))
-    );
+    const filtrados = examenesData.filter(examen => {
+        // Filtro por búsqueda
+        const coincideSearch = !searchTerm || 
+            examen.titulo.toLowerCase().includes(searchTerm) ||
+            (examen.descripcion && examen.descripcion.toLowerCase().includes(searchTerm));
+        
+        // Filtro por materia
+        const coincideMateria = !filtroMateria || examen.materia_id == filtroMateria;
+        
+        // Filtro por tema
+        const coincideTema = !filtroTema || examen.tema_id == filtroTema;
+        
+        // Filtro por tipo
+        let coincideTipo = true;
+        if (filtroTipo) {
+            if (filtroTipo === 'premium') {
+                coincideTipo = examen.materia_requiere_suscripcion === true;
+            } else if (filtroTipo === 'gratis') {
+                coincideTipo = examen.materia_requiere_suscripcion === false;
+            }
+        }
+        
+        // Filtro por estado
+        let coincideEstado = true;
+        if (filtroEstado) {
+            if (filtroEstado === 'activo') {
+                coincideEstado = examen.activo === true;
+            } else if (filtroEstado === 'inactivo') {
+                coincideEstado = examen.activo === false;
+            }
+        }
+        
+        return coincideSearch && coincideMateria && coincideTema && coincideTipo && coincideEstado;
+    });
 
     mostrarExamenes(filtrados);
 }
@@ -379,18 +488,57 @@ function getCookie(name) {
     return cookieValue;
 }
 
-// Mostrar mensaje toast
-function mostrarMensaje(mensaje, tipo) {
+// Mostrar mensaje tipo toast en la esquina inferior derecha
+function mostrarMensaje(titulo, mensaje, tipo) {
+    // Crear contenedor de notificaciones si no existe
+    let container = document.querySelector('.toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+
+    // Crear el toast
     const toast = document.createElement('div');
     toast.className = `toast toast-${tipo}`;
-    toast.textContent = mensaje;
     
-    document.body.appendChild(toast);
-    
-    // Trigger animation
+    // Icono según el tipo
+    let icono = '';
+    switch(tipo) {
+        case 'success':
+            icono = '<i class="fas fa-check-circle"></i>';
+            break;
+        case 'error':
+        case 'danger':
+            icono = '<i class="fas fa-exclamation-circle"></i>';
+            break;
+        case 'warning':
+            icono = '<i class="fas fa-exclamation-triangle"></i>';
+            break;
+        case 'info':
+            icono = '<i class="fas fa-info-circle"></i>';
+            break;
+        default:
+            icono = '<i class="fas fa-bell"></i>';
+    }
+
+    toast.innerHTML = `
+        <div class="toast-icon">${icono}</div>
+        <div class="toast-content">
+            <div class="toast-title">${escapeHtml(titulo)}</div>
+            <div class="toast-message">${escapeHtml(mensaje)}</div>
+        </div>
+        <button class="toast-close" onclick="this.parentElement.remove()">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+
+    container.appendChild(toast);
+
+    // Animar entrada
     setTimeout(() => toast.classList.add('show'), 10);
-    
-    // Remove after 5 seconds
+
+    // Auto-eliminar después de 5 segundos
     setTimeout(() => {
         toast.classList.remove('show');
         setTimeout(() => toast.remove(), 300);

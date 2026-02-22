@@ -1,8 +1,9 @@
-<div id="modal-eliminar-flashcard" class="modal">
-    <div class="modal-content">
+<!-- Modal Eliminar Flashcard -->
+<div class="modal-overlay" id="modalEliminarFlashcardOverlay">
+    <div class="modal-content" id="modalEliminarFlashcard">
         <div class="modal-header">
-            <h3>Eliminar Flashcard</h3>
-            <span class="close">&times;</span>
+            <h5 class="modal-header-title">Eliminar Flashcard</h5>
+            <button type="button" class="modal-close-btn" onclick="cerrarModalMazo('modalEliminarFlashcardOverlay')">×</button>
         </div>
         <div class="modal-body">
             <div class="warning-message">
@@ -13,8 +14,8 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-secondary" id="cancelar-eliminar-flashcard">Cancelar</button>
-            <button class="btn btn-danger" id="confirmar-eliminar-flashcard">Eliminar</button>
+            <button type="button" class="btn btn-secondary" onclick="cerrarModalMazo('modalEliminarFlashcardOverlay')">Cancelar</button>
+            <button type="button" class="btn btn-danger" id="confirmar-eliminar-flashcard">Eliminar</button>
         </div>
     </div>
 </div>

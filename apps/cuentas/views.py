@@ -329,7 +329,7 @@ def login_view(request):
         if user is None:
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({'success': False, 'message': 'Credenciales incorrectas.'})
-            return redirect(f'{reverse("cuentas:home")}?login_error=credenciales_incorrectas')
+            return redirect(f'{reverse("cuentas:home")}?show_login=true&login_error=credenciales_incorrectas')
 
         if not getattr(user, 'email_verificado', False):
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -342,7 +342,10 @@ def login_view(request):
             return JsonResponse({'success': True, 'redirect_url': reverse('cuentas:panel')})
         return redirect('cuentas:panel')
 
-    return render(request, 'cuentas/autenticacion/login.html')
+    # Mostrar el modal de login en el home en lugar de una página de login
+    next_url = request.GET.get('next', '')
+    next_param = f'&next={next_url}' if next_url else ''
+    return redirect(f"{reverse('cuentas:home')}?show_login=true{next_param}")
 
 
 def logout_view(request):

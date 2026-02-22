@@ -1,17 +1,17 @@
 <!-- Modal Crear Tema -->
-<div class="modal-crear-overlay" id="modalCrearOverlay">
-    <div class="modal-crear-container">
-        <div class="modal-crear-header">
-            <h2>Crear Nuevo Tema</h2>
-            <button type="button" class="modal-crear-btn-close">&times;</button>
+<div class="modal-overlay" id="modalCrearOverlay">
+    <div class="modal-content" id="modalCrearTema">
+        <div class="modal-header">
+            <h5 class="modal-header-title">Crear Nuevo Tema</h5>
+            <button type="button" class="modal-close-btn" onclick="cerrarModal('modalCrearOverlay')">×</button>
         </div>
         <form id="formCrearTema">
-            <div class="modal-crear-body">
-                <div class="modal-crear-form-group modal-crear-required">
-                    <label for="crearNombre">Nombre del Tema</label>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Nombre del Tema</label>
                     <input 
                         type="text" 
-                        class="modal-crear-form-control" 
+                        class="form-control" 
                         id="crearNombre" 
                         name="nombre" 
                         placeholder="Ej: Introducción a la Programación"
@@ -20,10 +20,10 @@
                         maxlength="200">
                 </div>
                 
-                <div class="modal-crear-form-group modal-crear-required">
-                    <label for="crearMateria">Materia</label>
+                <div class="form-group">
+                    <label class="form-label">Materia</label>
                     <select 
-                        class="modal-crear-form-control" 
+                        class="form-control" 
                         id="crearMateria" 
                         name="materia_id"
                         required>
@@ -31,10 +31,10 @@
                     </select>
                 </div>
                 
-                <div class="modal-crear-form-group">
-                    <label for="crearDescripcion">Descripción</label>
+                <div class="form-group">
+                    <label class="form-label">Descripción</label>
                     <textarea 
-                        class="modal-crear-form-control" 
+                        class="form-control" 
                         id="crearDescripcion" 
                         name="descripcion" 
                         placeholder="Descripción opcional del tema..."
@@ -42,17 +42,17 @@
                         rows="4"></textarea>
                 </div>
                 
-                <div class="modal-crear-form-group">
-                    <label class="modal-crear-checkbox-label">
+                <div class="form-group">
+                    <label class="form-label">
                         <input type="checkbox" id="crearRequiereSuscripcion" name="requiere_suscripcion">
-                        <span class="modal-crear-checkbox-text">Requiere Suscripción Premium</span>
+                        Requiere Suscripción Premium
                     </label>
-                    <small class="modal-crear-form-help">Si está marcado, solo usuarios con suscripción premium podrán acceder a este tema</small>
+                    <small style="display: block; margin-top: 0.25rem; color: #6c757d;">Si está marcado, solo usuarios con suscripción premium podrán acceder a este tema</small>
                 </div>
             </div>
-            <div class="modal-crear-footer">
-                <button type="button" class="modal-crear-btn modal-crear-btn-cancelar" id="btnCancelarTema">Cancelar</button>
-                <button type="button" class="modal-crear-btn modal-crear-btn-guardar" id="btnGuardarTema">Guardar</button>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="cerrarModal('modalCrearOverlay')">Cancelar</button>
+                <button type="submit" class="btn btn-success" id="btnGuardarTema">Crear Tema</button>
             </div>
         </form>
     </div>

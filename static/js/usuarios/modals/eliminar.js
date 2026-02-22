@@ -33,17 +33,16 @@ function confirmarEliminar() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            mostrarAlerta('¡Usuario eliminado exitosamente!', 'success');
-            ocultarModal('modalEliminarOverlay');
-            if (typeof cargarUsuarios === 'function') {
-                cargarUsuarios();
-            }
+            cargarUsuarios();
+            cerrarModal('modalEliminarOverlay');
+            mostrarMensaje('Éxito', data.message || 'Usuario eliminado correctamente', 'success');
         } else {
-            mostrarAlerta(data.error || 'Error al eliminar usuario', 'danger');
+            cerrarModal('modalEliminarOverlay');
+            mostrarMensaje('No se puede eliminar', data.error || 'Error al eliminar el usuario', 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        mostrarAlerta('Error al eliminar usuario', 'danger');
+        mostrarMensaje('Error', 'Error al eliminar el usuario', 'error');
     });
 }
