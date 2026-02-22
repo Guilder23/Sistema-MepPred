@@ -307,7 +307,7 @@ function crearInfoExamen(examen, numero, totalExamenes) {
             <div class="examen-aprobado">
                 <i class="fas fa-check-circle"></i>
                 <span>Examen Aprobado</span>
-                <span class="nota">Nota: ${mejorNota}/20</span>
+                <span class="nota">Nota: ${mejorNota}/100</span>
             </div>
         `;
         // No mostrar botón para exámenes aprobados
@@ -317,7 +317,7 @@ function crearInfoExamen(examen, numero, totalExamenes) {
             <div class="examen-disponible">
                 <i class="fas fa-clipboard-check"></i>
                 <span>Examen Disponible</span>
-                ${mejorNota ? `<span class="nota">Mejor nota: ${mejorNota}/20</span>` : ''}
+                ${mejorNota ? `<span class="nota">Mejor nota: ${mejorNota}/100</span>` : ''}
                 ${totalIntentos > 0 ? `<span class="intentos">${totalIntentos} intento(s)</span>` : ''}
             </div>
         `;
