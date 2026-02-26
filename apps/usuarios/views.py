@@ -4,8 +4,12 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
+from django.conf import settings
 from django.views.decorators.http import require_http_methods
 from django.db.models import Q
+from django.urls import reverse
 import json
 
 from .models import UsuarioAuditoria
@@ -141,6 +145,63 @@ def crear_usuario(request):
         usuario.role = role
         usuario.is_staff = role == 'admin'
         usuario.save()
+
+        email_warning = None
+        try:
+            login_url = request.build_absolute_uri(f"{reverse('cuentas:home')}?show_login=true")
+            subject = 'Tu cuenta ha sido creada en LevelMed'
+            text_body = (
+                f'Hola {usuario.first_name or usuario.username},\n\n'
+                f'Se creó una cuenta para ti en LevelMed.\n'
+                f'Usuario: {usuario.username}\n'
+                f'Correo: {usuario.email}\n\n'
+                f'Inicia sesión aquí: {login_url}\n\n'
+                'Si no solicitaste esta cuenta, por favor contacta al administrador.'
+            )
+            html_body = f"""
+            <div style=\"margin:0;padding:24px;background:#f4f6fb;font-family:Arial,Helvetica,sans-serif;color:#1f2937;\">
+                <table role=\"presentation\" style=\"width:100%;max-width:620px;margin:0 auto;background:#ffffff;border-radius:12px;border:1px solid #e5e7eb;overflow:hidden;\">
+                    <tr>
+                        <td style=\"background:#0f172a;padding:18px 24px;\">
+                            <h2 style=\"margin:0;color:#ffffff;font-size:22px;font-weight:700;\">LevelMed</h2>
+                            <p style=\"margin:8px 0 0;color:#cbd5e1;font-size:13px;\">Tu cuenta ha sido creada exitosamente</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style=\"padding:24px;\">
+                            <p style=\"margin:0 0 16px;font-size:16px;\">Hola <strong>{usuario.first_name or usuario.username}</strong>,</p>
+                            <p style=\"margin:0 0 18px;line-height:1.6;\">Se creó una cuenta para ti en <strong>LevelMed</strong>. Aquí tienes tus datos:</p>
+                            <table role=\"presentation\" style=\"width:100%;border-collapse:collapse;margin:0 0 18px;\">
+                                <tr>
+                                    <td style=\"padding:10px;border:1px solid #e5e7eb;background:#f8fafc;font-weight:600;width:140px;\">Usuario</td>
+                                    <td style=\"padding:10px;border:1px solid #e5e7eb;\">{usuario.username}</td>
+                                </tr>
+                                <tr>
+                                    <td style=\"padding:10px;border:1px solid #e5e7eb;background:#f8fafc;font-weight:600;\">Correo</td>
+                                    <td style=\"padding:10px;border:1px solid #e5e7eb;\">{usuario.email}</td>
+                                </tr>
+                            </table>
+                            <div style=\"margin:0 0 18px;\">
+                                <a href=\"{login_url}\" style=\"display:inline-block;padding:10px 16px;background:#0f172a;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:600;\">Ir a iniciar sesión</a>
+                            </div>
+                            <p style=\"margin:0 0 18px;line-height:1.6;\">También puedes ingresar desde este enlace: <a href=\"{login_url}\">{login_url}</a></p>
+                            <p style=\"margin:0;line-height:1.6;color:#475569;\">Si no solicitaste esta cuenta, contacta al administrador para revisar el acceso.</p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            """
+
+            email = EmailMultiAlternatives(
+                subject=subject,
+                body=text_body,
+                from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', None),
+                to=[usuario.email],
+            )
+            email.attach_alternative(html_body, "text/html")
+            email.send(fail_silently=False)
+        except Exception:
+            email_warning = 'Usuario creado, pero no se pudo enviar el correo de notificación.'
         
         # Registrar en auditoría
         UsuarioAuditoria.objects.create(
@@ -149,7 +210,12 @@ def crear_usuario(request):
             realizado_por=request.user
         )
         
-        return JsonResponse({'success': True, 'message': 'Usuario creado exitosamente'})
+        response_payload = {'success': True, 'message': 'Usuario creado exitosamente'}
+        if email_warning:
+            response_payload['warning'] = email_warning
+            response_payload['message'] = email_warning
+
+        return JsonResponse(response_payload)
     
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
@@ -235,27 +301,48 @@ def editar_usuario(request):
 @login_required
 @require_http_methods(["DELETE"])
 def eliminar_usuario(request, usuario_id):
-    """API para eliminar un usuario"""
+    """API para eliminar un usuario (deshabilitada por política de negocio)"""
     if not (request.user.is_superuser or getattr(request.user, 'role', '') == 'admin'):
         return JsonResponse({'error': 'No tienes permisos'}, status=403)
-    
+
+    return JsonResponse(
+        {
+            'success': False,
+            'error': 'La eliminación de usuarios está deshabilitada. Puedes desactivar el usuario desde Editar.'
+        },
+        status=403
+    )
+
+
+@login_required
+@require_http_methods(["POST"])
+def toggle_estado_usuario(request, usuario_id):
+    """API para activar/desactivar usuario desde la tabla"""
+    if not (request.user.is_superuser or getattr(request.user, 'role', '') == 'admin'):
+        return JsonResponse({'error': 'No tienes permisos'}, status=403)
+
     try:
         usuario = User.objects.get(id=usuario_id)
-        
-        # No permitir eliminar al mismo usuario
-        if usuario.id == request.user.id:
-            return JsonResponse({'success': False, 'error': 'No puedes eliminar tu propia cuenta'})
-        
-        # Registrar en auditoría antes de eliminar
+
+        is_active_val = request.POST.get('is_active')
+        nuevo_estado = str(is_active_val).lower() in ['true', 'on', '1']
+
+        if usuario.id == request.user.id and not nuevo_estado:
+            return JsonResponse({'success': False, 'error': 'No puedes desactivar tu propia cuenta'})
+
+        usuario.is_active = nuevo_estado
+        usuario.save(update_fields=['is_active'])
+
         UsuarioAuditoria.objects.create(
             usuario=usuario,
-            accion='eliminar',
-            realizado_por=request.user
+            accion='editar',
+            realizado_por=request.user,
+            cambios={'estado': 'activo' if nuevo_estado else 'inactivo'}
         )
-        
-        usuario.delete()
-        return JsonResponse({'success': True, 'message': 'Usuario eliminado exitosamente'})
-    
+
+        accion = 'activado' if nuevo_estado else 'desactivado'
+        return JsonResponse({'success': True, 'message': f'Usuario {accion} exitosamente'})
+
     except User.DoesNotExist:
         return JsonResponse({'success': False, 'error': 'Usuario no encontrado'})
     except Exception as e:

@@ -229,8 +229,15 @@ function crearUsuario(e) {
         if (data.success) {
             cargarUsuarios();
             cerrarModal('modalCrearOverlay');
-            document.getElementById('formCrearUsuario').reset();
-            mostrarMensaje('Éxito', data.message || 'Usuario creado correctamente', 'success');
+            const form = document.getElementById('formCrear');
+            if (form) {
+                form.reset();
+            }
+            if (data.warning) {
+                mostrarMensaje('Advertencia', data.warning, 'warning');
+            } else {
+                mostrarMensaje('Éxito', data.message || 'Usuario creado correctamente', 'success');
+            }
         } else {
             mostrarMensaje('Error', data.error || 'Error al crear el usuario', 'error');
         }

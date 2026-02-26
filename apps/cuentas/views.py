@@ -43,8 +43,8 @@ def _generar_email_recuperacion(user: User, url: str) -> str:
             .content {{ background: #F5F5F5; padding: 40px 20px; border-radius: 0 0 8px 8px; }}
             .content p {{ margin: 15px 0; }}
             .button-container {{ text-align: center; margin: 30px 0; }}
-            .button {{ display: inline-block; padding: 14px 40px; background: #27AE60; color: white; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px; border: none; cursor: pointer; }}
-            .button:hover {{ background: #229954; }}
+            .button {{ display: inline-block; padding: 14px 40px; background: #0D6EFD; color: #000000; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px; border: none; cursor: pointer; }}
+            .button:hover {{ background: #0B5ED7; color: #000000; }}
             .info-box {{ background: #E8F8F5; border-left: 4px solid #27AE60; padding: 15px; margin: 20px 0; border-radius: 4px; font-size: 14px; color: #1E5631; }}
             .url-box {{ background: white; padding: 15px; border-radius: 4px; font-family: monospace; font-size: 12px; word-break: break-all; margin: 15px 0; border: 1px solid #E0E0E0; }}
             .footer {{ text-align: center; color: #999999; font-size: 12px; margin-top: 20px; padding-top: 20px; border-top: 1px solid #E0E0E0; }}

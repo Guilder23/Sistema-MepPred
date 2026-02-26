@@ -207,8 +207,8 @@ function mostrarUsuarios(usuarios) {
                         <button class="btn-icon btn-editar" onclick="abrirModalEditar('${usuario.id}')" title="Editar">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button class="btn-icon btn-eliminar" onclick="abrirModalEliminar('${usuario.id}')" title="Eliminar">
-                            <i class="fas fa-trash"></i>
+                        <button class="btn-icon btn-eliminar" onclick="abrirModalEliminar('${usuario.id}', ${usuario.is_active})" title="${usuario.is_active ? 'Desactivar' : 'Activar'}">
+                            <i class="fas ${usuario.is_active ? 'fa-user-slash' : 'fa-user-check'}"></i>
                         </button>
                     </div>
                 </td>
@@ -281,3 +281,4 @@ function mostrarMensaje(titulo, mensaje, tipo) {
         setTimeout(() => toast.remove(), 300);
     }, 5000);
 }
+
