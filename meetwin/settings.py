@@ -141,7 +141,6 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
 # Configuración de almacenamiento de archivos con Supabase
-DEFAULT_FILE_STORAGE = 'meetwin.supabase_storage.SupabaseStorage'
 STORAGES = {
     'default': {
         'BACKEND': 'meetwin.supabase_storage.SupabaseStorage',
@@ -159,7 +158,9 @@ try:
 except Exception as e:
     print(f"⚠ Advertencia: No se pudo conectar a Supabase: {e}")
     print("  Usando almacenamiento local como fallback")
-    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    STORAGES['default'] = {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    }
     SUPABASE_ENABLED = False
 
 # URLs de Supabase para servir archivos públicos
