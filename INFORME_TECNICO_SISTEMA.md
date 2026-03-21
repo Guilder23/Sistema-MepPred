@@ -1,4 +1,4 @@
-# Informe tecnico del proyecto Sistema-MeedPred
+# Informe tecnico del proyecto AprendoYa
 
 ## 1. Resumen ejecutivo
 Sistema web educativo construido sobre Django para gestionar:
@@ -9,6 +9,7 @@ Sistema web educativo construido sobre Django para gestionar:
 - flashcards regulares y premium.
 
 La arquitectura sigue un estilo monolitico modular por apps Django.
+El nombre funcional del sistema es AprendoYa y el modulo principal Django se llama meetwin.
 
 ## 2. Tecnologias usadas
 ## Backend
@@ -65,7 +66,7 @@ En la practica, este MVT cubre lo que comunmente se llama MVC en otros framework
 flowchart LR
     U[Usuario Web] --> DJ[Django Monolito]
 
-    subgraph DJM[Proyecto meetwin]
+    subgraph DJM[Modulo principal Django: meetwin]
       URL[URL Router]
       CU[App cuentas]
       CO[App contenido]
