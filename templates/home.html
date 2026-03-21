@@ -1,6 +1,6 @@
 {% extends 'base/base.html' %}
 
-{% block titulo %}Inicio - AprendeYa{% endblock %}
+{% block titulo %}Inicio - AprendoYa{% endblock %}
 
 {% block css %}
 <link rel="stylesheet" href="/static/css/home.css" />
@@ -9,318 +9,309 @@
 {% endblock %}
 
 {% block contenido %}
-<!-- Hero Section -->
 <section class="hero">
+  <div class="hero__ambient hero__ambient--left"></div>
+  <div class="hero__ambient hero__ambient--right"></div>
+
   <div class="hero__container">
     <div class="hero__content">
+      <span class="hero__eyebrow">
+        <i class="fas fa-sparkles"></i>
+        Plataforma de aprendizaje universitario
+      </span>
+
       <h1 class="hero__title">
-        Domina tus Estudios con <span class="hero__highlight">AprendeYa</span>
+        Estudia con estrategia, no con estrés.
+        <span class="hero__highlight">AprendoYa</span> convierte tu esfuerzo en resultados.
       </h1>
+
       <p class="hero__subtitle">
-        La plataforma educativa definitiva para estudiantes universitarios. Aprende, practica y supera tus exámenes con herramientas avanzadas de IA y contenido personalizado.
+        Organiza materias, practica con evaluaciones inteligentes y acelera tu progreso con rutas de estudio personalizadas para cada semestre.
       </p>
+
       <div class="hero__buttons">
         <button class="btn btn--primary btn--large" id="open-login-modal">
-          <i class="fas fa-rocket"></i>
-          Comenzar Ahora
+          <i class="fas fa-right-to-bracket"></i>
+          Iniciar sesión
         </button>
-        <button class="btn btn--secondary btn--large" id="open-registro-modal">
+        <button class="btn btn--ghost btn--large" id="open-registro-modal">
           <i class="fas fa-user-plus"></i>
-          Crear Cuenta
+          Crear cuenta gratis
         </button>
       </div>
+
       <div class="hero__stats">
         <div class="stat">
-          <span class="stat__number">1000+</span>
-          <span class="stat__label">Estudiantes</span>
+          <span class="stat__number">25000+</span>
+          <span class="stat__label">Sesiones completadas</span>
         </div>
         <div class="stat">
-          <span class="stat__number">100+</span>
-          <span class="stat__label">Materias</span>
+          <span class="stat__number">180+</span>
+          <span class="stat__label">Rutas académicas</span>
         </div>
         <div class="stat">
-          <span class="stat__number">95%</span>
-          <span class="stat__label">Éxito</span>
+          <span class="stat__number">92%</span>
+          <span class="stat__label">Mejoran sus notas</span>
         </div>
       </div>
     </div>
+
     <div class="hero__image">
       <div class="hero__illustration">
-        <img src="/static/img/estudiante.png" alt="Estudiante" class="hero__student-image">
+        <div class="hero-card hero-card--top">
+          <span class="hero-card__title">Ritmo semanal</span>
+          <strong>7.8h de estudio efectivo</strong>
+          <small>+22% vs mes anterior</small>
+        </div>
+
+        <img src="/static/img/estudiante.png" alt="Estudiante aprendiendo" class="hero__student-image" />
+
+        <div class="hero-card hero-card--bottom">
+          <span class="hero-card__title">Objetivo de hoy</span>
+          <strong>Terminar 2 evaluaciones</strong>
+          <small>1 completada</small>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Features Section -->
+<section class="trust-strip">
+  <div class="container trust-strip__container">
+    <p class="trust-strip__text">Estudiantes de carreras exigentes eligen AprendoYa para estudiar con método</p>
+    <div class="trust-strip__chips">
+      <span>Medicina</span>
+      <span>Ingeniería</span>
+      <span>Derecho</span>
+      <span>Economía</span>
+      <span>Arquitectura</span>
+    </div>
+  </div>
+</section>
+
 <section class="features">
   <div class="container">
     <div class="section-header">
-      <h2 class="section-title">Características Principales</h2>
-      <p class="section-subtitle">Herramientas poderosas diseñadas para potenciar tu aprendizaje</p>
+      <h2 class="section-title">Todo lo que necesitas para rendir mejor</h2>
+      <p class="section-subtitle">Una experiencia integrada para planificar, practicar, medir y mejorar tu desempeño académico.</p>
     </div>
+
     <div class="features__grid">
-      <div class="feature-card">
-        <div class="feature-card__icon">
-          <i class="fas fa-brain"></i>
-        </div>
-        <h3 class="feature-card__title">IA Avanzada</h3>
-        <p class="feature-card__description">
-          Algoritmos de aprendizaje automático que se adaptan a tu ritmo de estudio y predicen áreas de mejora.
-        </p>
+      <article class="feature-card">
+        <div class="feature-card__icon"><i class="fas fa-compass"></i></div>
+        <h3 class="feature-card__title">Planificador académico</h3>
+        <p class="feature-card__description">Define objetivos por materia, organiza tus semanas y mantén visibilidad de lo que realmente importa.</p>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-card__icon"><i class="fas fa-pen-ruler"></i></div>
+        <h3 class="feature-card__title">Evaluaciones inteligentes</h3>
+        <p class="feature-card__description">Entrena con simulaciones que detectan vacíos de conocimiento y te recomiendan práctica puntual.</p>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-card__icon"><i class="fas fa-layer-group"></i></div>
+        <h3 class="feature-card__title">Flashcards de alto impacto</h3>
+        <p class="feature-card__description">Memoriza conceptos clave con repaso espaciado para retener más en menos tiempo.</p>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-card__icon"><i class="fas fa-chart-line"></i></div>
+        <h3 class="feature-card__title">Panel de progreso</h3>
+        <p class="feature-card__description">Visualiza tendencias reales de rendimiento y toma decisiones basadas en datos.</p>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-card__icon"><i class="fas fa-ranking-star"></i></div>
+        <h3 class="feature-card__title">Ranking con propósito</h3>
+        <p class="feature-card__description">Compite sanamente con tu comunidad y usa esa motivación para sostener el hábito.</p>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-card__icon"><i class="fas fa-mobile-screen-button"></i></div>
+        <h3 class="feature-card__title">Diseño multiplataforma</h3>
+        <p class="feature-card__description">Tu avance te acompaña en laptop, tablet o móvil sin perder contexto.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="study-flow">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Un flujo claro para estudiar mejor</h2>
+      <p class="section-subtitle">Menos improvisación, más consistencia. Así se ve una semana productiva en AprendoYa.</p>
+    </div>
+
+    <div class="study-flow__grid">
+      <div class="flow-step">
+        <span class="flow-step__number">01</span>
+        <h3>Diagnostica tu punto de partida</h3>
+        <p>Evalúa tu nivel por tema y descubre qué reforzar primero para tener impacto inmediato.</p>
       </div>
-      <div class="feature-card">
-        <div class="feature-card__icon">
-          <i class="fas fa-book-open"></i>
-        </div>
-        <h3 class="feature-card__title">Biblioteca Completa</h3>
-        <p class="feature-card__description">
-          Acceso ilimitado a miles de recursos educativos, exámenes y materiales de estudio organizados por materia.
-        </p>
+      <div class="flow-step">
+        <span class="flow-step__number">02</span>
+        <h3>Planifica sesiones de enfoque</h3>
+        <p>Construye bloques de estudio realistas según tu agenda, prioridades y fechas de examen.</p>
       </div>
-      <div class="feature-card">
-        <div class="feature-card__icon">
-          <i class="fas fa-layer-group"></i>
-        </div>
-        <h3 class="feature-card__title">Flashcards Premium</h3>
-        <p class="feature-card__description">
-          Sistema de tarjetas de memoria inteligente con espaciado repetitivo para un aprendizaje efectivo y duradero.
-        </p>
+      <div class="flow-step">
+        <span class="flow-step__number">03</span>
+        <h3>Practica con retroalimentación</h3>
+        <p>Recibe sugerencias concretas sobre errores frecuentes y mejora en cada intento.</p>
       </div>
-      <div class="feature-card">
-        <div class="feature-card__icon">
-          <i class="fas fa-trophy"></i>
-        </div>
-        <h3 class="feature-card__title">Ranking Competitivo</h3>
-        <p class="feature-card__description">
-          Compite con otros estudiantes, sube en el ranking y gana recompensas por tu desempeño académico.
-        </p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-card__icon">
-          <i class="fas fa-chart-line"></i>
-        </div>
-        <h3 class="feature-card__title">Análisis de Progreso</h3>
-        <p class="feature-card__description">
-          Seguimiento detallado de tu evolución con gráficos y métricas que te ayudan a identificar fortalezas y debilidades.
-        </p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-card__icon">
-          <i class="fas fa-users"></i>
-        </div>
-        <h3 class="feature-card__title">Comunidad Activa</h3>
-        <p class="feature-card__description">
-          Conecta con estudiantes de tu universidad, comparte conocimientos y aprende en comunidad.
-        </p>
+      <div class="flow-step">
+        <span class="flow-step__number">04</span>
+        <h3>Optimiza con tus métricas</h3>
+        <p>Revisa avances semanales y ajusta tu estrategia para mantener una mejora sostenible.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Benefits Section -->
 <section class="benefits">
   <div class="container">
     <div class="benefits__content">
       <div class="benefits__text">
-        <h2 class="section-title">¿Por qué elegir AprendeYa?</h2>
-        <p class="section-subtitle">
-          Únete a miles de estudiantes que ya han transformado su forma de estudiar
-        </p>
+        <h2 class="section-title">Resultados que se sienten en el semestre</h2>
+        <p class="section-subtitle">AprendoYa te ayuda a estudiar con enfoque y continuidad, incluso en semanas de alta carga.</p>
         <ul class="benefits__list">
-          <li class="benefit-item">
-            <i class="fas fa-check-circle"></i>
-            <span>Aumenta tu rendimiento académico en un 40%</span>
-          </li>
-          <li class="benefit-item">
-            <i class="fas fa-check-circle"></i>
-            <span>Estudia de manera más eficiente y menos estresante</span>
-          </li>
-          <li class="benefit-item">
-            <i class="fas fa-check-circle"></i>
-            <span>Acceso 24/7 desde cualquier dispositivo</span>
-          </li>
-          <li class="benefit-item">
-            <i class="fas fa-check-circle"></i>
-            <span>Contenido actualizado constantemente</span>
-          </li>
-          <li class="benefit-item">
-            <i class="fas fa-check-circle"></i>
-            <span>Soporte personalizado y comunidad de estudio</span>
-          </li>
+          <li class="benefit-item"><i class="fas fa-check-circle"></i><span>Claridad sobre qué estudiar primero y por qué.</span></li>
+          <li class="benefit-item"><i class="fas fa-check-circle"></i><span>Más constancia gracias a objetivos diarios visibles.</span></li>
+          <li class="benefit-item"><i class="fas fa-check-circle"></i><span>Mejor retención de contenidos con práctica activa.</span></li>
+          <li class="benefit-item"><i class="fas fa-check-circle"></i><span>Seguimiento continuo para evitar estudiar a última hora.</span></li>
+          <li class="benefit-item"><i class="fas fa-check-circle"></i><span>Mayor confianza al llegar a parciales y finales.</span></li>
         </ul>
       </div>
       <div class="benefits__image">
         <div class="benefits__illustration">
-          <i class="fas fa-chart-bar"></i>
+          <i class="fas fa-chart-simple"></i>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Testimonials Section -->
 <section class="testimonials">
   <div class="container">
     <div class="section-header">
-      <h2 class="section-title">Lo que dicen nuestros estudiantes</h2>
-      <p class="section-subtitle">Historias reales de éxito académico</p>
+      <h2 class="section-title">Experiencias reales, progreso real</h2>
+      <p class="section-subtitle">Historias de estudiantes que pasaron de estudiar sin rumbo a estudiar con resultados.</p>
     </div>
+
     <div class="testimonials__grid">
-      <div class="testimonial-card">
+      <article class="testimonial-card">
         <div class="testimonial-card__content">
-          <p class="testimonial-card__text">
-            "AprendeYa cambió completamente mi forma de estudiar. Pasé de reprobar exámenes a ser el primero de mi clase. Las flashcards y el análisis de progreso son increíbles."
-          </p>
+          <p class="testimonial-card__text">"Antes estudiaba horas sin saber si avanzaba. Ahora tengo objetivos claros por semana y mis notas subieron en dos parciales seguidos."</p>
         </div>
         <div class="testimonial-card__author">
-          <div class="author__avatar">
-            <i class="fas fa-user"></i>
-          </div>
+          <div class="author__avatar"><i class="fas fa-user"></i></div>
           <div class="author__info">
-            <h4 class="author__name">María González</h4>
-            <p class="author__role">Estudiante de Medicina</p>
+            <h4 class="author__name">Valentina Rojas</h4>
+            <p class="author__role">Estudiante de Bioquímica</p>
           </div>
         </div>
-      </div>
-      <div class="testimonial-card">
+      </article>
+
+      <article class="testimonial-card">
         <div class="testimonial-card__content">
-          <p class="testimonial-card__text">
-            "La plataforma es intuitiva y el contenido está muy bien organizado. El ranking me motiva a estudiar más duro cada día."
-          </p>
+          <p class="testimonial-card__text">"Las evaluaciones me muestran exactamente dónde me equivoco. Eso me ahorra tiempo y me deja estudiar con foco real."</p>
         </div>
         <div class="testimonial-card__author">
-          <div class="author__avatar">
-            <i class="fas fa-user"></i>
-          </div>
+          <div class="author__avatar"><i class="fas fa-user"></i></div>
           <div class="author__info">
-            <h4 class="author__name">Carlos Rodríguez</h4>
-            <p class="author__role">Estudiante de Ingeniería</p>
+            <h4 class="author__name">Diego Martínez</h4>
+            <p class="author__role">Estudiante de Sistemas</p>
           </div>
         </div>
-      </div>
-      <div class="testimonial-card">
+      </article>
+
+      <article class="testimonial-card">
         <div class="testimonial-card__content">
-          <p class="testimonial-card__text">
-            "Gracias a AprendeYa, pude mantener mi beca. Las herramientas de IA realmente entienden cómo aprendo mejor."
-          </p>
+          <p class="testimonial-card__text">"Me gustó que todo esté conectado: materias, progreso, ranking y flashcards. Se siente profesional y fácil de mantener."</p>
         </div>
         <div class="testimonial-card__author">
-          <div class="author__avatar">
-            <i class="fas fa-user"></i>
-          </div>
+          <div class="author__avatar"><i class="fas fa-user"></i></div>
           <div class="author__info">
-            <h4 class="author__name">Ana López</h4>
+            <h4 class="author__name">Sofía Herrera</h4>
             <p class="author__role">Estudiante de Derecho</p>
           </div>
         </div>
-      </div>
+      </article>
     </div>
   </div>
 </section>
 
-<!-- CTA Section -->
 <section class="cta">
   <div class="container">
     <div class="cta__content">
-      <h2 class="cta__title">¿Listo para revolucionar tus estudios?</h2>
-      <p class="cta__subtitle">
-        Únete hoy y comienza tu viaje hacia el éxito académico
-      </p>
+      <h2 class="cta__title">Tu mejor versión académica empieza hoy</h2>
+      <p class="cta__subtitle">Crea tu cuenta en minutos y empieza a estudiar con una estrategia clara desde el primer día.</p>
       <div class="cta__buttons">
         <button class="btn btn--primary btn--large" id="open-registro-modal-cta">
           <i class="fas fa-user-plus"></i>
-          Registrarme Gratis
+          Empezar gratis
         </button>
-        <a href="/ranking/" class="btn btn--secondary btn--large">
+        <a href="/ranking/" class="btn btn--outline btn--large">
           <i class="fas fa-trophy"></i>
-          Ver Ranking
+          Ver ranking
         </a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Footer Section -->
 <footer class="home-footer">
   <div class="home-footer__container">
     <div class="home-footer__grid">
-      <div class="footer-section">
-        <div class="footer-logo">
-          <h3 class="footer-logo__text">AprendeYa</h3>
-          <p class="footer-logo__tagline">La plataforma educativa del futuro</p>
-        </div>
+      <div class="footer-section footer-section--brand">
+        <h3 class="footer-logo__text">AprendoYa</h3>
+        <p class="footer-logo__tagline">Estudia con método. Rinde con confianza.</p>
         <p class="footer-description">
-          Revolucionando la educación universitaria con IA avanzada, contenido personalizado y herramientas de aprendizaje efectivas.
+          Plataforma académica para estudiantes universitarios que buscan una rutina eficiente, medible y sostenible.
         </p>
         <div class="footer-social">
-          <a href="https://www.facebook.com/share/1AZts5zPx9/" target="_blank" class="social-link" aria-label="Facebook">
-            <i class="fab fa-facebook-f"></i>
-          </a>
-          <a href="https://www.youtube.com/@AprendeYa7?si=nVTOd2prbb64NX3q" target="_blank" class="social-link" aria-label="YouTube">
-            <i class="fab fa-youtube"></i>
-          </a>
-          <a href="https://www.instagram.com/jndani1?igsh=Nm0xbjI0Ymd3YTVq" target="_blank" class="social-link" aria-label="Instagram">
-            <i class="fab fa-instagram"></i>
-          </a>
-          <a href="https://www.tiktok.com/@juan_dani_?_r=1&_t=ZS-94sNge2Heab" target="_blank" class="social-link" aria-label="TikTok">
-            <i class="fab fa-tiktok"></i>
-          </a>
+          <a href="https://www.facebook.com/share/1AZts5zPx9/" target="_blank" class="social-link" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="https://www.youtube.com/@AprendoYa7?si=nVTOd2prbb64NX3q" target="_blank" class="social-link" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+          <a href="https://www.instagram.com/jndani1?igsh=Nm0xbjI0Ymd3YTVq" target="_blank" class="social-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.tiktok.com/@juan_dani_?_r=1&_t=ZS-94sNge2Heab" target="_blank" class="social-link" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
         </div>
       </div>
 
       <div class="footer-section">
-        <h4 class="footer-title">Plataforma</h4>
+        <h4 class="footer-title">Producto</h4>
         <ul class="footer-links">
-          <li><a href="#">Características</a></li>
-          <li><a href="/ranking/">Ranking</a></li>
-          <li><a href="#">Biblioteca</a></li>
-          <li><a href="#">Mi Progreso</a></li>
+          <li><a href="#">Planificador</a></li>
+          <li><a href="#">Evaluaciones</a></li>
           <li><a href="#">Flashcards</a></li>
+          <li><a href="/ranking/">Ranking</a></li>
         </ul>
       </div>
 
       <div class="footer-section">
-        <h4 class="footer-title">Soporte</h4>
+        <h4 class="footer-title">Recursos</h4>
         <ul class="footer-links">
-          <li><a href="#">Centro de Ayuda</a></li>
+          <li><a href="#">Guía de estudio</a></li>
+          <li><a href="#">Centro de ayuda</a></li>
+          <li><a href="#">Preguntas frecuentes</a></li>
           <li><a href="#">Contacto</a></li>
-          <li><a href="#">Preguntas Frecuentes</a></li>
-          <li><a href="#">Tutoriales</a></li>
-          <li><a href="#">Soporte Técnico</a></li>
         </ul>
       </div>
 
       <div class="footer-section">
-        <h4 class="footer-title">Empresa</h4>
+        <h4 class="footer-title">Legal</h4>
         <ul class="footer-links">
-          <li><a href="#">Acerca de Nosotros</a></li>
-          <li><a href="#">Política de Privacidad</a></li>
-          <li><a href="#">Términos de Servicio</a></li>
-          <li><a href="#">Carreras</a></li>
-          <li><a href="#">Blog</a></li>
+          <li><a href="#">Política de privacidad</a></li>
+          <li><a href="#">Términos de servicio</a></li>
+          <li><a href="#">Uso responsable</a></li>
+          <li><a href="#">Cookies</a></li>
         </ul>
       </div>
-
-      <!-- <div class="footer-section">
-        <h4 class="footer-title">Suscríbete</h4>
-        <p class="footer-newsletter__text">
-          Recibe las últimas actualizaciones y consejos de estudio.
-        </p>
-        <form class="footer-newsletter">
-          <input type="email" placeholder="Tu correo electrónico" class="newsletter-input">
-          <button type="submit" class="btn btn--primary btn--small">
-            <i class="fas fa-paper-plane"></i>
-          </button>
-        </form>
-      </div> -->
     </div>
 
     <div class="home-footer__bottom">
       <div class="footer-bottom__content">
         <p class="footer-copyright">
-          © {% now 'Y' %} Desarrollado por  <a href="https://appyaa.com"><b>AppYaa-Guilder</b></a>
-
+          © {% now 'Y' %} Desarrollado por <a href="https://appyaa.com"><b>AppYaa-Guilder</b></a>
         </p>
         <div class="footer-bottom__links">
           <a href="#">Privacidad</a>
@@ -332,10 +323,9 @@
   </div>
 </footer>
 
-<!-- Botón flotante WhatsApp -->
-<a href="https://wa.me/59168477543?text=Hola, necesito información o ayuda con AprendeYa" 
-   target="_blank" 
-   class="whatsapp-button" 
+<a href="https://wa.me/59168477543?text=Hola, necesito información o ayuda con AprendoYa"
+   target="_blank"
+   class="whatsapp-button"
    title="Contactar por WhatsApp">
   <i class="fab fa-whatsapp"></i>
 </a>

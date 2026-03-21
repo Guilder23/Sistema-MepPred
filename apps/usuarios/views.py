@@ -149,10 +149,10 @@ def crear_usuario(request):
         email_warning = None
         try:
             login_url = request.build_absolute_uri(f"{reverse('cuentas:home')}?show_login=true")
-            subject = 'Tu cuenta ha sido creada en AprendeYa'
+            subject = 'Tu cuenta ha sido creada en AprendoYa'
             text_body = (
                 f'Hola {usuario.first_name or usuario.username},\n\n'
-                f'Se creó una cuenta para ti en AprendeYa.\n'
+                f'Se creó una cuenta para ti en AprendoYa.\n'
                 f'Usuario: {usuario.username}\n'
                 f'Correo: {usuario.email}\n\n'
                 f'Inicia sesión aquí: {login_url}\n\n'
@@ -163,14 +163,14 @@ def crear_usuario(request):
                 <table role=\"presentation\" style=\"width:100%;max-width:620px;margin:0 auto;background:#ffffff;border-radius:12px;border:1px solid #e5e7eb;overflow:hidden;\">
                     <tr>
                         <td style=\"background:#0f172a;padding:18px 24px;\">
-                            <h2 style=\"margin:0;color:#ffffff;font-size:22px;font-weight:700;\">AprendeYa</h2>
+                            <h2 style=\"margin:0;color:#ffffff;font-size:22px;font-weight:700;\">AprendoYa</h2>
                             <p style=\"margin:8px 0 0;color:#cbd5e1;font-size:13px;\">Tu cuenta ha sido creada exitosamente</p>
                         </td>
                     </tr>
                     <tr>
                         <td style=\"padding:24px;\">
                             <p style=\"margin:0 0 16px;font-size:16px;\">Hola <strong>{usuario.first_name or usuario.username}</strong>,</p>
-                            <p style=\"margin:0 0 18px;line-height:1.6;\">Se creó una cuenta para ti en <strong>AprendeYa</strong>. Aquí tienes tus datos:</p>
+                            <p style=\"margin:0 0 18px;line-height:1.6;\">Se creó una cuenta para ti en <strong>AprendoYa</strong>. Aquí tienes tus datos:</p>
                             <table role=\"presentation\" style=\"width:100%;border-collapse:collapse;margin:0 0 18px;\">
                                 <tr>
                                     <td style=\"padding:10px;border:1px solid #e5e7eb;background:#f8fafc;font-weight:600;width:140px;\">Usuario</td>
