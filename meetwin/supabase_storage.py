@@ -37,15 +37,40 @@ class SupabaseStorage(Storage):
         
         try:
             self.client = create_client(self.supabase_url, self.supabase_key)
+            self._check_connection()
         except Exception as e:
             print(f"⚠️  No se pudo conectar a Supabase: {e}")
             print("   Usando almacenamiento local como fallback")
             self.use_fallback = True
+
+    def _check_connection(self):
+        """Valida conectividad y acceso al bucket para decidir si usar Supabase o fallback."""
+        if not self.client:
+            self.use_fallback = True
+            return
+
+        try:
+            # Forzamos una llamada real de red para confirmar disponibilidad.
+            self.client.storage.from_(self.bucket_name).list(path='', options={"limit": 1})
+        except Exception as e:
+            print(f"⚠️  Supabase no disponible ({e}), activando fallback local")
+            self.use_fallback = True
+
+    def _activate_fallback(self, context=''):
+        """Activa fallback local de forma persistente tras errores de conectividad."""
+        if not self.use_fallback:
+            self.use_fallback = True
+            if context:
+                print(f"⚠️  Activando fallback local: {context}")
     
     def _init_fallback(self):
         """Inicializa el almacenamiento local como fallback"""
         media_root = getattr(settings, 'MEDIA_ROOT', Path(settings.BASE_DIR) / 'media')
-        self.fallback_storage = FileSystemStorage(location=str(media_root))
+        local_media_url = getattr(settings, 'LOCAL_MEDIA_URL', '/media/')
+        self.fallback_storage = FileSystemStorage(
+            location=str(media_root),
+            base_url=local_media_url,
+        )
     
     def _is_network_error(self, error):
         """Verifica si el error es de conectividad de red"""
@@ -71,6 +96,7 @@ class SupabaseStorage(Storage):
             return ContentFile(response)
         except Exception as e:
             if self._is_network_error(e):
+                self._activate_fallback(f"error de red al abrir {name}")
                 print(f"⚠️  Error de red al abrir {name}, usando almacenamiento local")
                 return self.fallback_storage._open(name, mode)
             raise FileNotFoundError(f"No se pudo descargar el archivo {name}: {str(e)}")
@@ -100,6 +126,7 @@ class SupabaseStorage(Storage):
             return name
         except Exception as e:
             if self._is_network_error(e):
+                self._activate_fallback(f"error de red al guardar {name}")
                 print(f"⚠️  Error de red al guardar {name}, usando almacenamiento local")
                 return self.fallback_storage._save(name, content)
             raise Exception(f"Error al guardar el archivo {name} en Supabase: {str(e)}")
@@ -113,6 +140,7 @@ class SupabaseStorage(Storage):
             self.client.storage.from_(self.bucket_name).remove([name])
         except Exception as e:
             if self._is_network_error(e):
+                self._activate_fallback(f"error de red al eliminar {name}")
                 print(f"⚠️  Error de red al eliminar {name}, usando almacenamiento local")
                 return self.fallback_storage.delete(name)
             raise Exception(f"Error al eliminar el archivo {name}: {str(e)}")
@@ -123,12 +151,24 @@ class SupabaseStorage(Storage):
             return self.fallback_storage.exists(name)
         
         try:
+            normalized = name.strip('/').replace('\\', '/')
+            if not normalized:
+                return False
+
+            parts = normalized.rsplit('/', 1)
+            if len(parts) == 2:
+                directory, filename = parts
+            else:
+                directory, filename = '', parts[0]
+
             files = self.client.storage.from_(self.bucket_name).list(
-                options={"limit": 100}
+                path=directory,
+                options={"limit": 1000}
             )
-            return any(f['name'] == name for f in files)
+            return any(f.get('name') == filename for f in files)
         except Exception as e:
             if self._is_network_error(e):
+                self._activate_fallback("error de red al verificar existencia")
                 return self.fallback_storage.exists(name)
             return False
     
@@ -151,6 +191,7 @@ class SupabaseStorage(Storage):
             return dirs, file_list
         except Exception as e:
             if self._is_network_error(e):
+                self._activate_fallback(f"error de red al listar {path}")
                 return self.fallback_storage.listdir(path)
             raise Exception(f"Error al listar el directorio {path}: {str(e)}")
     
@@ -169,6 +210,7 @@ class SupabaseStorage(Storage):
             return 0
         except Exception as e:
             if self._is_network_error(e):
+                self._activate_fallback(f"error de red al obtener tamaño de {name}")
                 return self.fallback_storage.size(name)
             return 0
     
@@ -178,10 +220,13 @@ class SupabaseStorage(Storage):
             return self.fallback_storage.url(name)
         
         try:
+            if not self.exists(name) and self.fallback_storage.exists(name):
+                return self.fallback_storage.url(name)
             url = self.client.storage.from_(self.bucket_name).get_public_url(name)
             return url
         except Exception as e:
             if self._is_network_error(e):
+                self._activate_fallback(f"error de red al obtener URL de {name}")
                 return self.fallback_storage.url(name)
             # Construir URL manualmente si falla
             return f"{self.supabase_url.rstrip('/')}/storage/v1/object/public/{self.bucket_name}/{name}"
